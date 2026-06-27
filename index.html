@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>REGEN — Biological Wellness Center</title>
+<meta name="description" content="REGEN, centro de bienestar biológico en Córdoba. Diagnóstico molecular, terapias regenerativas y optimización metabólica.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:        #F1ECE0;
+    --cream-soft:   #E9E2D2;
+    --stone:        #C7C0AC;
+    --stone-dark:   #6E6A59;
+    --ink:          #1A1912;
+    --sage:         #7E8F68;
+    --moss:         #2C3324;
+    --moss-deep:    #1E2417;
+    --terracotta:   #AD7950;
+    --amber:        #E2A86B;
+    --amber-deep:   #C97F4C;
+
+    --space-1: 8px;
+    --space-2: 16px;
+    --space-3: 24px;
+    --space-4: 40px;
+    --space-5: 64px;
+    --space-6: 96px;
+    --space-7: 144px;
+
+    --max: 1240px;
+    --radius: 2px;
+    --ease: cubic-bezier(.16,.8,.3,1);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img,svg{ display:block; max-width:100%; }
+  a{ color: inherit; text-decoration: none; }
+  ul{ margin:0; padding:0; list-style:none; }
+  h1,h2,h3,p{ margin:0; }
+
+  .display{
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .label{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--stone-dark);
+  }
+  .label--light{ color: rgba(241,236,224,0.68); }
+
+  .wrap{
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+    position: relative;
+  }
+  @media (max-width:640px){
+    .wrap{ padding: 0 var(--space-3); }
+  }
+
+  :focus-visible{
+    outline: 2px solid var(--amber-deep);
+    outline-offset: 3px;
+  }
+
+  .reveal{
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .7s var(--ease), transform .7s var(--ease);
+  }
+  .reveal.is-visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    html{ scroll-behavior:auto; }
+    .hero__glow, .ring, .hero__bg-grid{ animation:none !important; }
+  }
+
+  .grid-ink{ fill:none; stroke: var(--ink); stroke-width: 1.6; }
+  .grid-sage{ fill:none; stroke: var(--sage); stroke-width: 1.3; }
+  .grid-cream-ink{ fill:none; stroke: var(--cream); stroke-width: 1.4; }
+
+  .nav{
+    position: fixed;
+    top:0; left:0; right:0;
+    z-index: 50;
+    background: rgba(26,25,18,0.42);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(241,236,224,0.12);
+    transition: background .35s var(--ease), border-color .35s var(--ease);
+  }
+  .nav__row{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    height: 76px;
+  }
+  .nav__logo{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight:700;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--cream);
+    transition: color .35s var(--ease);
+  }
+  .nav__links{
+    display:flex;
+    align-items:center;
+    gap: var(--space-4);
+  }
+  .nav__link{
+    font-size: 13px;
+    font-weight:600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(241,236,224,0.72);
+    transition: color .2s var(--ease);
+  }
+  .nav__link:hover{ color: var(--amber); }
+  .nav__toggle{
+    display:none;
+    background:none; border:none; cursor:pointer;
+    width: 36px; height: 28px; position:relative;
+  }
+  .nav__toggle span{
+    position:absolute; left:0; right:0; height:2px; background: var(--cream);
+    transition: transform .25s var(--ease), opacity .25s var(--ease), background .35s var(--ease);
+  }
+  .nav__toggle span:nth-child(1){ top:2px; }
+  .nav__toggle span:nth-child(2){ top:13px; }
+  .nav__toggle span:nth-child(3){ top:24px; }
+  .nav.is-open .nav__toggle span:nth-child(1){ transform: translateY(11px) rotate(45deg); }
+  .nav.is-open .nav__toggle span:nth-child(2){ opacity:0; }
+  .nav.is-open .nav__toggle span:nth-child(3){ transform: translateY(-11px) rotate(-45deg); }
+
+  .nav.nav--light{
+    background: rgba(241,236,224,0.88);
+    border-bottom-color: rgba(26,25,18,0.08);
+  }
+  .nav.nav--light .nav__logo{ color: var(--ink); }
+  .nav.nav--light .nav__link{ color: var(--stone-dark); }
+  .nav.nav--light .nav__link:hover{ color: var(--amber-deep); }
+  .nav.nav--light .nav__toggle span{ background: var(--ink); }
+  .nav.nav--light .nav__links{ background: var(--cream); }
+
+  @media (max-width: 860px){
+    .nav__links{
+      position:fixed;
+      top:76px; left:0; right:0;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-3);
+      background: var(--ink);
+      padding: var(--space-4) var(--space-3);
+      border-bottom: 1px solid rgba(241,236,224,0.12);
+      transform: translateY(-12px);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .25s var(--ease), transform .25s var(--ease), background .35s var(--ease);
+    }
+    .nav.is-open .nav__links{
+      opacity:1; transform:none; pointer-events:auto;
+    }
+    .nav__toggle{ display:block; }
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap: 10px;
+    padding: 13px 26px;
+    font-size: 13px;
+    font-weight:600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: var(--radius);
+    border: 1px solid var(--ink);
+    cursor:pointer;
+    transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), transform .2s var(--ease);
+  }
+  .btn--primary{ background: var(--ink); color: var(--cream); }
+  .btn--primary:hover{ background: var(--amber-deep); border-color: var(--amber-deep); }
+  .btn--ghost{ background: transparent; color: var(--ink); }
+  .btn--ghost:hover{ border-color: var(--amber-deep); color: var(--amber-deep); }
+  .btn--on-dark{ border-color: rgba(241,236,224,0.5); color: var(--cream); }
+  .btn--on-dark:hover{ border-color: var(--cream); background: rgba(241,236,224,0.08); }
+  .btn--amber{ background: var(--amber); border-color: var(--amber); color: var(--moss-deep); }
+  .btn--amber:hover{ background: var(--cream); border-color: var(--cream); box-shadow: 0 0 28px rgba(226,168,107,.45); transform: translateY(-1px); }
+
+  .hero{
+    position: relative;
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding-top: 76px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 18%, rgba(226,168,107,0.16), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 82% 78%, rgba(126,143,104,0.20), transparent 60%),
+      linear-gradient(165deg, var(--moss) 0%, var(--ink) 55%, var(--moss-deep) 100%);
+    color: var(--cream);
+  }
+  .hero__glow{
+    position:absolute;
+    border-radius:50%;
+    filter: blur(70px);
+    pointer-events:none;
+    z-index:0;
+  }
+  .hero__glow--amber{
+    width: 60vmax; height:60vmax;
+    background: radial-gradient(circle, rgba(226,168,107,0.55), transparent 65%);
+    top: -22vmax; left:50%;
+    animation: glowPulseA 8s ease-in-out infinite;
+  }
+  .hero__glow--sage{
+    width: 46vmax; height:46vmax;
+    background: radial-gradient(circle, rgba(126,143,104,0.5), transparent 65%);
+    bottom: -16vmax; right: -8vmax;
+    animation: glowPulseB 10s ease-in-out infinite;
+  }
+  @keyframes glowPulseA{
+    0%,100%{ opacity:.55; transform: translateX(-50%) scale(1); }
+    50%{ opacity:.85; transform: translateX(-50%) scale(1.14); }
+  }
+  @keyframes glowPulseB{
+    0%,100%{ opacity:.45; transform: scale(1); }
+    50%{ opacity:.75; transform: scale(1.12); }
+  }
+
+  .hero__bg-grid{
+    position:absolute;
+    top:50%; left:50%;
+    width: min(1100px, 170vw);
+    transform: translate(-50%,-50%) rotate(0deg);
+    opacity: 0.14;
+    z-index:0;
+    animation: slowSpin 220s linear infinite;
+  }
+  @keyframes slowSpin{ to{ transform: translate(-50%,-50%) rotate(360deg); } }
+
+  .hero__rings{
+    position:absolute;
+    top:50%; left:50%;
+    width: min(720px, 130vw);
+    height: min(720px,130vw);
+    transform: translate(-50%,-50%);
+    z-index:0;
+  }
+  .ring{
+    fill:none;
+    stroke: var(--amber);
+    stroke-width: 1.4;
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity:0;
+    animation: ringPulse 5.5s ease-out infinite;
+  }
+  .ring--sage{ stroke: var(--sage); }
+  .ring:nth-of-type(2){ animation-delay: 1.4s; }
+  .ring:nth-of-type(3){ animation-delay: 2.8s; }
+  @keyframes ringPulse{
+    0%{ transform: scale(.6); opacity:0; }
+    18%{ opacity:.55; }
+    100%{ transform: scale(1.35); opacity:0; }
+  }
+
+  .hero__content{
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    text-align:center;
+    padding: var(--space-6) var(--space-3);
+  }
+  .hero__heading{
+    margin-top: var(--space-2);
+    font-size: clamp(42px, 7.4vw, 88px);
+    line-height: 1.02;
+    text-transform: uppercase;
+  }
+  .hero__heading-accent{
+    background: linear-gradient(95deg, var(--amber) 0%, #EFCB97 45%, var(--sage) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero__sub{
+    margin: var(--space-3) auto 0;
+    max-width: 480px;
+    font-size: 17px;
+    color: rgba(241,236,224,0.78);
+  }
+  .hero__actions{
+    margin-top: var(--space-4);
+    display:flex;
+    gap: var(--space-2);
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .hero__meta{
+    margin-top: var(--space-5);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: var(--space-2);
+  }
+  .hero__meta-dot{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--amber);
+    box-shadow: 0 0 10px 2px rgba(226,168,107,.7);
+    animation: dotPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes dotPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    padding: 8px 16px;
+    margin-bottom: var(--space-3);
+    border: 1px solid rgba(241,236,224,0.32);
+    font-size: 12px;
+    font-weight:600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(241,236,224,0.88);
+  }
+  .badge__dot{
+    width:6px; height:6px; border-radius:50%;
+    background: var(--amber);
+    box-shadow: 0 0 8px 2px rgba(226,168,107,.7);
+    animation: dotPulse 2.2s ease-in-out infinite;
+  }
+
+  /* ---------- Progress stages ---------- */
+  .stages{ display:flex; flex-direction:column; gap: var(--space-3); }
+  .stage{ display:flex; gap: var(--space-3); align-items:flex-start; }
+  .stage__rail{ display:flex; flex-direction:column; align-items:center; width:14px; flex-shrink:0; padding-top:4px; }
+  .stage__dot{ width:14px; height:14px; border-radius:50%; flex-shrink:0; border:2px solid var(--stone); background:transparent; }
+  .stage__line{ width:1px; flex:1; min-height: 22px; background: rgba(26,25,18,0.16); margin-top:4px; }
+  .stage:last-child .stage__line{ display:none; }
+  .stage__dot--done{ background: var(--sage); border-color: var(--sage); }
+  .stage__dot--current{ background: var(--amber); border-color: var(--amber); box-shadow: 0 0 0 4px rgba(226,168,107,.22); animation: dotPulse 2.2s ease-in-out infinite; }
+  .stage__title{ font-family:'Bricolage Grotesque',sans-serif; font-weight:600; font-size: 17px; }
+  .stage__status{ font-size: 13px; color: var(--stone-dark); margin-top:2px; }
+  .stage__status--current{ color: var(--amber-deep); font-weight:600; }
+
+  .scroll-cue{
+    position:absolute;
+    bottom: var(--space-4);
+    left:50%;
+    transform: translateX(-50%);
+    width: 1px; height: 46px;
+    background: linear-gradient(to bottom, rgba(241,236,224,0), rgba(241,236,224,.55));
+    z-index:2;
+  }
+  .scroll-cue::after{
+    content:'';
+    position:absolute; left:-2.5px; top:0;
+    width:6px; height:6px; border-radius:50%;
+    background: var(--amber);
+    animation: cueDrop 2.6s ease-in-out infinite;
+  }
+  @keyframes cueDrop{ 0%{ top:0; opacity:0;} 20%{opacity:1;} 80%{opacity:1;} 100%{ top:40px; opacity:0;} }
+
+  @media (max-width: 640px){
+    .hero{ min-height: 100svh; }
+    .hero__heading{ font-size: clamp(36px, 11vw, 56px); }
+  }
+
+  .divider{
+    height:3px;
+    background: linear-gradient(90deg, var(--amber), var(--sage));
+  }
+
+  section{ position:relative; }
+  .band{ padding: var(--space-7) 0; overflow:hidden; }
+  .band--tight{ padding: var(--space-6) 0; }
+  .band--cream-soft{ background: var(--cream-soft); }
+  .band--dark{ background: linear-gradient(160deg, var(--moss) 0%, var(--moss-deep) 100%); color: var(--cream); }
+  .ambient-blob{
+    position:absolute;
+    border-radius:50%;
+    filter: blur(60px);
+    opacity:.16;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .centro__top{ margin-bottom: var(--space-5); max-width: 720px; position:relative; z-index:1; }
+  .centro__heading{
+    margin-top: var(--space-2);
+    font-size: clamp(28px, 3.6vw, 44px);
+    line-height: 1.12;
+  }
+  .centro__grid{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: var(--space-6);
+    align-items:start;
+    position:relative; z-index:1;
+  }
+  .centro__copy p{ font-size: 17px; color:#43412F; }
+  .centro__copy p + p{ margin-top: var(--space-3); }
+  .stats{ display:flex; flex-direction:column; gap: var(--space-4); }
+  .stat{ display:flex; gap: var(--space-3); align-items:flex-start; }
+  .stat__icon{ width:40px; flex-shrink:0; }
+  .stat__num{
+    font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size: 32px;
+    background: linear-gradient(95deg, var(--ink), var(--amber-deep));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .stat__label{ font-size: 14px; color: var(--stone-dark); margin-top:2px; }
+
+  @media (max-width: 860px){
+    .centro__grid{ grid-template-columns: 1fr; gap: var(--space-5); }
+  }
+
+  .principios__head{ max-width: 560px; margin-bottom: var(--space-5); position:relative; z-index:1; }
+  .principios__heading{ margin-top: var(--space-2); font-size: clamp(26px,3.2vw,38px); }
+  .principios__grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+    position:relative; z-index:1;
+  }
+  .principio{ padding-top: var(--space-3); border-top: 1px solid rgba(26,25,18,0.14); transition: transform .3s var(--ease); }
+  .principio:hover{ transform: translateY(-4px); }
+  .principio__icon{ width: 52px; height:52px; margin-bottom: var(--space-3); transition: transform .3s var(--ease); }
+  .principio:hover .principio__icon{ transform: scale(1.1) rotate(4deg); }
+  .principio__title{ font-family:'Bricolage Grotesque',sans-serif; font-weight:600; font-size: 19px; }
+  .principio__text{ margin-top: var(--space-1); color:#4A4838; font-size:15px; }
+  @media (max-width: 860px){
+    .principios__grid{ grid-template-columns: 1fr; gap: var(--space-4); }
+  }
+
+  .servicios__head{ display:flex; justify-content: space-between; align-items:flex-end; gap: var(--space-4); margin-bottom: var(--space-5); flex-wrap:wrap; position:relative; z-index:1; }
+  .servicios__heading{ margin-top: var(--space-2); font-size: clamp(28px,3.6vw,42px); max-width: 520px; }
+  .servicios__grid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: rgba(241,236,224,0.14);
+    position:relative; z-index:1;
+  }
+  .servicio{
+    background: var(--moss-deep);
+    padding: var(--space-4);
+    border-left: 2px solid transparent;
+    transition: background .25s var(--ease), border-color .25s var(--ease), padding-left .25s var(--ease);
+  }
+  .servicio:hover{ background: #283120; border-left-color: var(--amber); padding-left: calc(var(--space-4) + 6px); }
+  .servicio__num{ font-size: 13px; letter-spacing: 0.1em; color: rgba(241,236,224,0.5); }
+  .servicio__title{ margin-top: var(--space-2); font-family:'Bricolage Grotesque',sans-serif; font-weight:600; font-size: 22px; }
+  .servicio__text{ margin-top: var(--space-2); color: rgba(241,236,224,0.74); font-size: 15px; max-width: 380px; }
+  @media (max-width: 760px){
+    .servicios__grid{ grid-template-columns: 1fr; }
+  }
+
+  .quote__inner{ max-width: 820px; margin: 0 auto; text-align:center; position:relative; z-index:1; }
+  .quote__mark{
+    font-family:'Bricolage Grotesque', sans-serif;
+    font-weight: 500;
+    font-size: clamp(26px, 4vw, 42px);
+    line-height: 1.25;
+  }
+  .quote__sign{ margin-top: var(--space-4); }
+
+  .contacto__grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    position:relative; z-index:1;
+  }
+  .contacto__heading{ margin-top: var(--space-2); font-size: clamp(28px,3.6vw,42px); max-width: 460px; }
+  .contacto__info{ margin-top: var(--space-5); display:flex; flex-direction:column; gap: var(--space-3); }
+  .info-row{ display:flex; gap: var(--space-3); }
+  .info-row__label{ width: 110px; flex-shrink:0; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color: var(--stone-dark); }
+  .info-row__value{ font-size: 15px; }
+
+  .field{ margin-bottom: var(--space-3); }
+  .field label{ display:block; font-size:13px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color: var(--stone-dark); margin-bottom: 8px; }
+  .field input, .field textarea{
+    width:100%;
+    border:none;
+    border-bottom: 1px solid rgba(26,25,18,0.3);
+    background:transparent;
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    padding: 10px 2px;
+    color: var(--ink);
+    transition: border-color .2s var(--ease);
+  }
+  .field input:focus, .field textarea:focus{ outline:none; border-color: var(--amber-deep); }
+  .field textarea{ resize: vertical; min-height: 90px; }
+  .form__status{ margin-top: var(--space-3); font-size: 14px; color: var(--sage); display:none; }
+  .form__status.is-shown{ display:block; }
+
+  @media (max-width: 860px){
+    .contacto__grid{ grid-template-columns: 1fr; gap: var(--space-5); }
+  }
+
+  .footer{ background: var(--ink); color: var(--cream); position:relative; overflow:hidden; }
+  .footer__watermark{
+    position:absolute;
+    right: -8%;
+    top: -18%;
+    width: 480px;
+    opacity: 0.07;
+    pointer-events:none;
+  }
+  .footer__row{
+    display:flex;
+    justify-content: space-between;
+    align-items:flex-start;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding: var(--space-6) 0 var(--space-4);
+    position:relative;
+  }
+  .footer__logo{ font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size: 26px; }
+  .footer__tag{ margin-top: var(--space-2); max-width: 320px; color: rgba(241,236,224,0.6); font-size:14px; }
+  .footer__cols{ display:flex; gap: var(--space-6); flex-wrap:wrap; }
+  .footer__col-title{ margin-bottom: var(--space-2); }
+  .footer__col a{ display:block; font-size: 14px; color: rgba(241,236,224,0.78); padding: 5px 0; transition: color .2s var(--ease); }
+  .footer__col a:hover{ color: var(--amber); }
+  .footer__bottom{
+    display:flex; justify-content: space-between; flex-wrap:wrap; gap: var(--space-2);
+    padding: var(--space-3) 0 var(--space-5);
+    font-size: 12px;
+    color: rgba(241,236,224,0.45);
+    position:relative;
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="regenGrid" viewBox="0 0 600 1000">
+      <line class="grid-sage" x1="300" y1="40"  x2="300" y2="960"/>
+      <circle class="grid-ink"  cx="300" cy="230" r="150"/>
+      <circle class="grid-sage" cx="300" cy="292" r="104"/>
+      <line class="grid-sage" x1="150" y1="230" x2="450" y2="230"/>
+      <circle class="grid-ink"  cx="300" cy="500" r="230"/>
+      <circle class="grid-sage" cx="300" cy="500" r="170"/>
+      <line class="grid-sage" x1="70" y1="500" x2="530" y2="500"/>
+      <circle class="grid-ink"  cx="300" cy="770" r="150"/>
+      <circle class="grid-sage" cx="300" cy="708" r="104"/>
+      <line class="grid-sage" x1="150" y1="770" x2="450" y2="770"/>
+      <line class="grid-ink" x1="194" y1="146" x2="406" y2="314"/>
+      <line class="grid-ink" x1="406" y1="146" x2="194" y2="314"/>
+      <line class="grid-ink" x1="170" y1="686" x2="430" y2="854"/>
+      <line class="grid-ink" x1="430" y1="686" x2="170" y2="854"/>
+    </symbol>
+    <symbol id="regenGridCream" viewBox="0 0 600 1000">
+      <line class="grid-cream-ink" x1="300" y1="40"  x2="300" y2="960" stroke-opacity=".5"/>
+      <circle class="grid-cream-ink" cx="300" cy="230" r="150"/>
+      <circle class="grid-cream-ink" cx="300" cy="292" r="104" stroke-opacity=".6"/>
+      <circle class="grid-cream-ink" cx="300" cy="500" r="230"/>
+      <circle class="grid-cream-ink" cx="300" cy="500" r="170" stroke-opacity=".6"/>
+      <circle class="grid-cream-ink" cx="300" cy="770" r="150"/>
+      <circle class="grid-cream-ink" cx="300" cy="708" r="104" stroke-opacity=".6"/>
+    </symbol>
+    <symbol id="regenGridMini" viewBox="0 0 160 160">
+      <line class="grid-sage" x1="80" y1="8" x2="80" y2="152"/>
+      <circle class="grid-ink"  cx="80" cy="68" r="46"/>
+      <circle class="grid-sage" cx="80" cy="96" r="32"/>
+      <line class="grid-sage" x1="40" y1="68" x2="120" y2="68"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="nav" id="nav">
+  <div class="wrap nav__row">
+    <a href="#hero" class="nav__logo">REGEN</a>
+    <nav class="nav__links">
+      <a class="nav__link" href="#centro">Sobre el centro</a>
+      <a class="nav__link" href="#principios">Principios</a>
+      <a class="nav__link" href="#servicios">Servicios</a>
+      <a class="nav__link" href="#novedades">Novedades</a>
+      <a class="btn btn--amber" href="#novedades" style="margin-top:8px;">Recibir novedades</a>
+    </nav>
+    <button class="nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero" id="hero">
+    <div class="hero__glow hero__glow--amber" aria-hidden="true"></div>
+    <div class="hero__glow hero__glow--sage" aria-hidden="true"></div>
+    <svg class="hero__bg-grid" viewBox="0 0 600 1000" aria-hidden="true"><use href="#regenGridCream"/></svg>
+    <svg class="hero__rings" viewBox="0 0 300 300" aria-hidden="true">
+      <circle class="ring" cx="150" cy="150" r="60"/>
+      <circle class="ring ring--sage" cx="150" cy="150" r="60"/>
+      <circle class="ring" cx="150" cy="150" r="60"/>
+    </svg>
+
+    <div class="hero__content">
+      <div class="badge"><span class="badge__dot"></span>Próxima apertura · Córdoba</div>
+      <p class="label label--light">Biological Wellness Center</p>
+      <h1 class="display hero__heading">Optimizing<br><span class="hero__heading-accent">Human Vitality</span></h1>
+      <p class="hero__sub">Estamos construyendo el primer centro de bienestar biológico de Córdoba. Sumate a la lista de novedades para enterarte antes que nadie de nuestros avances y de la fecha de apertura.</p>
+      <div class="hero__actions">
+        <a class="btn btn--amber" href="#novedades">Quiero recibir novedades</a>
+        <a class="btn btn--on-dark" href="#centro">Conocer el proyecto</a>
+      </div>
+      <div class="hero__meta">
+        <span class="hero__meta-dot"></span>
+        <span class="label label--light">Construcción del espacio en curso</span>
+      </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"></div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="band" id="centro">
+    <div class="ambient-blob" style="width:46vmax;height:46vmax;background:var(--amber);top:-18vmax;right:-16vmax;"></div>
+    <div class="wrap">
+      <div class="centro__top reveal">
+        <p class="label">El centro · En construcción</p>
+        <h2 class="display centro__heading">Estamos construyendo el primer centro de bienestar biológico de Córdoba.</h2>
+      </div>
+      <div class="centro__grid">
+        <div class="centro__copy reveal">
+          <p>REGEN nace para tratar la edad biológica como un dato, no como un destino. Vamos a combinar diagnóstico molecular, terapias regenerativas y entrenamiento de precisión bajo un mismo techo, en Córdoba.</p>
+          <p>Hoy estamos terminando de diseñar los protocolos y armando el espacio. Sumate a la lista de novedades para seguir el avance de la obra y ser de los primeros en enterarte de la fecha de apertura.</p>
+        </div>
+        <div class="stages reveal">
+          <div class="stage">
+            <div class="stage__rail"><span class="stage__dot stage__dot--done"></span><span class="stage__line"></span></div>
+            <div>
+              <p class="stage__title">Diseño de protocolos</p>
+              <p class="stage__status">Completado</p>
+            </div>
+          </div>
+          <div class="stage">
+            <div class="stage__rail"><span class="stage__dot stage__dot--current"></span><span class="stage__line"></span></div>
+            <div>
+              <p class="stage__title">Construcción del espacio</p>
+              <p class="stage__status stage__status--current">En curso</p>
+            </div>
+          </div>
+          <div class="stage">
+            <div class="stage__rail"><span class="stage__dot"></span><span class="stage__line"></span></div>
+            <div>
+              <p class="stage__title">Conformación del equipo médico</p>
+              <p class="stage__status">Próximamente</p>
+            </div>
+          </div>
+          <div class="stage">
+            <div class="stage__rail"><span class="stage__dot"></span></div>
+            <div>
+              <p class="stage__title">Apertura en Córdoba</p>
+              <p class="stage__status">Próximamente</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--tight band--cream-soft" id="principios">
+    <div class="ambient-blob" style="width:38vmax;height:38vmax;background:var(--sage);bottom:-14vmax;left:-12vmax;"></div>
+    <div class="wrap">
+      <div class="principios__head reveal">
+        <p class="label">Cómo trabajamos</p>
+        <h2 class="display principios__heading">Tres principios detrás de cada protocolo.</h2>
+      </div>
+      <div class="principios__grid">
+        <div class="principio reveal">
+          <svg class="principio__icon" viewBox="0 0 160 160"><use href="#regenGridMini"/></svg>
+          <h3 class="principio__title">Precisión biológica</h3>
+          <p class="principio__text">Cada plan parte de tus biomarcadores propios, no de promedios poblacionales ni de tablas genéricas.</p>
+        </div>
+        <div class="principio reveal">
+          <svg class="principio__icon" viewBox="0 0 160 160"><use href="#regenGridMini"/></svg>
+          <h3 class="principio__title">Regeneración activa</h3>
+          <p class="principio__text">Las terapias estimulan los propios mecanismos reparadores del cuerpo en lugar de reemplazarlos.</p>
+        </div>
+        <div class="principio reveal">
+          <svg class="principio__icon" viewBox="0 0 160 160"><use href="#regenGridMini"/></svg>
+          <h3 class="principio__title">Vitalidad sostenida</h3>
+          <p class="principio__text">Hacemos seguimiento continuo para que el progreso se mantenga después del primer resultado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--dark" id="servicios">
+    <div class="ambient-blob" style="width:42vmax;height:42vmax;background:var(--amber);top:-16vmax;left:50%;opacity:.10;"></div>
+    <div class="wrap">
+      <div class="servicios__head reveal">
+        <div>
+          <p class="label label--light">Servicios · Próximamente</p>
+          <h2 class="display servicios__heading">Cuatro líneas de trabajo que vas a poder reservar apenas abramos.</h2>
+        </div>
+        <a class="btn btn--on-dark" href="#novedades">Recibir novedades</a>
+      </div>
+      <div class="servicios__grid reveal">
+        <div class="servicio">
+          <p class="servicio__num label label--light">01</p>
+          <h3 class="servicio__title">Diagnóstico biológico</h3>
+          <p class="servicio__text">Panel completo de biomarcadores, edad metabólica y composición corporal.</p>
+        </div>
+        <div class="servicio">
+          <p class="servicio__num label label--light">02</p>
+          <h3 class="servicio__title">Terapias regenerativas</h3>
+          <p class="servicio__text">Protocolos de recuperación celular y tisular guiados por tus propios datos.</p>
+        </div>
+        <div class="servicio">
+          <p class="servicio__num label label--light">03</p>
+          <h3 class="servicio__title">Optimización metabólica</h3>
+          <p class="servicio__text">Planes de nutrición y suplementación de precisión, ajustados cada pocas semanas.</p>
+        </div>
+        <div class="servicio">
+          <p class="servicio__num label label--light">04</p>
+          <h3 class="servicio__title">Performance &amp; Recovery</h3>
+          <p class="servicio__text">Entrenamiento, movilidad y recuperación activa para sostener el rendimiento.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="ambient-blob" style="width:30vmax;height:30vmax;background:var(--amber);top:10%;right:8%;opacity:.12;"></div>
+    <div class="wrap quote__inner reveal">
+      <p class="quote__mark display">"No optimizamos el cuerpo que tenías. Optimizamos el que estás construyendo."</p>
+      <p class="label quote__sign">— Equipo médico, REGEN</p>
+    </div>
+  </section>
+
+  <section class="band band--cream-soft" id="novedades">
+    <div class="ambient-blob" style="width:34vmax;height:34vmax;background:var(--sage);bottom:-12vmax;right:-10vmax;"></div>
+    <div class="wrap contacto__grid">
+      <div class="reveal">
+        <p class="label">Novedades</p>
+        <h2 class="display contacto__heading">Sumate a la lista de apertura.</h2>
+        <p style="margin-top:var(--space-3); color:#43412F; font-size:16px; max-width:420px;">Te vamos a escribir con los avances de la obra, los protocolos que estamos terminando de diseñar y la fecha exacta de apertura, antes que a nadie más.</p>
+        <div class="contacto__info">
+          <div class="info-row">
+            <span class="info-row__label">Ubicación</span>
+            <span class="info-row__value">Nueva Córdoba, Córdoba, Argentina</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label">Estado</span>
+            <span class="info-row__value">Construcción del espacio en curso</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label">Apertura</span>
+            <span class="info-row__value">Te avisamos por mail apenas tengamos fecha</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label">Email</span>
+            <span class="info-row__value">contacto@regenbwc.com</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal">
+        <form id="contactForm">
+          <div class="field">
+            <label for="fname">Nombre</label>
+            <input id="fname" name="name" type="text" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="femail">Email</label>
+            <input id="femail" name="email" type="email" required autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="fphone">Teléfono (opcional)</label>
+            <input id="fphone" name="phone" type="tel" autocomplete="tel">
+          </div>
+          <div class="field">
+            <label for="fmsg">¿Qué te gustaría que priorizáramos? (opcional)</label>
+            <textarea id="fmsg" name="message" placeholder="Por ejemplo: diagnóstico biológico, recuperación deportiva, nutrición..."></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary">Sumarme a la lista</button>
+          <p class="form__status" id="formStatus">¡Listo! Te vamos a avisar apenas tengamos novedades.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <svg class="footer__watermark" viewBox="0 0 600 1000"><use href="#regenGrid"/></svg>
+  <div class="wrap footer__row">
+    <div>
+      <p class="footer__logo">REGEN</p>
+      <p class="footer__tag">Biological Wellness Center. Construyendo el primer centro de bienestar biológico de Córdoba.</p>
+    </div>
+    <div class="footer__cols">
+      <div class="footer__col">
+        <p class="label label--light footer__col-title">Centro</p>
+        <a href="#centro">Sobre el centro</a>
+        <a href="#principios">Principios</a>
+        <a href="#servicios">Servicios</a>
+      </div>
+      <div class="footer__col">
+        <p class="label label--light footer__col-title">Novedades</p>
+        <a href="#novedades">Recibir novedades</a>
+        <a href="mailto:contacto@regenbwc.com">contacto@regenbwc.com</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap footer__bottom">
+    <span>© <span id="year"></span> REGEN Biological Wellness Center.</span>
+    <span>Córdoba, Argentina · Próxima apertura.</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const nav = document.getElementById('nav');
+  const navToggle = document.getElementById('navToggle');
+  navToggle.addEventListener('click', () => {
+    const open = nav.classList.toggle('is-open');
+    navToggle.setAttribute('aria-expanded', String(open));
+  });
+  document.querySelectorAll('.nav__link, .nav__links .btn').forEach(el => {
+    el.addEventListener('click', () => {
+      nav.classList.remove('is-open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  const hero = document.getElementById('hero');
+  if ('IntersectionObserver' in window) {
+    const navObserver = new IntersectionObserver(([entry]) => {
+      nav.classList.toggle('nav--light', !entry.isIntersecting);
+    }, { rootMargin: '-80px 0px 0px 0px', threshold: 0 });
+    navObserver.observe(hero);
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
+  }
+
+  const form = document.getElementById('contactForm');
+  const status = document.getElementById('formStatus');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    status.classList.add('is-shown');
+    form.reset();
+  });
+</script>
+
+</body>
+</html>
