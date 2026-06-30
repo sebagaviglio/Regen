@@ -543,6 +543,8 @@
   .field textarea{ resize: vertical; min-height: 90px; }
   .form__status{ margin-top: var(--space-3); font-size: 14px; color: var(--sage); display:none; }
   .form__status.is-shown{ display:block; }
+  .form__status--error{ color: #B5503A; }
+  #formSubmit:disabled{ opacity:.55; cursor:not-allowed; }
 
   @media (max-width: 860px){
     .contacto__grid{ grid-template-columns: 1fr; gap: var(--space-5); }
@@ -810,6 +812,10 @@
       </div>
       <div class="reveal">
         <form id="contactForm">
+          <div class="field" style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
+            <label for="fweb">No completar</label>
+            <input id="fweb" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
           <div class="field">
             <label for="fname">Nombre</label>
             <input id="fname" name="name" type="text" required autocomplete="name">
@@ -826,8 +832,9 @@
             <label for="fmsg">¿Qué te gustaría que priorizáramos? (opcional)</label>
             <textarea id="fmsg" name="message" placeholder="Por ejemplo: diagnóstico biológico, recuperación deportiva, nutrición..."></textarea>
           </div>
-          <button type="submit" class="btn btn--primary">Sumarme a la lista</button>
+          <button type="submit" class="btn btn--primary" id="formSubmit">Sumarme a la lista</button>
           <p class="form__status" id="formStatus">¡Listo! Te vamos a avisar apenas tengamos novedades.</p>
+          <p class="form__status form__status--error" id="formError">No pudimos enviar tu mensaje. Probá de nuevo en unos minutos o escribinos a novedades@regen.ar.</p>
         </form>
       </div>
     </div>
@@ -901,12 +908,51 @@
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
   }
 
+  // Endpoint del Worker que envía el email vía Resend.
+  // Reemplazar por la URL real del Worker (o el dominio custom, ej. https://api.regen.ar)
+  const FORM_ENDPOINT = 'https://regen-form.sebagaviglio.workers.dev';
+
   const form = document.getElementById('contactForm');
   const status = document.getElementById('formStatus');
-  form.addEventListener('submit', (e) => {
+  const errorEl = document.getElementById('formError');
+  const submitBtn = document.getElementById('formSubmit');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    status.classList.add('is-shown');
-    form.reset();
+    status.classList.remove('is-shown');
+    errorEl.classList.remove('is-shown');
+
+    const payload = {
+      name: form.name.value.trim(),
+      email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
+      message: form.message.value.trim(),
+      website: form.website.value.trim(), // honeypot
+    };
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.ok) {
+        status.classList.add('is-shown');
+        form.reset();
+      } else {
+        errorEl.classList.add('is-shown');
+      }
+    } catch (err) {
+      errorEl.classList.add('is-shown');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Sumarme a la lista';
+    }
   });
 </script>
 
