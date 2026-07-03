@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REGEN — Biological Wellness Center</title>
-<meta name="description" content="REGEN, centro de bienestar biológico en Córdoba. Diagnóstico molecular, terapias regenerativas y optimización metabólica.">
+<title>REGEN · Bienestar Biológico y Longevidad | Córdoba</title>
+<meta name="description" content="Centro de longevidad basado en evidencia en Córdoba. Medimos tu biología, intervenimos con pilares probados y volvemos a medir para optimizar tus años de vida saludable.">
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -16,16 +16,16 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="REGEN">
-<meta property="og:title" content="REGEN — Biological Wellness Center">
-<meta property="og:description" content="Próxima apertura en Córdoba. Sumate a la lista de novedades del primer centro de bienestar biológico de la ciudad.">
+<meta property="og:title" content="REGEN · Bienestar Biológico y Longevidad | Córdoba">
+<meta property="og:description" content="Centro de longevidad basado en evidencia en Córdoba. Medimos tu biología, intervenimos con pilares probados y volvemos a medir para optimizar tus años de vida saludable.">
 <meta property="og:image" content="https://regen.ar/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://regen.ar/">
 <meta property="og:locale" content="es_AR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="REGEN — Biological Wellness Center">
-<meta name="twitter:description" content="Próxima apertura en Córdoba. Sumate a la lista de novedades.">
+<meta name="twitter:title" content="REGEN · Bienestar Biológico y Longevidad | Córdoba">
+<meta name="twitter:description" content="Centro de longevidad basado en evidencia en Córdoba. Sumate a la lista de novedades.">
 <meta name="twitter:image" content="https://regen.ar/og-image.png">
 
 <!-- Brandbook fonts -->
@@ -273,12 +273,17 @@
   }
   @keyframes dotPulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
 
+  .sr-only{
+    position:absolute; width:1px; height:1px;
+    padding:0; margin:-1px; overflow:hidden;
+    clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
   .hero__heading{
     margin-top:var(--space-2);
-    font-size:clamp(44px,7.8vw,96px);
+    font-size:clamp(64px,10vw,120px);
     line-height:1;
     text-transform:uppercase;
-    letter-spacing:0.04em;
+    letter-spacing:0.08em;
   }
   .hero__tagline{
     margin-top:var(--space-2);
@@ -565,7 +570,13 @@
     <div class="hero__content">
       <div class="hero__badge"><span class="hero__badge-dot"></span>Próxima apertura · Mendiolaza, Córdoba</div>
       <p class="label label--light">Biological Wellness Center</p>
-      <h1 class="display hero__heading">REGEN</h1>
+
+      <!-- H1 y H2 para SEO — invisible en pantalla, indexado por buscadores -->
+      <h1 class="sr-only">Centro de bienestar biológico y longevidad en Córdoba</h1>
+      <h2 class="sr-only">Medimos, intervenimos y volvemos a medir para optimizar tu salud</h2>
+
+      <!-- Wordmark visual — lo que ve el usuario -->
+      <p class="display hero__heading" aria-hidden="true">REGEN</p>
       <p class="hero__tagline">Recovery is the upgrade.</p>
       <p class="hero__sub">Estamos construyendo el primer centro de bienestar biológico de Córdoba. Sumate a la lista de novedades para enterarte antes que nadie de nuestros avances y la fecha de apertura.</p>
       <div class="hero__actions">
