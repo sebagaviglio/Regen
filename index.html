@@ -464,99 +464,7 @@
   }
 </style>
 </head>
-  <!-- regen-chat.html
-     Widget mínimo para probar el agente desde regen.ar.
-     Reemplazá WORKER_URL por la URL de tu Worker desplegado.
-     Soporta: texto, nota de voz (micrófono), imagen y reproducción de la respuesta en voz. -->
-<div id="regen-chat" style="max-width:420px;font-family:Inter,system-ui,sans-serif;border:1px solid #e6e3da;border-radius:16px;overflow:hidden;background:#fbfaf6">
-  <div style="background:#1E3A2F;color:#f4f1e8;padding:14px 16px;font-weight:600">REGEN · Asistente</div>
-  <div id="log" style="height:340px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:#2b2b28"></div>
-  <div style="display:flex;gap:6px;align-items:center;padding:10px;border-top:1px solid #e6e3da">
-    <input id="txt" placeholder="Escribí tu consulta…" style="flex:1;border:1px solid #d8d4c8;border-radius:10px;padding:9px 11px;font-size:14px;outline:none">
-    <input id="img" type="file" accept="image/*" style="display:none">
-    <button id="imgBtn" title="Adjuntar imagen" style="border:none;background:#efece2;border-radius:10px;padding:9px 11px;cursor:pointer">🖼️</button>
-    <button id="micBtn" title="Nota de voz" style="border:none;background:#efece2;border-radius:10px;padding:9px 11px;cursor:pointer">🎤</button>
-    <button id="send" style="border:none;background:#1E3A2F;color:#fff;border-radius:10px;padding:9px 13px;cursor:pointer">➤</button>
-  </div>
-  <label style="display:flex;gap:6px;align-items:center;padding:0 12px 12px;font-size:12px;color:#7a7768">
-    <input type="checkbox" id="voice"> Responder también en voz
-  </label>
-</div>
-
-<script>
-const WORKER_URL = "https://regen-agente.TU-SUBDOMINIO.workers.dev"; // ← reemplazar
-const sessionId = crypto.randomUUID();
-const log = document.getElementById("log");
-let pendingImage = null;      // { base64, mediaType }
-let mediaRecorder, chunks = [];
-
-function bubble(text, who) {
-  const el = document.createElement("div");
-  el.textContent = text;
-  el.style.cssText = `padding:9px 12px;border-radius:12px;max-width:85%;${
-    who === "user" ? "align-self:flex-end;background:#1E3A2F;color:#fff" : "align-self:flex-start;background:#efece2;color:#2b2b28"}`;
-  log.appendChild(el); log.scrollTop = log.scrollHeight;
-  return el;
-}
-
-async function fileToBase64(file) {
-  return new Promise((res) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(",")[1]);
-    r.readAsDataURL(file);
-  });
-}
-
-async function send() {
-  const text = document.getElementById("txt").value.trim();
-  const wantVoice = document.getElementById("voice").checked;
-  if (!text && !pendingImage) return;
-  bubble(text || "[imagen adjunta]", "user");
-  document.getElementById("txt").value = "";
-  const thinking = bubble("…", "bot");
-
-  const payload = { sessionId, text, wantVoice };
-  if (pendingImage) { payload.imageBase64 = pendingImage.base64; payload.imageMediaType = pendingImage.mediaType; pendingImage = null; }
-
-  try {
-    const r = await fetch(WORKER_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    const data = await r.json();
-    thinking.textContent = data.reply || data.error || "Sin respuesta.";
-    if (data.audioBase64) new Audio("data:audio/mp3;base64," + data.audioBase64).play();
-  } catch (e) { thinking.textContent = "Error de conexión."; }
-}
-
-document.getElementById("send").onclick = send;
-document.getElementById("txt").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
-document.getElementById("imgBtn").onclick = () => document.getElementById("img").click();
-document.getElementById("img").onchange = async (e) => {
-  const f = e.target.files[0]; if (!f) return;
-  pendingImage = { base64: await fileToBase64(f), mediaType: f.type };
-  bubble("Imagen lista para enviar con tu próxima consulta.", "bot");
-};
-
-// Nota de voz: graba, la manda como audioBase64 (el Worker la transcribe)
-document.getElementById("micBtn").onclick = async () => {
-  if (mediaRecorder && mediaRecorder.state === "recording") { mediaRecorder.stop(); return; }
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  mediaRecorder = new MediaRecorder(stream); chunks = [];
-  mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-  mediaRecorder.onstop = async () => {
-    const blob = new Blob(chunks, { type: "audio/webm" });
-    const b64 = await fileToBase64(new File([blob], "a.webm", { type: "audio/webm" }));
-    const thinking = bubble("🎤 …", "bot");
-    const r = await fetch(WORKER_URL, { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, audioBase64: b64, wantVoice: document.getElementById("voice").checked }) });
-    const data = await r.json();
-    thinking.textContent = data.reply || data.error || "Sin respuesta.";
-    if (data.audioBase64) new Audio("data:audio/mp3;base64," + data.audioBase64).play();
-  };
-  mediaRecorder.start();
-  bubble("Grabando… tocá 🎤 de nuevo para enviar.", "bot");
-};
-</script>
-<body>
-
+ <body>
 <!-- SVG Symbols — sistema de espirales del brandbook -->
 <!-- Construcción: dos centros (negro + sage) offset 45°, distancia = 1/3 radio exterior -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -982,6 +890,97 @@ document.getElementById("micBtn").onclick = async () => {
     } catch { errorEl.classList.add('is-shown'); }
     finally { submitBtn.disabled = false; submitBtn.textContent = 'Sumarme a la lista'; }
   });
+</script>
+ <!-- regen-chat.html
+     Widget mínimo para probar el agente desde regen.ar.
+     Reemplazá WORKER_URL por la URL de tu Worker desplegado.
+     Soporta: texto, nota de voz (micrófono), imagen y reproducción de la respuesta en voz. -->
+<div id="regen-chat" style="max-width:420px;font-family:Inter,system-ui,sans-serif;border:1px solid #e6e3da;border-radius:16px;overflow:hidden;background:#fbfaf6">
+  <div style="background:#1E3A2F;color:#f4f1e8;padding:14px 16px;font-weight:600">REGEN · Asistente</div>
+  <div id="log" style="height:340px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:#2b2b28"></div>
+  <div style="display:flex;gap:6px;align-items:center;padding:10px;border-top:1px solid #e6e3da">
+    <input id="txt" placeholder="Escribí tu consulta…" style="flex:1;border:1px solid #d8d4c8;border-radius:10px;padding:9px 11px;font-size:14px;outline:none">
+    <input id="img" type="file" accept="image/*" style="display:none">
+    <button id="imgBtn" title="Adjuntar imagen" style="border:none;background:#efece2;border-radius:10px;padding:9px 11px;cursor:pointer">🖼️</button>
+    <button id="micBtn" title="Nota de voz" style="border:none;background:#efece2;border-radius:10px;padding:9px 11px;cursor:pointer">🎤</button>
+    <button id="send" style="border:none;background:#1E3A2F;color:#fff;border-radius:10px;padding:9px 13px;cursor:pointer">➤</button>
+  </div>
+  <label style="display:flex;gap:6px;align-items:center;padding:0 12px 12px;font-size:12px;color:#7a7768">
+    <input type="checkbox" id="voice"> Responder también en voz
+  </label>
+</div>
+
+<script>
+const WORKER_URL = "https://regen-agente.TU-SUBDOMINIO.workers.dev"; // ← reemplazar
+const sessionId = crypto.randomUUID();
+const log = document.getElementById("log");
+let pendingImage = null;      // { base64, mediaType }
+let mediaRecorder, chunks = [];
+
+function bubble(text, who) {
+  const el = document.createElement("div");
+  el.textContent = text;
+  el.style.cssText = `padding:9px 12px;border-radius:12px;max-width:85%;${
+    who === "user" ? "align-self:flex-end;background:#1E3A2F;color:#fff" : "align-self:flex-start;background:#efece2;color:#2b2b28"}`;
+  log.appendChild(el); log.scrollTop = log.scrollHeight;
+  return el;
+}
+
+async function fileToBase64(file) {
+  return new Promise((res) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(",")[1]);
+    r.readAsDataURL(file);
+  });
+}
+
+async function send() {
+  const text = document.getElementById("txt").value.trim();
+  const wantVoice = document.getElementById("voice").checked;
+  if (!text && !pendingImage) return;
+  bubble(text || "[imagen adjunta]", "user");
+  document.getElementById("txt").value = "";
+  const thinking = bubble("…", "bot");
+
+  const payload = { sessionId, text, wantVoice };
+  if (pendingImage) { payload.imageBase64 = pendingImage.base64; payload.imageMediaType = pendingImage.mediaType; pendingImage = null; }
+
+  try {
+    const r = await fetch(WORKER_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const data = await r.json();
+    thinking.textContent = data.reply || data.error || "Sin respuesta.";
+    if (data.audioBase64) new Audio("data:audio/mp3;base64," + data.audioBase64).play();
+  } catch (e) { thinking.textContent = "Error de conexión."; }
+}
+
+document.getElementById("send").onclick = send;
+document.getElementById("txt").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+document.getElementById("imgBtn").onclick = () => document.getElementById("img").click();
+document.getElementById("img").onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  pendingImage = { base64: await fileToBase64(f), mediaType: f.type };
+  bubble("Imagen lista para enviar con tu próxima consulta.", "bot");
+};
+
+// Nota de voz: graba, la manda como audioBase64 (el Worker la transcribe)
+document.getElementById("micBtn").onclick = async () => {
+  if (mediaRecorder && mediaRecorder.state === "recording") { mediaRecorder.stop(); return; }
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  mediaRecorder = new MediaRecorder(stream); chunks = [];
+  mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+  mediaRecorder.onstop = async () => {
+    const blob = new Blob(chunks, { type: "audio/webm" });
+    const b64 = await fileToBase64(new File([blob], "a.webm", { type: "audio/webm" }));
+    const thinking = bubble("🎤 …", "bot");
+    const r = await fetch(WORKER_URL, { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, audioBase64: b64, wantVoice: document.getElementById("voice").checked }) });
+    const data = await r.json();
+    thinking.textContent = data.reply || data.error || "Sin respuesta.";
+    if (data.audioBase64) new Audio("data:audio/mp3;base64," + data.audioBase64).play();
+  };
+  mediaRecorder.start();
+  bubble("Grabando… tocá 🎤 de nuevo para enviar.", "bot");
+};
 </script>
 
 </body>
