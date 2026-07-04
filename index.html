@@ -891,96 +891,447 @@
     finally { submitBtn.disabled = false; submitBtn.textContent = 'Sumarme a la lista'; }
   });
 </script>
- <!-- regen-chat.html
-     Widget mínimo para probar el agente desde regen.ar.
-     Reemplazá WORKER_URL por la URL de tu Worker desplegado.
-     Soporta: texto, nota de voz (micrófono), imagen y reproducción de la respuesta en voz. -->
-<div id="regen-chat" style="max-width:420px;font-family:Inter,system-ui,sans-serif;border:1px solid #e6e3da;border-radius:16px;overflow:hidden;background:#fbfaf6">
-  <div style="background:#1E3A2F;color:#f4f1e8;padding:14px 16px;font-weight:600">REGEN · Asistente</div>
-  <div id="log" style="height:340px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:#2b2b28"></div>
-  <div style="display:flex;gap:6px;align-items:center;padding:10px;border-top:1px solid #e6e3da">
-    <input id="txt" placeholder="Escribí tu consulta…" style="flex:1;border:1px solid #d8d4c8;border-radius:10px;padding:9px 11px;font-size:14px;outline:none">
-    <input id="img" type="file" accept="image/*" style="display:none">
-    <button id="imgBtn" title="Adjuntar imagen" style="border:none;background:#efece2;border-radius:10px;padding:9px 11px;cursor:pointer">🖼️</button>
-    <button id="micBtn" title="Nota de voz" style="border:none;background:#efece2;border-radius:10px;padding:9px 11px;cursor:pointer">🎤</button>
-    <button id="send" style="border:none;background:#1E3A2F;color:#fff;border-radius:10px;padding:9px 13px;cursor:pointer">➤</button>
+
+<!-- ════════════════════ REGEN · ASISTENTE (widget) ═══════════════════
+     Reemplaza al widget anterior. Usa las fuentes y tokens del brandbook
+     que ya cargás en el <head> (Bodoni Moda + DM Sans), así que no agrega
+     ningún <link> de fuentes. Todo scopeado bajo #regen-assistant.
+     Mismo contrato con el Worker: POST { sessionId, text?, audioBase64?,
+     imageBase64?+imageMediaType?, wantVoice } → { reply | error, audioBase64? }
+------------------------------------------------------------------------ -->
+<style>
+@property --regen-beam-angle { syntax:"<angle>"; initial-value:0deg; inherits:false; }
+
+#regen-assistant{
+  --regen-cream:#F4EFE5;        /* linen */
+  --regen-cream-soft:#EDE7D8;
+  --regen-ink:#191917;          /* REGEN black */
+  --regen-ink-soft:#8C7F6A;     /* stone-dark */
+  --regen-sage:#788F76;
+  --regen-sage-deep:#5E7258;
+  --regen-forest:#222B1C;       /* moss */
+  --regen-glow:#B9C8AE;         /* sage claro — punta del beam */
+  --regen-line:rgba(25,25,23,.12);
+
+  --regen-orb:66px;
+  --regen-panel-w:380px;
+  --regen-panel-h:560px;
+  --regen-radius:22px;
+  --regen-ease:cubic-bezier(.16,1,.3,1);
+  --regen-shadow:0 24px 60px -18px rgba(25,30,20,.5), 0 6px 18px -8px rgba(25,30,20,.32);
+
+  position:fixed; right:26px; bottom:26px; z-index:2147483000;
+  width:var(--regen-orb); height:var(--regen-orb);
+  font-family:'DM Sans',system-ui,sans-serif; font-weight:300;
+  color:var(--regen-ink); -webkit-font-smoothing:antialiased;
+}
+#regen-assistant *{box-sizing:border-box}
+
+#regen-assistant .regen-halo{
+  position:absolute; right:0; bottom:0; width:var(--regen-orb); height:var(--regen-orb);
+  border-radius:50%; z-index:0; pointer-events:none;
+  background:radial-gradient(circle, var(--regen-sage) 0%, rgba(120,143,118,0) 65%);
+  filter:blur(12px); opacity:.4; animation:regen-breathe 3.4s ease-in-out infinite;
+  transition:opacity .35s ease;
+}
+#regen-assistant.is-open .regen-halo{opacity:0}
+
+#regen-assistant .regen-shell{
+  position:absolute; right:0; bottom:0; z-index:1;
+  width:var(--regen-orb); height:var(--regen-orb);
+  border-radius:calc(var(--regen-orb) / 2);
+  box-shadow:0 12px 26px -12px rgba(25,30,20,.55);
+  transition:width .55s var(--regen-ease), height .55s var(--regen-ease),
+             border-radius .55s var(--regen-ease), box-shadow .5s ease;
+}
+#regen-assistant.is-open .regen-shell{
+  width:var(--regen-panel-w); height:var(--regen-panel-h);
+  max-width:calc(100vw - 40px); max-height:calc(100vh - 90px);
+  border-radius:var(--regen-radius); box-shadow:var(--regen-shadow);
+}
+#regen-assistant .regen-surface{
+  position:absolute; inset:0; border-radius:inherit; overflow:hidden; background:var(--regen-cream);
+}
+#regen-assistant .regen-beam{
+  position:absolute; inset:0; border-radius:inherit; padding:2px; z-index:6; pointer-events:none;
+  background:conic-gradient(from var(--regen-beam-angle),
+    transparent 0deg, transparent 190deg, rgba(185,200,174,0) 235deg,
+    var(--regen-glow) 300deg, var(--regen-sage) 335deg, transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  animation:regen-spin 3.9s linear infinite;
+  transition:padding .55s var(--regen-ease), opacity .4s ease;
+}
+#regen-assistant.is-open .regen-beam{padding:1.5px; opacity:.65}
+
+#regen-assistant .regen-orb-btn{
+  position:absolute; inset:0; z-index:4; border:0; padding:0; cursor:pointer; background:transparent;
+  border-radius:inherit; transition:opacity .2s ease;
+}
+#regen-assistant.is-open .regen-orb-btn{opacity:0; pointer-events:none; transition:opacity .25s ease}
+#regen-assistant .regen-orb-btn:focus-visible{outline:2px solid var(--regen-sage); outline-offset:4px}
+
+#regen-assistant .regen-orb-core{
+  position:absolute; right:0; bottom:0; width:var(--regen-orb); height:var(--regen-orb);
+  border-radius:50%; overflow:hidden; z-index:3; pointer-events:none;
+  background:radial-gradient(120% 120% at 30% 25%, var(--regen-cream-soft), #D8DCC7 70%);
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.6), inset 0 -8px 16px rgba(34,43,28,.22);
+  transition:opacity .22s ease;
+}
+#regen-assistant.is-open .regen-orb-core{opacity:0}
+#regen-assistant .regen-blob{position:absolute; border-radius:50%; filter:blur(6px); mix-blend-mode:multiply; opacity:.85}
+#regen-assistant .regen-blob.b1{width:44px;height:44px;left:-4px;top:2px;   background:radial-gradient(circle,var(--regen-sage),transparent 70%);   animation:regen-drift1 6.5s ease-in-out infinite}
+#regen-assistant .regen-blob.b2{width:38px;height:38px;right:-6px;top:8px;  background:radial-gradient(circle,var(--regen-forest),transparent 70%); animation:regen-drift2 7.8s ease-in-out infinite}
+#regen-assistant .regen-blob.b3{width:36px;height:36px;left:10px;bottom:-6px;background:radial-gradient(circle,var(--regen-glow),transparent 68%);    animation:regen-drift3 5.6s ease-in-out infinite; mix-blend-mode:screen; opacity:.9}
+#regen-assistant .regen-orb-gloss{position:absolute; inset:0; border-radius:50%; pointer-events:none;
+  background:radial-gradient(60% 45% at 34% 26%, rgba(255,255,255,.72), transparent 60%);}
+
+#regen-assistant.is-busy .regen-beam{animation-duration:1.4s}
+#regen-assistant.is-busy .regen-halo{animation-duration:1.6s; opacity:.55}
+#regen-assistant.is-busy .regen-blob{animation-duration:2.6s !important}
+
+#regen-assistant .regen-content{
+  position:absolute; inset:0; z-index:5; border-radius:inherit; overflow:hidden;
+  display:flex; flex-direction:column; opacity:0; pointer-events:none; transition:opacity .2s ease;
+}
+#regen-assistant.is-open .regen-content{opacity:1; pointer-events:auto; transition:opacity .32s ease .2s}
+
+#regen-assistant .regen-head{
+  flex:0 0 auto; display:flex; align-items:center; gap:12px;
+  padding:18px 18px 16px; border-bottom:1px solid var(--regen-line);
+  background:linear-gradient(180deg, var(--regen-cream-soft), var(--regen-cream));
+}
+#regen-assistant .regen-mark{flex:0 0 auto; width:34px; height:34px; color:var(--regen-sage); opacity:.9}
+#regen-assistant .regen-head-txt{flex:1 1 auto; min-width:0}
+#regen-assistant .regen-eyebrow{
+  font-family:'DM Sans',sans-serif; font-weight:500; font-size:10px;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--regen-ink-soft); margin:0 0 2px;
+}
+#regen-assistant .regen-word{
+  font-family:'Bodoni Moda',serif; font-weight:400; font-size:27px;
+  letter-spacing:.1em; line-height:1; margin:0; color:var(--regen-ink); text-transform:uppercase;
+}
+#regen-assistant .regen-close{
+  flex:0 0 auto; width:30px; height:30px; border:0; border-radius:50%; cursor:pointer;
+  background:transparent; color:var(--regen-ink-soft); display:grid; place-items:center; transition:background .2s,color .2s;
+}
+#regen-assistant .regen-close:hover{background:rgba(34,43,28,.09); color:var(--regen-ink)}
+
+#regen-assistant .regen-log{
+  flex:1 1 auto; overflow-y:auto; padding:20px 18px; display:flex; flex-direction:column; gap:14px;
+  scrollbar-width:thin; scrollbar-color:var(--regen-sage) transparent;
+}
+#regen-assistant .regen-log::-webkit-scrollbar{width:6px}
+#regen-assistant .regen-log::-webkit-scrollbar-thumb{background:rgba(120,143,118,.5); border-radius:6px}
+#regen-assistant .regen-greet{text-align:center; padding:22px 10px 6px; color:var(--regen-ink-soft)}
+#regen-assistant .regen-greet svg{width:56px; height:56px; color:var(--regen-sage); opacity:.85; margin-bottom:14px}
+#regen-assistant .regen-greet p{margin:0; font-size:14px; line-height:1.6; max-width:270px; margin-inline:auto}
+
+#regen-assistant .regen-msg{display:flex; gap:9px; max-width:88%; animation:regen-rise .34s ease both}
+#regen-assistant .regen-msg.user{align-self:flex-end; flex-direction:row-reverse}
+#regen-assistant .regen-avatar{
+  flex:0 0 auto; width:24px; height:24px; border-radius:50%; margin-top:2px;
+  border:1px solid var(--regen-sage); display:grid; place-items:center; color:var(--regen-sage-deep);
+}
+#regen-assistant .regen-msg.user .regen-avatar{display:none}
+#regen-assistant .regen-bubble{font-size:14.5px; line-height:1.55; padding:10px 14px; border-radius:16px; word-wrap:break-word}
+#regen-assistant .regen-msg.bot .regen-bubble{background:var(--regen-cream-soft); border:1px solid var(--regen-line); border-top-left-radius:5px; color:var(--regen-ink)}
+#regen-assistant .regen-msg.user .regen-bubble{background:var(--regen-forest); color:var(--regen-cream); border-bottom-right-radius:5px}
+#regen-assistant .regen-bubble img{max-width:100%; border-radius:10px; margin-top:4px; display:block}
+#regen-assistant .regen-typing{display:flex; gap:5px; padding:4px 2px}
+#regen-assistant .regen-typing span{width:6px; height:6px; border-radius:50%; background:var(--regen-sage); animation:regen-blink 1.3s ease-in-out infinite}
+#regen-assistant .regen-typing span:nth-child(2){animation-delay:.18s}
+#regen-assistant .regen-typing span:nth-child(3){animation-delay:.36s}
+
+#regen-assistant .regen-attach{
+  flex:0 0 auto; display:none; align-items:center; gap:10px; margin:0 18px 4px; padding:8px 10px;
+  background:var(--regen-cream-soft); border:1px solid var(--regen-line); border-radius:12px; font-size:12px;
+}
+#regen-assistant .regen-attach.show{display:flex}
+#regen-assistant .regen-attach img{width:34px; height:34px; object-fit:cover; border-radius:7px}
+#regen-assistant .regen-attach button{margin-left:auto; border:0; background:transparent; cursor:pointer; color:var(--regen-ink-soft); font-size:16px; line-height:1}
+
+#regen-assistant .regen-bar{
+  flex:0 0 auto; border-top:1px solid var(--regen-line); padding:12px 14px 14px;
+  background:linear-gradient(0deg, var(--regen-cream-soft), var(--regen-cream));
+}
+#regen-assistant .regen-inputrow{
+  display:flex; align-items:flex-end; gap:8px;
+  background:#fff; border:1px solid var(--regen-line); border-radius:16px; padding:6px 6px 6px 14px;
+  transition:border-color .2s, box-shadow .2s;
+}
+#regen-assistant .regen-inputrow:focus-within{border-color:var(--regen-sage); box-shadow:0 0 0 3px rgba(120,143,118,.16)}
+#regen-assistant .regen-field{
+  flex:1 1 auto; border:0; outline:0; resize:none; background:transparent;
+  font-family:inherit; font-weight:400; font-size:14.5px; line-height:1.5; color:var(--regen-ink);
+  max-height:110px; padding:5px 0; min-height:24px;
+}
+#regen-assistant .regen-field::placeholder{color:var(--regen-ink-soft); opacity:.75}
+#regen-assistant .regen-iconbtn{
+  flex:0 0 auto; width:36px; height:36px; border:0; border-radius:50%; cursor:pointer;
+  background:transparent; color:var(--regen-ink-soft); display:grid; place-items:center;
+  transition:background .2s, color .2s, transform .2s;
+}
+#regen-assistant .regen-iconbtn:hover{background:rgba(120,143,118,.16); color:var(--regen-forest)}
+#regen-assistant .regen-iconbtn svg{width:19px; height:19px}
+#regen-assistant .regen-send{background:var(--regen-forest); color:var(--regen-cream)}
+#regen-assistant .regen-send:hover{background:var(--regen-sage-deep); color:#fff}
+#regen-assistant .regen-mic.recording{background:var(--regen-forest); color:var(--regen-cream); animation:regen-pulse 1.1s ease-in-out infinite}
+
+#regen-assistant .regen-opts{display:flex; align-items:center; justify-content:space-between; margin-top:10px; padding:0 4px}
+#regen-assistant .regen-voice{display:flex; align-items:center; gap:9px; cursor:pointer; user-select:none}
+#regen-assistant .regen-voice > span:last-child{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--regen-ink-soft)}
+#regen-assistant .regen-switch{position:relative; width:38px; height:21px; border-radius:11px; background:rgba(34,43,28,.22); transition:background .25s}
+#regen-assistant .regen-switch::after{content:""; position:absolute; top:2.5px; left:2.5px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25); transition:transform .25s}
+#regen-assistant .regen-voice input{position:absolute; opacity:0; width:0; height:0}
+#regen-assistant .regen-voice input:checked + .regen-switch{background:var(--regen-sage)}
+#regen-assistant .regen-voice input:checked + .regen-switch::after{transform:translateX(17px)}
+#regen-assistant .regen-hint{font-size:11px; color:var(--regen-sage-deep); letter-spacing:.02em; opacity:0; transition:opacity .2s}
+#regen-assistant .regen-hint.show{opacity:1}
+
+@keyframes regen-spin{to{--regen-beam-angle:360deg}}
+@keyframes regen-breathe{0%,100%{transform:scale(1);opacity:.35}50%{transform:scale(1.18);opacity:.6}}
+@keyframes regen-drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8px,6px) scale(1.12)}}
+@keyframes regen-drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-7px,5px) scale(1.15)}}
+@keyframes regen-drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(4px,-8px) scale(1.1)}}
+@keyframes regen-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes regen-blink{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+@keyframes regen-pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,43,28,.4)}50%{box-shadow:0 0 0 7px rgba(34,43,28,0)}}
+
+@media (max-width:480px){
+  #regen-assistant{right:16px; bottom:16px}
+  #regen-assistant.is-open .regen-shell{width:calc(100vw - 24px); height:min(72vh, calc(100vh - 110px)); max-width:none}
+}
+@media (prefers-reduced-motion:reduce){
+  #regen-assistant .regen-beam,#regen-assistant .regen-halo,#regen-assistant .regen-blob,
+  #regen-assistant .regen-mic.recording,#regen-assistant .regen-typing span{animation:none}
+  #regen-assistant .regen-shell,#regen-assistant .regen-content{transition-duration:.25s}
+}
+</style>
+
+<div id="regen-assistant">
+  <span class="regen-halo" aria-hidden="true"></span>
+  <div class="regen-shell" data-shell>
+    <div class="regen-surface" aria-hidden="true"></div>
+    <button class="regen-orb-btn" type="button" data-orb aria-label="Abrir asistente de REGEN" aria-expanded="false"></button>
+    <div class="regen-orb-core" aria-hidden="true">
+      <span class="regen-blob b1"></span><span class="regen-blob b2"></span><span class="regen-blob b3"></span>
+      <span class="regen-orb-gloss"></span>
+    </div>
+    <div class="regen-beam" aria-hidden="true"></div>
+
+    <div class="regen-content" role="dialog" aria-label="Asistente de REGEN" aria-modal="false">
+      <header class="regen-head">
+        <svg class="regen-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+          <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1"/>
+          <circle cx="20" cy="15" r="11.5" stroke="currentColor" stroke-width="1"/>
+          <circle cx="20" cy="24" r="9" stroke="currentColor" stroke-width="1"/>
+          <circle cx="20" cy="20" r="2" fill="currentColor"/>
+        </svg>
+        <div class="regen-head-txt">
+          <p class="regen-eyebrow">Asistente de bienestar</p>
+          <p class="regen-word">Regen</p>
+        </div>
+        <button class="regen-close" type="button" data-close aria-label="Cerrar asistente">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </header>
+
+      <div class="regen-log" role="log" aria-live="polite">
+        <div class="regen-greet" data-greet>
+          <svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+            <circle cx="20" cy="20" r="18" stroke="currentColor" stroke-width="1"/>
+            <circle cx="20" cy="15" r="11.5" stroke="currentColor" stroke-width="1"/>
+            <circle cx="20" cy="24" r="9" stroke="currentColor" stroke-width="1"/>
+            <circle cx="20" cy="20" r="2" fill="currentColor"/>
+          </svg>
+          <p>Hola. Soy el asistente de REGEN. Puedo ayudarte con tratamientos, turnos y bienestar. Escribime, mandame un audio o una imagen.</p>
+        </div>
+      </div>
+
+      <div class="regen-attach" data-attach>
+        <img data-attach-img alt="Imagen a enviar">
+        <span data-attach-name>imagen.jpg</span>
+        <button type="button" data-attach-remove aria-label="Quitar imagen">&times;</button>
+      </div>
+
+      <div class="regen-bar">
+        <div class="regen-inputrow">
+          <textarea class="regen-field" data-field rows="1" placeholder="Escribí tu consulta…" aria-label="Mensaje"></textarea>
+          <button class="regen-iconbtn regen-img" type="button" data-img aria-label="Adjuntar imagen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M4 17l4.5-4.5L13 17l3-3 4 4"/></svg>
+          </button>
+          <input type="file" accept="image/*" data-file hidden>
+          <button class="regen-iconbtn regen-mic" type="button" data-mic aria-label="Grabar audio">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+          </button>
+          <button class="regen-iconbtn regen-send" type="button" data-send aria-label="Enviar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="regen-opts">
+          <label class="regen-voice">
+            <input type="checkbox" data-voice>
+            <span class="regen-switch" aria-hidden="true"></span>
+            <span>Responder en voz</span>
+          </label>
+          <span class="regen-hint" data-hint></span>
+        </div>
+      </div>
+    </div>
   </div>
-  <label style="display:flex;gap:6px;align-items:center;padding:0 12px 12px;font-size:12px;color:#7a7768">
-    <input type="checkbox" id="voice"> Responder también en voz
-  </label>
 </div>
 
 <script>
-const WORKER_URL = "https://regen-agente.sebagaviglio.workers.dev"; // ← reemplazar
-const sessionId = crypto.randomUUID();
-const log = document.getElementById("log");
-let pendingImage = null;      // { base64, mediaType }
-let mediaRecorder, chunks = [];
+(function(){
+  "use strict";
+  /* ═══════════════ CONFIG (ajustado a tu Worker actual) ═══════════════ */
+  var WORKER_URL = "https://regen-agente.sebagaviglio.workers.dev";
+  var AUDIO_MIME = "audio/mp3";     // tu Worker devuelve mp3
+  var STRIP_DATA_PREFIX = true;     // mandás el base64 sin el prefijo data:
+  /* ════════════════════════════════════════════════════════════════════ */
 
-function bubble(text, who) {
-  const el = document.createElement("div");
-  el.textContent = text;
-  el.style.cssText = `padding:9px 12px;border-radius:12px;max-width:85%;${
-    who === "user" ? "align-self:flex-end;background:#1E3A2F;color:#fff" : "align-self:flex-start;background:#efece2;color:#2b2b28"}`;
-  log.appendChild(el); log.scrollTop = log.scrollHeight;
-  return el;
-}
+  var root   = document.getElementById("regen-assistant");
+  var orb    = root.querySelector("[data-orb]");
+  var closeB = root.querySelector("[data-close]");
+  var log    = root.querySelector(".regen-log");
+  var greet  = root.querySelector("[data-greet]");
+  var field  = root.querySelector("[data-field]");
+  var sendB  = root.querySelector("[data-send]");
+  var micB   = root.querySelector("[data-mic]");
+  var imgB   = root.querySelector("[data-img]");
+  var fileIn = root.querySelector("[data-file]");
+  var voiceI = root.querySelector("[data-voice]");
+  var hint   = root.querySelector("[data-hint]");
+  var attach = root.querySelector("[data-attach]");
+  var attachImg  = root.querySelector("[data-attach-img]");
+  var attachName = root.querySelector("[data-attach-name]");
+  var attachRm   = root.querySelector("[data-attach-remove]");
 
-async function fileToBase64(file) {
-  return new Promise((res) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(",")[1]);
-    r.readAsDataURL(file);
+  var sessionId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + "-" + Math.random());
+  var pendingImage = null;
+  var mediaRecorder = null, chunks = [], recording = false, busy = false;
+
+  function openPanel(){ root.classList.add("is-open"); orb.setAttribute("aria-expanded","true"); setTimeout(function(){ field.focus(); }, 420); }
+  function closePanel(){ root.classList.remove("is-open"); orb.setAttribute("aria-expanded","false"); orb.focus(); }
+  orb.addEventListener("click", function(){ root.classList.contains("is-open") ? closePanel() : openPanel(); });
+  closeB.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function(e){ if(e.key==="Escape" && root.classList.contains("is-open")) closePanel(); });
+
+  function setBusy(v){ busy = v; root.classList.toggle("is-busy", v); }
+  function showHint(t){ hint.textContent = t||""; hint.classList.toggle("show", !!t); }
+
+  function esc(s){ var d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+  var botAvatar = '<span class="regen-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="9" r="6"/></svg></span>';
+
+  function addMsg(role, text, imgUrl){
+    if(greet && greet.parentNode) greet.remove();
+    var m = document.createElement("div");
+    m.className = "regen-msg " + (role==="user" ? "user" : "bot");
+    var inner = role!=="user" ? botAvatar : "";
+    var bubble = "";
+    if(text)   bubble += esc(text).replace(/\n/g,"<br>");
+    if(imgUrl) bubble += '<img src="'+imgUrl+'" alt="Imagen enviada">';
+    inner += '<div class="regen-bubble">'+bubble+'</div>';
+    m.innerHTML = inner;
+    log.appendChild(m); log.scrollTop = log.scrollHeight;
+    return m;
+  }
+  function addTyping(){
+    var m = document.createElement("div");
+    m.className = "regen-msg bot";
+    m.innerHTML = botAvatar + '<div class="regen-bubble"><div class="regen-typing"><span></span><span></span><span></span></div></div>';
+    log.appendChild(m); log.scrollTop = log.scrollHeight;
+    return m;
+  }
+
+  function blobToDataUrl(blob){ return new Promise(function(res,rej){ var r=new FileReader(); r.onloadend=function(){res(String(r.result));}; r.onerror=rej; r.readAsDataURL(blob); }); }
+  function payloadFrom(dataUrl){ return STRIP_DATA_PREFIX ? dataUrl.split(",")[1] : dataUrl; }
+
+  function callWorker(o){
+    var body = { sessionId: sessionId, wantVoice: voiceI.checked };
+    if(typeof o.text === "string") body.text = o.text;
+    if(o.audioBase64) body.audioBase64 = o.audioBase64;
+    if(o.imageBase64){ body.imageBase64 = o.imageBase64; if(o.imageMediaType) body.imageMediaType = o.imageMediaType; }
+    return fetch(WORKER_URL, { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(body) })
+      .then(function(res){ if(!res.ok) throw new Error("HTTP "+res.status); return res.json(); });
+  }
+  function playVoice(b64){ if(!b64) return; try{ new Audio("data:"+AUDIO_MIME+";base64,"+b64).play().catch(function(){}); }catch(e){} }
+
+  function handleSend(o){
+    if(busy) return;
+    addMsg("user", o.showText || o.text || (o.audioBase64 ? "🎤 Audio" : ""), o.imageDataUrl || null);
+    field.value = ""; autoGrow(); clearAttachment(); setBusy(true);
+    var typing = addTyping();
+    callWorker({ text:o.text, audioBase64:o.audioBase64, imageBase64:o.imageBase64, imageMediaType:o.imageMediaType })
+      .then(function(data){
+        typing.remove();
+        addMsg("bot", (data && (data.reply || data.error)) || "Sin respuesta.");
+        if(voiceI.checked && data && data.audioBase64) playVoice(data.audioBase64);
+      })
+      .catch(function(err){
+        typing.remove();
+        addMsg("bot", "No pude conectar. Probá de nuevo en un momento.");
+        console.error("[REGEN] error:", err);
+      })
+      .then(function(){ setBusy(false); });
+  }
+
+  function submitText(){
+    var text = field.value.trim();
+    if(!text && !pendingImage) return;
+    handleSend({
+      text: text || (pendingImage ? "" : undefined),
+      imageDataUrl: pendingImage ? pendingImage.dataUrl : null,
+      imageBase64:  pendingImage ? pendingImage.base64 : undefined,
+      imageMediaType: pendingImage ? pendingImage.mediaType : undefined,
+      showText: text
+    });
+  }
+  sendB.addEventListener("click", submitText);
+  field.addEventListener("keydown", function(e){ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); submitText(); } });
+
+  function autoGrow(){ field.style.height="auto"; field.style.height=Math.min(field.scrollHeight,110)+"px"; }
+  field.addEventListener("input", autoGrow);
+
+  imgB.addEventListener("click", function(){ fileIn.click(); });
+  fileIn.addEventListener("change", function(){
+    var f = fileIn.files && fileIn.files[0];
+    if(!f) return;
+    blobToDataUrl(f).then(function(dataUrl){
+      pendingImage = { dataUrl:dataUrl, base64:payloadFrom(dataUrl), mediaType:f.type, name:f.name };
+      attachImg.src = dataUrl; attachName.textContent = f.name; attach.classList.add("show");
+      fileIn.value = ""; field.focus();
+    });
   });
-}
+  function clearAttachment(){ pendingImage=null; attach.classList.remove("show"); attachImg.removeAttribute("src"); }
+  attachRm.addEventListener("click", clearAttachment);
 
-async function send() {
-  const text = document.getElementById("txt").value.trim();
-  const wantVoice = document.getElementById("voice").checked;
-  if (!text && !pendingImage) return;
-  bubble(text || "[imagen adjunta]", "user");
-  document.getElementById("txt").value = "";
-  const thinking = bubble("…", "bot");
-
-  const payload = { sessionId, text, wantVoice };
-  if (pendingImage) { payload.imageBase64 = pendingImage.base64; payload.imageMediaType = pendingImage.mediaType; pendingImage = null; }
-
-  try {
-    const r = await fetch(WORKER_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    const data = await r.json();
-    thinking.textContent = data.reply || data.error || "Sin respuesta.";
-    if (data.audioBase64) new Audio("data:audio/mp3;base64," + data.audioBase64).play();
-  } catch (e) { thinking.textContent = "Error de conexión."; }
-}
-
-document.getElementById("send").onclick = send;
-document.getElementById("txt").addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
-document.getElementById("imgBtn").onclick = () => document.getElementById("img").click();
-document.getElementById("img").onchange = async (e) => {
-  const f = e.target.files[0]; if (!f) return;
-  pendingImage = { base64: await fileToBase64(f), mediaType: f.type };
-  bubble("Imagen lista para enviar con tu próxima consulta.", "bot");
-};
-
-// Nota de voz: graba, la manda como audioBase64 (el Worker la transcribe)
-document.getElementById("micBtn").onclick = async () => {
-  if (mediaRecorder && mediaRecorder.state === "recording") { mediaRecorder.stop(); return; }
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  mediaRecorder = new MediaRecorder(stream); chunks = [];
-  mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-  mediaRecorder.onstop = async () => {
-    const blob = new Blob(chunks, { type: "audio/webm" });
-    const b64 = await fileToBase64(new File([blob], "a.webm", { type: "audio/webm" }));
-    const thinking = bubble("🎤 …", "bot");
-    const r = await fetch(WORKER_URL, { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, audioBase64: b64, wantVoice: document.getElementById("voice").checked }) });
-    const data = await r.json();
-    thinking.textContent = data.reply || data.error || "Sin respuesta.";
-    if (data.audioBase64) new Audio("data:audio/mp3;base64," + data.audioBase64).play();
-  };
-  mediaRecorder.start();
-  bubble("Grabando… tocá 🎤 de nuevo para enviar.", "bot");
-};
+  micB.addEventListener("click", function(){
+    if(recording){ stopRecording(); return; }
+    if(!navigator.mediaDevices || !window.MediaRecorder){ addMsg("bot","Tu navegador no permite grabar audio. Probá desde otro dispositivo o escribí tu consulta."); return; }
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      chunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = function(e){ if(e.data.size) chunks.push(e.data); };
+      mediaRecorder.onstop = function(){
+        stream.getTracks().forEach(function(t){ t.stop(); });
+        var blob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
+        blobToDataUrl(blob).then(function(dataUrl){ handleSend({ audioBase64: payloadFrom(dataUrl), showText:"🎤 Audio" }); });
+      };
+      mediaRecorder.start(); recording = true;
+      micB.classList.add("recording"); micB.setAttribute("aria-label","Detener y enviar audio");
+      setBusy(true); showHint("Grabando… tocá para enviar");
+    }).catch(function(err){ showHint(""); addMsg("bot","No pude acceder al micrófono. Revisá los permisos del navegador."); console.error("[REGEN] mic:", err); });
+  });
+  function stopRecording(){
+    if(mediaRecorder && recording){ mediaRecorder.stop(); }
+    recording = false; micB.classList.remove("recording"); micB.setAttribute("aria-label","Grabar audio");
+    setBusy(false); showHint("");
+  }
+})();
 </script>
+<!-- ══════════════════ REGEN · ASISTENTE (fin widget) ═════════════════ -->
+
 </body>
 </html>
