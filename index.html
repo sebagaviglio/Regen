@@ -309,8 +309,11 @@
     max-width:600px;margin:0 auto var(--s5);
     position:relative;z-index:1;
   }
-  @media(max-width:560px){
-    .infog-badge-group{display:none;}
+  .infog-desktop{ display:block; }
+  .infog-mobile{ display:none; }
+  @media(max-width:580px){
+    .infog-badge-group{ display:none; }
+    .infog-wrap{ display:none; }
   }
   @media(prefers-reduced-motion:reduce){
     .infog-wrap *{animation:none!important;}
@@ -693,7 +696,7 @@
         Bordes nodos (r=40): Medimos=(320,105), Interv=(432,297), Vuelve=(208,297)
       -->
       <div class="infog-wrap reveal" aria-hidden="true">
-      <svg viewBox="0 0 640 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+      <svg class="infog-desktop" viewBox="0 0 640 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
         <defs>
           <!-- Motion paths (invisible) -->
           <path id="fp-medir"      d="M320,167 L320,105"/>
@@ -869,6 +872,7 @@
         </g>
 
       </svg>
+
       </div>
       <!-- END INFOGRAFÍA -->
 
