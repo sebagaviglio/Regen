@@ -357,6 +357,117 @@
     font-size:clamp(28px,4.2vw,50px);line-height:1.25;
   }
 
+  /* ── Planes ── */
+  .planes__head{
+    max-width:640px;margin:0 auto var(--s6);text-align:center;
+    position:relative;z-index:1;
+  }
+  .planes__heading{margin-top:var(--s2);font-size:clamp(28px,3.6vw,46px);line-height:1.1;}
+  .planes__sub{margin-top:var(--s3);font-size:17px;color:rgba(244,239,229,.7);}
+  .planes__grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;background:rgba(244,239,229,.12);
+    position:relative;z-index:1;
+  }
+  .plan{
+    padding:var(--s5) var(--s4);display:flex;flex-direction:column;
+    background:rgba(244,239,229,.04);
+    position:relative;
+    transition:background .25s var(--ease);
+  }
+  .plan:hover{background:rgba(244,239,229,.07);}
+  .plan--featured{
+    background:rgba(120,143,118,.16);
+    outline:1px solid rgba(120,143,118,.5);
+    outline-offset:-1px;
+  }
+  .plan--featured:hover{background:rgba(120,143,118,.22);}
+  .plan__badge{
+    display:inline-block;margin-bottom:var(--s3);
+    padding:4px 12px;background:var(--sage);
+    font-family:'DM Sans',sans-serif;font-weight:500;
+    font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--linen);align-self:flex-start;
+  }
+  .plan__name{
+    font-family:'Bodoni Moda',serif;font-weight:400;
+    font-size:28px;letter-spacing:.04em;
+  }
+  .plan__price{
+    margin-top:var(--s2);
+    font-family:'DM Sans',sans-serif;font-weight:300;
+    font-size:13px;color:rgba(244,239,229,.55);
+  }
+  .plan__price strong{
+    display:block;font-size:clamp(28px,3vw,36px);font-weight:500;
+    color:var(--linen);letter-spacing:-.01em;margin-bottom:2px;
+  }
+  .plan__features{
+    margin-top:var(--s4);flex:1;
+    display:flex;flex-direction:column;gap:var(--s2);
+  }
+  .plan__feat{
+    display:flex;gap:10px;align-items:flex-start;
+    font-size:14px;font-weight:300;color:rgba(244,239,229,.85);
+    line-height:1.5;
+  }
+  .plan__feat::before{
+    content:'';flex-shrink:0;width:5px;height:5px;border-radius:50%;
+    background:var(--sage);margin-top:7px;
+  }
+  .plan--featured .plan__feat{color:rgba(244,239,229,.95);}
+  .plan__cta{margin-top:var(--s4);}
+  .plan__note{
+    margin-top:var(--s2);font-size:12px;font-weight:300;
+    color:rgba(244,239,229,.45);line-height:1.5;
+  }
+  .plan--elite .plan__price strong{font-size:22px;letter-spacing:0;}
+
+  /* Diagnóstico add-on */
+  .diagnostico{
+    margin-top:1px;background:rgba(191,177,156,.08);
+    border-top:1px solid rgba(191,177,156,.2);
+    position:relative;z-index:1;
+    padding:var(--s4);
+    display:grid;grid-template-columns:1fr auto;
+    gap:var(--s4);align-items:center;
+  }
+  .diagnostico__label{
+    font-family:'DM Sans',sans-serif;font-weight:500;font-size:10px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--stone);
+    margin-bottom:8px;
+  }
+  .diagnostico__title{
+    font-family:'Bodoni Moda',serif;font-weight:400;font-size:22px;
+    color:var(--linen);
+  }
+  .diagnostico__text{
+    margin-top:8px;font-size:14px;font-weight:300;
+    color:rgba(244,239,229,.65);max-width:520px;line-height:1.55;
+  }
+  .diagnostico__price{
+    text-align:right;white-space:nowrap;
+  }
+  .diagnostico__price strong{
+    display:block;font-size:22px;font-weight:500;
+    color:var(--linen);letter-spacing:-.01em;
+  }
+  .diagnostico__price span{
+    display:block;font-size:12px;font-weight:300;
+    color:rgba(244,239,229,.45);margin-top:2px;
+  }
+  .planes__mp{
+    margin-top:var(--s3);text-align:center;
+    font-size:12px;font-weight:300;color:rgba(244,239,229,.4);
+    position:relative;z-index:1;
+  }
+  @media(max-width:900px){
+    .planes__grid{grid-template-columns:1fr;}
+    .diagnostico{grid-template-columns:1fr;}
+    .diagnostico__price{text-align:left;}
+  }
+
   /* Novedades / form */
   .news__grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s6);position:relative;z-index:1;}
   .news__heading{margin-top:var(--s2);font-size:clamp(26px,3.4vw,44px);max-width:420px;}
@@ -486,9 +597,9 @@
     <a href="#hero" class="nav__logo">REGEN</a>
     <nav class="nav__links">
       <a class="nav__link" href="#como-funciona">Cómo funciona</a>
+      <a class="nav__link" href="#planes">Planes</a>
       <a class="nav__link" href="#diferencial">Por qué REGEN</a>
-      <a class="nav__link" href="#novedades">Sumate</a>
-      <a class="btn btn--sage" href="#novedades" style="margin-top:8px;">Recibir novedades</a>
+      <a class="btn btn--sage" href="https://asistente.regen.ar/planes" target="_blank" rel="noopener" style="margin-top:8px;">Ver planes</a>
     </nav>
     <button class="nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
       <span></span><span></span><span></span>
@@ -521,7 +632,7 @@
       <p class="hero__tagline">Recovery is the upgrade.</p>
       <p class="hero__sub">Longevidad basada en evidencia. Medimos tu biología, intervenimos con pilares probados y volvemos a medir para optimizar tus años de vida saludable.</p>
       <div class="hero__actions">
-        <a class="btn btn--sage" href="#novedades">Quiero saber más</a>
+        <a class="btn btn--sage" href="#planes">Ver planes</a>
         <a class="btn btn--on-dark" href="#como-funciona">Cómo funciona</a>
       </div>
     </div>
@@ -614,12 +725,98 @@
     </div>
   </section>
 
+  <!-- PLANES -->
+  <section class="band band--dark" id="planes">
+    <div class="blob" style="width:50vmax;height:50vmax;background:var(--sage);top:-20vmax;right:-10vmax;opacity:.08;"></div>
+    <div class="blob" style="width:34vmax;height:34vmax;background:var(--stone);bottom:-14vmax;left:-8vmax;opacity:.07;"></div>
+    <div class="wrap">
+      <div class="planes__head reveal">
+        <p class="label label--light">Planes</p>
+        <h3 class="display planes__heading">Elegí el nivel de acompañamiento que necesitás.</h3>
+        <p class="planes__sub">Todos los planes incluyen acceso al asistente REGEN con inteligencia artificial y validación médica permanente.</p>
+      </div>
+      <div class="planes__grid reveal">
+
+        <!-- Core -->
+        <div class="plan">
+          <p class="plan__name">Core</p>
+          <div class="plan__price">
+            <strong>$59.999<span style="font-size:16px;font-weight:300;color:rgba(244,239,229,.55)">/mes</span></strong>
+          </div>
+          <ul class="plan__features">
+            <li class="plan__feat">Coach humano certificado</li>
+            <li class="plan__feat">Asistente REGEN con IA disponible 24/7</li>
+            <li class="plan__feat">20 minutos de llamada de voz al mes</li>
+            <li class="plan__feat">Validación médica al ingresar y cada 6 meses</li>
+          </ul>
+          <div class="plan__cta">
+            <a class="btn btn--on-dark" href="https://asistente.regen.ar/planes" target="_blank" rel="noopener">Elegir Core</a>
+          </div>
+        </div>
+
+        <!-- Activo -->
+        <div class="plan plan--featured">
+          <p class="plan__badge">Más elegido</p>
+          <p class="plan__name">Activo</p>
+          <div class="plan__price">
+            <strong>$139.999<span style="font-size:16px;font-weight:300;color:rgba(244,239,229,.55)">/mes</span></strong>
+          </div>
+          <ul class="plan__features">
+            <li class="plan__feat">Todo lo incluido en Core</li>
+            <li class="plan__feat">Panel de análisis semestral a domicilio</li>
+            <li class="plan__feat">45 minutos de llamada de voz al mes</li>
+            <li class="plan__feat">Validación médica trimestral</li>
+          </ul>
+          <div class="plan__cta">
+            <a class="btn btn--sage" href="https://asistente.regen.ar/planes" target="_blank" rel="noopener">Elegir Activo</a>
+          </div>
+        </div>
+
+        <!-- Elite -->
+        <div class="plan plan--elite">
+          <p class="plan__name">Elite</p>
+          <div class="plan__price">
+            <strong>Cupos limitados</strong>
+            Consultá disponibilidad
+          </div>
+          <ul class="plan__features">
+            <li class="plan__feat">Médico de longevidad dedicado a tu caso</li>
+            <li class="plan__feat">Estudios en cualquier ciudad del país</li>
+            <li class="plan__feat">Protocolo anual personalizado</li>
+            <li class="plan__feat">Acceso directo al equipo REGEN</li>
+          </ul>
+          <div class="plan__cta">
+            <a class="btn btn--on-dark" href="mailto:contacto@regen.ar?subject=Quiero%20ser%20Elite" rel="noopener">Consultar Elite</a>
+            <p class="plan__note">Te respondemos dentro de las 24 hs hábiles.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Diagnóstico inicial -->
+      <div class="diagnostico reveal">
+        <div>
+          <p class="diagnostico__label">Add-on opcional</p>
+          <p class="diagnostico__title">Diagnóstico Inicial</p>
+          <p class="diagnostico__text">Extracción de biomarcadores a domicilio, lectura e interpretación por un médico matriculado y ficha de validación para iniciar tu plan con datos reales. Recomendado para comenzar.</p>
+        </div>
+        <div class="diagnostico__price">
+          <strong>$299.999</strong>
+          <span>Pago único</span>
+          <a class="btn btn--on-dark" style="margin-top:var(--s2);" href="https://asistente.regen.ar/planes" target="_blank" rel="noopener">Agregar al plan</a>
+        </div>
+      </div>
+
+      <p class="planes__mp reveal">Pagos procesados por Mercado Pago · Podés cancelar cuando quieras</p>
+    </div>
+  </section>
+
   <!-- DIFERENCIAL -->
-  <section class="band band--dark" id="diferencial">
+  <section class="band" id="diferencial">
     <div class="blob" style="width:46vmax;height:46vmax;background:var(--sage);top:-16vmax;left:50%;opacity:.09;"></div>
     <div class="wrap dif__grid">
       <div class="reveal">
-        <p class="label label--light">Por qué REGEN</p>
+        <p class="label">Por qué REGEN</p>
         <h3 class="display dif__heading">Evidencia primero. Siempre.</h3>
         <div class="dif__list">
           <div class="dif__item">
@@ -640,11 +837,11 @@
           </div>
         </div>
         <div style="margin-top:var(--s4);">
-          <a class="btn btn--on-dark" href="#novedades">Sumate a la lista</a>
+          <a class="btn btn--primary" href="#planes">Ver planes</a>
         </div>
       </div>
       <div class="reveal dif__spiral">
-        <svg viewBox="0 0 600 600" style="width:100%;opacity:.55;"><use href="#spiralCream"/></svg>
+        <svg viewBox="0 0 600 600" style="width:100%;opacity:.55;"><use href="#spiralMain"/></svg>
       </div>
     </div>
   </section>
@@ -658,14 +855,15 @@
     </div>
   </section>
 
-  <!-- NOVEDADES -->
+  <!-- CONTACTO / DUDAS -->
   <section class="band band--soft" id="novedades">
     <div class="blob" style="width:36vmax;height:36vmax;background:var(--sage);bottom:-14vmax;right:-12vmax;"></div>
     <div class="wrap news__grid">
       <div class="reveal">
-        <p class="label">Sumate</p>
-        <h3 class="display news__heading">Sé de los primeros en acceder.</h3>
-        <p class="news__body">Estamos construyendo REGEN. Anotate y te escribimos con los avances, los primeros cupos y la fecha de apertura antes que a nadie.</p>
+        <p class="label">Contacto</p>
+        <h3 class="display news__heading">¿Tenés dudas antes de elegir?</h3>
+        <p class="news__body">Escribinos. Respondemos a todas las consultas y te ayudamos a encontrar el plan que mejor se adapta a tus objetivos.</p>
+        <p class="news__body" style="margin-top:var(--s3);">O si ya sabés lo que querés, <a href="https://asistente.regen.ar/planes" target="_blank" rel="noopener" style="color:var(--sage);border-bottom:1px solid var(--sage);padding-bottom:1px;">mirá los planes directamente</a>.</p>
       </div>
       <div class="reveal">
         <form id="contactForm">
@@ -685,12 +883,12 @@
             <input id="fphone" name="phone" type="tel" autocomplete="tel">
           </div>
           <div class="field">
-            <label for="fmsg">¿Qué te interesa mejorar? (opcional)</label>
-            <textarea id="fmsg" name="message" placeholder="Energía, rendimiento, recuperación, longevidad…"></textarea>
+            <label for="fmsg">Tu consulta</label>
+            <textarea id="fmsg" name="message" placeholder="¿Qué plan te interesa? ¿Qué querés mejorar? Cualquier duda que tengas…"></textarea>
           </div>
-          <button type="submit" class="btn btn--primary" id="formSubmit">Anotarme</button>
-          <p class="form__ok" id="formOk">¡Listo! Te escribimos apenas tengamos novedades.</p>
-          <p class="form__ok form__err" id="formErr">No pudimos enviar tu mensaje. Probá de nuevo o escribinos a novedades@regen.ar.</p>
+          <button type="submit" class="btn btn--primary" id="formSubmit">Enviar consulta</button>
+          <p class="form__ok" id="formOk">¡Listo! Te respondemos en breve.</p>
+          <p class="form__ok form__err" id="formErr">No pudimos enviar tu mensaje. Probá de nuevo o escribinos a contacto@regen.ar.</p>
         </form>
       </div>
     </div>
@@ -711,11 +909,13 @@
         <a href="#como-funciona">Cómo funciona</a>
         <a href="#diferencial">Por qué REGEN</a>
         <a href="#para-quien">Para quién</a>
+        <a href="#planes">Planes</a>
       </div>
       <div class="footer__col">
         <p class="label label--light footer__col-title">Contacto</p>
-        <a href="#novedades">Sumate a la lista</a>
+        <a href="#novedades">Escribinos</a>
         <a href="mailto:contacto@regen.ar">contacto@regen.ar</a>
+        <a href="https://asistente.regen.ar/planes" target="_blank" rel="noopener">Ver planes →</a>
       </div>
     </div>
   </div>
@@ -783,7 +983,7 @@
       if (res.ok && data.ok) { okEl.classList.add('is-shown'); form.reset(); }
       else { errEl.classList.add('is-shown'); }
     } catch { errEl.classList.add('is-shown'); }
-    finally { btn.disabled = false; btn.textContent = 'Anotarme'; }
+    finally { btn.disabled = false; btn.textContent = 'Enviar consulta'; }
   });
 </script>
 
