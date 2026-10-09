@@ -554,7 +554,7 @@
   .photobreak__inner.pb-visible{transform:scale(1);}
   .photobreak__img{
     width:100%;height:100%;
-    object-fit:cover;object-position:center 25%;
+    object-fit:cover;object-position:center 30%;
     display:block;pointer-events:none;
   }
   /* edge-fade overlay — blends into linen above and below */
@@ -562,10 +562,10 @@
     position:absolute;inset:0;pointer-events:none;
     background:
       linear-gradient(to bottom,
-        var(--linen) 0%,
-        transparent 18%,
-        transparent 82%,
-        var(--linen) 100%);
+        rgba(244,239,229,.55) 0%,
+        transparent 12%,
+        transparent 88%,
+        rgba(244,239,229,.55) 100%);
   }
   /* caption */
   .photobreak__text{
@@ -960,7 +960,7 @@
   <!-- PHOTO BREAK -->
   <div class="photobreak" aria-hidden="true">
     <div class="photobreak__inner" id="pbInner">
-      <img class="photobreak__img" src="piel-textura.jpg" alt="" draggable="false" loading="lazy">
+      <img class="photobreak__img" src="cuerpo-movimiento.jpg" alt="" draggable="false" loading="lazy">
     </div>
     <div class="photobreak__fade"></div>
     <p class="photobreak__text" id="pbText">La biología no miente.</p>
