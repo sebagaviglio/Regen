@@ -350,20 +350,39 @@
   @media(max-width:760px){.para__grid{grid-template-columns:1fr;}}
 
   /* Diferencial */
-  .dif__grid{
-    display:grid;grid-template-columns:1fr 1fr;
-    gap:var(--s6);align-items:center;position:relative;z-index:1;
-  }
+  .dif__header{max-width:600px;margin-bottom:var(--s6);position:relative;z-index:1;}
   .dif__heading{font-size:clamp(28px,3.6vw,46px);line-height:1.1;margin-top:var(--s2);}
-  .dif__list{margin-top:var(--s4);display:flex;flex-direction:column;gap:var(--s3);}
-  .dif__item{display:flex;gap:var(--s3);align-items:flex-start;}
-  .dif__item-dot{
-    width:8px;height:8px;border-radius:50%;background:var(--sage);
-    flex-shrink:0;margin-top:7px;
+  .dif__intro{margin-top:var(--s3);font-size:17px;font-weight:300;color:#5a5346;max-width:480px;}
+  .dif__cards{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:0;position:relative;z-index:1;
+    border-top:1px solid rgba(120,143,118,.25);
   }
-  .dif__item-text{font-size:16px;font-weight:300;}
-  .dif__spiral{opacity:.85;}
-  @media(max-width:860px){.dif__grid{grid-template-columns:1fr;} .dif__spiral{display:none;}}
+  .dif__card{
+    padding:var(--s5) var(--s4) var(--s5) 0;
+    border-right:1px solid rgba(120,143,118,.15);
+  }
+  .dif__card:last-child{border-right:none;padding-right:0;}
+  .dif__card:first-child{padding-left:0;}
+  .dif__card-visual{
+    height:72px;display:flex;align-items:flex-end;margin-bottom:var(--s4);
+  }
+  .dif__card-title{
+    font-family:'Bodoni Moda',Georgia,serif;font-size:17px;font-weight:400;
+    line-height:1.25;color:var(--charcoal);margin-bottom:var(--s2);
+  }
+  .dif__card-body{font-size:14.5px;font-weight:300;line-height:1.6;color:#5a5346;}
+  .dif__cta{margin-top:var(--s6);position:relative;z-index:1;}
+  @media(max-width:860px){
+    .dif__cards{grid-template-columns:1fr 1fr;}
+    .dif__card{border-right:none;border-bottom:1px solid rgba(120,143,118,.15);padding:var(--s4) 0;}
+    .dif__card:nth-child(odd){padding-right:var(--s3);}
+    .dif__card:last-child{border-bottom:none;}
+  }
+  @media(max-width:480px){
+    .dif__cards{grid-template-columns:1fr;}
+    .dif__card:nth-child(odd){padding-right:0;}
+  }
 
   /* Quote */
   .quote__inner{max-width:720px;margin:0 auto;text-align:center;position:relative;z-index:1;}
@@ -1020,36 +1039,94 @@
 
   <!-- DIFERENCIAL -->
   <section class="band" id="diferencial">
-    <div class="blob" style="width:46vmax;height:46vmax;background:var(--sage);top:-16vmax;left:50%;opacity:.09;"></div>
-    <div class="wrap dif__grid">
-      <div class="reveal">
+    <div class="blob" style="width:46vmax;height:46vmax;background:var(--sage);top:-16vmax;left:50%;opacity:.07;"></div>
+    <div class="wrap">
+
+      <div class="dif__header reveal">
         <p class="label">Por qué REGEN</p>
         <h3 class="display dif__heading">Evidencia primero. Siempre.</h3>
-        <div class="dif__list">
-          <div class="dif__item">
-            <span class="dif__item-dot"></span>
-            <p class="dif__item-text">Base de conocimiento con niveles de evidencia científica y guardrails regulatorios: nada sin respaldo.</p>
-          </div>
-          <div class="dif__item">
-            <span class="dif__item-dot"></span>
-            <p class="dif__item-text">Diagnóstico, indicación e interpretación siempre a cargo de un profesional matriculado. La IA asiste, no reemplaza.</p>
-          </div>
-          <div class="dif__item">
-            <span class="dif__item-dot"></span>
-            <p class="dif__item-text">Protocolos que se ajustan a tu respuesta biológica, no a un plan genérico de 30 días.</p>
-          </div>
-          <div class="dif__item">
-            <span class="dif__item-dot"></span>
-            <p class="dif__item-text">Seguimiento real: el progreso se mide, se muestra y se explica. Sin promesas vagas de resultado.</p>
-          </div>
-        </div>
-        <div style="margin-top:var(--s4);">
-          <a class="btn btn--primary" href="#planes">Ver planes</a>
-        </div>
+        <p class="dif__intro">Un centro de longevidad se diferencia en cómo usa la ciencia, no solo en qué la cita.</p>
       </div>
-      <div class="reveal dif__spiral">
-        <svg viewBox="0 0 600 600" style="width:100%;opacity:.55;"><use href="#spiralMain"/></svg>
+
+      <div class="dif__cards">
+
+        <!-- 1: Evidencia -->
+        <div class="dif__card reveal">
+          <div class="dif__card-visual">
+            <svg viewBox="0 0 72 72" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="36" cy="36" r="5.5" stroke="#788F76" stroke-width="1.4"/>
+              <circle cx="36" cy="14" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <circle cx="57" cy="27" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <circle cx="57" cy="50" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <circle cx="15" cy="27" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <circle cx="15" cy="50" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <line x1="36" y1="17.5" x2="36" y2="30.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <line x1="53.7" y1="29.5" x2="41.2" y2="33.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <line x1="53.9" y1="47.6" x2="41.2" y2="38.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <line x1="18.3" y1="29.5" x2="30.8" y2="33.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <line x1="18.1" y1="47.6" x2="30.8" y2="38.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <path d="M33.5,14 L35.5,16 L38.5,12" stroke="#788F76" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h4 class="dif__card-title">Ciencia con criterio</h4>
+          <p class="dif__card-body">Cada protocolo lleva nivel de evidencia asignado. Si no tiene respaldo publicado, no entra al sistema.</p>
+        </div>
+
+        <!-- 2: Médico -->
+        <div class="dif__card reveal">
+          <div class="dif__card-visual">
+            <svg viewBox="0 0 72 72" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="36" cy="19" r="8" stroke="#788F76" stroke-width="1.4"/>
+              <path d="M22,58 C22,44 50,44 50,58" stroke="#788F76" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M14,38 L22,38 L25,31 L28,45 L32,34 L36,38 L40,38 L43,33 L46,43 L49,38 L58,38"
+                    stroke="#788F76" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h4 class="dif__card-title">Criterio médico, siempre</h4>
+          <p class="dif__card-body">La IA amplifica al profesional, no lo reemplaza. Diagnóstico e indicación: siempre bajo firma médica.</p>
+        </div>
+
+        <!-- 3: Personalización -->
+        <div class="dif__card reveal">
+          <div class="dif__card-visual">
+            <svg viewBox="0 0 72 72" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M36,62 C19,62 10,50 10,36 C10,20 20,10 36,10" stroke="#788F76" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M36,55 C23,55 17,46 17,36 C17,25 24,17 36,17" stroke="#788F76" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+              <path d="M36,48 C27,48 24,42 24,36 C24,30 28,24 36,24" stroke="#788F76" stroke-width="1.1" stroke-linecap="round" opacity=".55"/>
+              <path d="M36,41 C31,41 31,38 31,36 C31,33 32,31 36,31" stroke="#788F76" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+              <line x1="36" y1="10" x2="36" y2="62" stroke="#788F76" stroke-width="1" stroke-dasharray="2,4" opacity=".3"/>
+              <circle cx="36" cy="36" r="2.5" fill="#788F76"/>
+            </svg>
+          </div>
+          <h4 class="dif__card-title">Tu biología, tu protocolo</h4>
+          <p class="dif__card-body">El programa se construye desde tus biomarcadores y se ajusta a medida que tu biología responde.</p>
+        </div>
+
+        <!-- 4: Seguimiento -->
+        <div class="dif__card reveal">
+          <div class="dif__card-visual">
+            <svg viewBox="0 0 72 72" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="14" y1="58" x2="14" y2="14" stroke="#788F76" stroke-width="1.2" stroke-linecap="round" opacity=".4"/>
+              <line x1="14" y1="58" x2="62" y2="58" stroke="#788F76" stroke-width="1.2" stroke-linecap="round" opacity=".4"/>
+              <path d="M18,52 C24,48 28,45 34,38 C40,31 46,25 58,16"
+                    stroke="#788F76" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="18" cy="52" r="2.8" fill="#788F76"/>
+              <circle cx="34" cy="38" r="2.8" fill="#788F76"/>
+              <circle cx="58" cy="16" r="2.8" fill="#788F76"/>
+              <line x1="34" y1="38" x2="34" y2="58" stroke="#788F76" stroke-width="1" stroke-dasharray="2,3" opacity=".3"/>
+              <line x1="58" y1="16" x2="58" y2="58" stroke="#788F76" stroke-width="1" stroke-dasharray="2,3" opacity=".3"/>
+            </svg>
+          </div>
+          <h4 class="dif__card-title">Progreso en datos reales</h4>
+          <p class="dif__card-body">Medimos antes y después. El avance se muestra en números concretos, no en percepciones.</p>
+        </div>
+
+      </div><!-- /dif__cards -->
+
+      <div class="dif__cta reveal">
+        <a class="btn btn--primary" href="#planes">Ver planes</a>
       </div>
+
     </div>
   </section>
 
