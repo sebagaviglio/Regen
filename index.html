@@ -514,6 +514,11 @@
   }
   .field input:focus,.field textarea:focus{outline:none;border-color:var(--sage);}
   .field textarea{resize:vertical;min-height:86px;}
+  .form__help{margin:6px 0 0;font-size:12.5px;line-height:1.5;color:#6b675e;font-weight:300;}
+  .form__consent{margin:var(--s3) 0;}
+  .form__check{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.45;cursor:pointer;}
+  .form__check input{margin-top:3px;flex:none;width:16px;height:16px;accent-color:var(--sage);}
+  .form__urgent{margin:0 0 var(--s3);font-size:13px;line-height:1.5;color:#4A4740;font-weight:300;}
   .form__ok{margin-top:var(--s3);font-size:14px;color:var(--sage);display:none;font-weight:300;}
   .form__ok.is-shown{display:block;}
   .form__err{color:#8C3A26;}
@@ -1060,7 +1065,7 @@
             <li class="plan__feat">Acceso directo al equipo REGEN</li>
           </ul>
           <div class="plan__cta">
-            <a class="btn btn--on-dark" href="mailto:contacto@regen.ar?subject=Quiero%20ser%20Elite" rel="noopener">Consultar Elite</a>
+            <a class="btn btn--on-dark" href="mailto:hola@regen.ar?subject=Quiero%20ser%20Elite" rel="noopener">Consultar Elite</a>
             <p class="plan__note">Te respondemos dentro de las 24 hs hábiles.</p>
           </div>
         </div>
@@ -1204,23 +1209,32 @@
           </div>
           <div class="field">
             <label for="fname">Nombre</label>
-            <input id="fname" name="name" type="text" required autocomplete="name">
+            <input id="fname" name="name" type="text" required maxlength="100" autocomplete="name">
           </div>
           <div class="field">
             <label for="femail">Email</label>
-            <input id="femail" name="email" type="email" required autocomplete="email">
+            <input id="femail" name="email" type="email" required maxlength="254" autocomplete="email">
           </div>
           <div class="field">
             <label for="fphone">Teléfono (opcional)</label>
-            <input id="fphone" name="phone" type="tel" autocomplete="tel">
+            <input id="fphone" name="phone" type="tel" maxlength="30" autocomplete="tel">
           </div>
           <div class="field">
             <label for="fmsg">Tu consulta</label>
-            <textarea id="fmsg" name="message" placeholder="¿Qué plan te interesa? ¿Qué querés mejorar? Cualquier duda que tengas…"></textarea>
+            <textarea id="fmsg" name="message" maxlength="1000" placeholder="¿Qué plan te interesa? ¿Qué querés mejorar? Cualquier duda que tengas…" aria-describedby="fmsgHelp"></textarea>
+            <p class="form__help" id="fmsgHelp">Hasta 1000 caracteres. Por favor, no incluyas información médica ni estudios: eso lo vemos con el equipo en la consulta.</p>
           </div>
+          <div class="form__consent">
+            <label class="form__check" for="fconsent">
+              <input id="fconsent" name="consent" type="checkbox" required>
+              <span>Acepto que REGEN use mis datos para responder esta consulta.</span>
+            </label>
+            <p class="form__help">Usamos tu nombre, email, teléfono y mensaje solo para contestarte. Los procesan los servicios de correo y alojamiento que usa REGEN. Podés pedir acceso, corrección o baja de tus datos escribiendo a hola@regen.ar. Tenés derecho a hacerlo según la Ley 25.326 de Protección de Datos Personales; la autoridad de control es la Agencia de Acceso a la Información Pública.</p>
+          </div>
+          <p class="form__urgent"><strong>Este formulario no es para urgencias.</strong> Si es una urgencia, llamá al 107 o al 911. Si estás atravesando un momento difícil, podés llamar al 0800-999-0091.</p>
           <button type="submit" class="btn btn--primary" id="formSubmit">Enviar consulta</button>
           <p class="form__ok" id="formOk">¡Listo! Te respondemos en breve.</p>
-          <p class="form__ok form__err" id="formErr">No pudimos enviar tu mensaje. Probá de nuevo o escribinos a contacto@regen.ar.</p>
+          <p class="form__ok form__err" id="formErr">No pudimos enviar tu mensaje. Probá de nuevo o escribinos a hola@regen.ar.</p>
         </form>
       </div>
     </div>
@@ -1246,7 +1260,7 @@
       <div class="footer__col">
         <p class="label label--light footer__col-title">Contacto</p>
         <a href="#novedades">Escribinos</a>
-        <a href="mailto:contacto@regen.ar">contacto@regen.ar</a>
+        <a href="mailto:hola@regen.ar">hola@regen.ar</a>
         <a href="https://asistente.regen.ar/planes" target="_blank" rel="noopener">Ver planes →</a>
       </div>
     </div>
@@ -1324,13 +1338,14 @@
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!form.consent.checked) { errEl.classList.add('is-shown'); return; }
     okEl.classList.remove('is-shown');
     errEl.classList.remove('is-shown');
     const payload = {
       name: form.name.value.trim(),
       email: form.email.value.trim(),
       phone: form.phone.value.trim(),
-      message: form.message.value.trim(),
+      message: form.message.value.trim().slice(0, 1000),
       website: form.website.value.trim(),
     };
     btn.disabled = true;
