@@ -1336,6 +1336,25 @@
   const errEl = document.getElementById('formErr');
   const btn   = document.getElementById('formSubmit');
 
+  // Avisos de validación en español (el navegador los muestra en su propio idioma si no se definen)
+  const MSG = {
+    fname:    { valueMissing: 'Escribí tu nombre.' },
+    femail:   { valueMissing: 'Escribí tu email.', typeMismatch: 'Revisá el email: tiene que ser como nombre@dominio.com.' },
+    fconsent: { valueMissing: 'Para enviar la consulta tenés que aceptar el aviso de privacidad.' },
+  };
+  Object.keys(MSG).forEach((id) => {
+    const el = document.getElementById(id);
+    const apply = () => {
+      el.setCustomValidity('');
+      if (el.validity.valid) return;
+      const k = Object.keys(MSG[id]).find((key) => el.validity[key]);
+      el.setCustomValidity(k ? MSG[id][k] : 'Revisá este campo.');
+    };
+    el.addEventListener('invalid', apply);
+    el.addEventListener('input', () => el.setCustomValidity(''));
+    el.addEventListener('change', () => el.setCustomValidity(''));
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!form.consent.checked) { errEl.classList.add('is-shown'); return; }
@@ -1347,7 +1366,7 @@
       phone: form.phone.value.trim(),
       message: form.message.value.trim().slice(0, 1000),
       consent: form.consent.checked,
-      privacy_version: 'v1-2026-10-provisorio',
+      privacy_version: 'v1-2026-10-validado',
       website: form.website.value.trim(),
     };
     btn.disabled = true;
