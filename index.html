@@ -1346,6 +1346,8 @@
       email: form.email.value.trim(),
       phone: form.phone.value.trim(),
       message: form.message.value.trim().slice(0, 1000),
+      consent: form.consent.checked,
+      privacy_version: 'v1-2026-10-provisorio',
       website: form.website.value.trim(),
     };
     btn.disabled = true;
