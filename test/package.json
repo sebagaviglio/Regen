@@ -1,0 +1,11 @@
+{
+  "name": "regen-web-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test home.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}
