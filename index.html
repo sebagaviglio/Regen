@@ -47,7 +47,7 @@
 <!-- Brandbook fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant:ital,wght@1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Cormorant:ital,wght@1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 
 <style>
   :root{
@@ -210,15 +210,18 @@
     width:min(640px,115vw);height:min(640px,115vw);
     transform:translate(-50%,-50%);z-index:0;
   }
+  /* Cada anillo es su propia capa (un <svg> con un círculo): el navegador la escala en la
+     placa de video. Animar el <circle> adentro del SVG recalculaba el layout en cada cuadro.
+     Mismo centro, misma escala y mismo trazo que antes. */
   .ring{
     fill:none;stroke:var(--sage);stroke-width:1.2;
-    transform-box:fill-box;transform-origin:center;
+    transform-origin:center;
     opacity:0;animation:ringPulse 6.5s ease-out infinite;
   }
   .ring--stone{stroke:var(--stone);}
-  .ring:nth-of-type(2){animation-delay:1.8s;}
-  .ring:nth-of-type(3){animation-delay:3.6s;}
-  @keyframes ringPulse{0%{transform:scale(.5);opacity:0;}14%{opacity:.4;}100%{transform:scale(1.45);opacity:0;}}
+  .ring--d2{animation-delay:1.8s;}
+  .ring--d3{animation-delay:3.6s;}
+  @keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(.5);opacity:0;}14%{opacity:.4;}100%{transform:translate(-50%,-50%) scale(1.45);opacity:0;}}
   .hero__content{
     position:relative;z-index:2;max-width:760px;
     text-align:center;padding:var(--s6) var(--s3);
@@ -267,7 +270,10 @@
     width:6px;height:6px;border-radius:50%;background:var(--sage);
     animation:cueDrop 2.8s ease-in-out infinite;
   }
-  @keyframes cueDrop{0%{top:0;opacity:0;}20%{opacity:1;}80%{opacity:1;}100%{top:38px;opacity:0;}}
+  /* transform en vez de top: mismo recorrido, sin recalcular el layout en cada cuadro */
+  @keyframes cueDrop{0%{transform:translateY(0);opacity:0;}20%{opacity:1;}80%{opacity:1;}100%{transform:translateY(38px);opacity:0;}}
+  /* Fuera de pantalla las animaciones del hero se pausan (nadie las ve); al volver siguen. */
+  .hero.is-offscreen *,.hero.is-offscreen *::after{animation-play-state:paused;}
   @media(max-width:640px){.hero{min-height:100svh;}.hero__wordmark{font-size:clamp(56px,14vw,80px);}}
 
   .divider{height:2px;background:linear-gradient(90deg,var(--sage),var(--stone));}
@@ -557,6 +563,7 @@
     transition:transform 1.4s cubic-bezier(.16,1,.3,1);
   }
   .photobreak__inner.pb-visible{transform:scale(1);}
+  .photobreak__inner picture{display:contents;} /* la imagen sigue midiendo como antes */
   .photobreak__img{
     width:100%;height:100%;
     object-fit:cover;object-position:center 30%;
@@ -692,11 +699,9 @@
     <div class="hero__glow hero__glow--a"></div>
     <div class="hero__glow hero__glow--b"></div>
     <svg class="hero__spiral" viewBox="0 0 600 600"><use href="#spiralCream"/></svg>
-    <svg class="hero__rings" viewBox="0 0 300 300">
-      <circle class="ring" cx="150" cy="150" r="60"/>
-      <circle class="ring ring--stone" cx="150" cy="150" r="60"/>
-      <circle class="ring" cx="150" cy="150" r="60"/>
-    </svg>
+    <svg class="hero__rings ring" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="60"/></svg>
+    <svg class="hero__rings ring ring--stone ring--d2" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="60"/></svg>
+    <svg class="hero__rings ring ring--d3" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="60"/></svg>
 
     <div class="hero__content">
       <div class="hero__badge"><span class="hero__badge-dot"></span>Plataforma de Salud Biológica</div>
@@ -965,7 +970,10 @@
   <!-- PHOTO BREAK -->
   <div class="photobreak" aria-hidden="true">
     <div class="photobreak__inner" id="pbInner">
-      <img class="photobreak__img" src="cuerpo-movimiento.jpg" alt="" draggable="false" loading="lazy">
+      <picture>
+        <source type="image/webp" srcset="cuerpo-movimiento-1200.webp 1200w, cuerpo-movimiento.webp 1792w" sizes="100vw">
+        <img class="photobreak__img" src="cuerpo-movimiento.jpg" alt="" draggable="false" loading="lazy" decoding="async">
+      </picture>
     </div>
     <div class="photobreak__fade"></div>
     <p class="photobreak__text" id="pbText">La biología no miente.</p>
@@ -1288,6 +1296,8 @@
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => nav.classList.toggle('nav--light', !e.isIntersecting),
       { rootMargin:'-80px 0px 0px 0px', threshold:0 }).observe(hero);
+    new IntersectionObserver(([e]) => hero.classList.toggle('is-offscreen', !e.isIntersecting))
+      .observe(hero);
   }
 
   const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1313,7 +1323,7 @@
     }, { threshold: .08 });
     pbObserver.observe(pbInner);
 
-    // Parallax on scroll
+    // Parallax on scroll: one measurement per frame, and only while the photo is on screen
     const pbSection = pbInner.closest('.photobreak');
     function pbParallax() {
       const rect = pbSection.getBoundingClientRect();
@@ -1323,7 +1333,14 @@
       const offset   = (progress - 0.5) * 90;               // ±45px travel
       pbInner.style.transform = `translateY(${offset}px) scale(${pbInner.classList.contains('pb-visible') ? 1 : 1.07})`;
     }
-    window.addEventListener('scroll', pbParallax, { passive: true });
+    let pbFrame = 0;
+    const onPbScroll = () => {
+      if (!pbFrame) pbFrame = requestAnimationFrame(() => { pbFrame = 0; pbParallax(); });
+    };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { window.addEventListener('scroll', onPbScroll, { passive: true }); pbParallax(); }
+      else window.removeEventListener('scroll', onPbScroll);
+    }).observe(pbSection);
     pbParallax();
   } else if (pbInner) {
     pbInner.classList.add('pb-visible');
