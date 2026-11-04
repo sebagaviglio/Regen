@@ -257,6 +257,29 @@ em.g{color:var(--gold)}
 .btn{padding:10px 18px;border:1px solid var(--hair);background:transparent;cursor:pointer;font-size:13px;color:var(--bone)}
 .btn:hover{border-color:var(--sage-lt)}
 
+/* ---------- Intro ---------- */
+.intro{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;text-align:center;background:var(--night);
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:40px;transition:opacity 1.2s,visibility 0s 1.2s}
+.intro.gone{opacity:0;visibility:hidden}
+.intro h1{font-family:var(--display);font-weight:400;font-size:clamp(36px,6vw,84px);margin:0;line-height:1.04;text-wrap:balance}
+.intro .note{margin:0;color:var(--muted);max-width:44ch;line-height:1.6;font-size:15px}
+.intro .row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.play{display:inline-flex;align-items:center;gap:14px;padding:15px 28px;border:1px solid var(--sage-lt);background:transparent;cursor:pointer;letter-spacing:.28em;text-transform:uppercase;font-size:12px;font-weight:500;transition:background .4s,color .4s;color:var(--bone)}
+.play:hover{background:var(--bone);color:var(--ink)}
+.play.alt{border-color:var(--hair);color:var(--muted)}
+.play svg{width:12px;height:12px}
+.links{display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:center}
+.lnk{background:none;border:0;border-bottom:1px solid var(--hair);padding:4px 0;cursor:pointer;color:var(--muted);font-size:13px}
+.lnk:hover{color:var(--bone);border-color:var(--sage-lt)}
+.keys{margin:0;font-size:11px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase;line-height:1.7}
+.vstat{margin:0;font-size:12px;color:var(--sage-lt);min-height:1em}
+.ib.off{opacity:.4}
+.ib.live{border-color:var(--sage-lt)}
+.prog{position:fixed;left:0;bottom:0;height:2px;width:100%;z-index:16;background:var(--sage-lt);transform-origin:left;transform:scaleX(0);opacity:.7;pointer-events:none}
+.vo-row{display:grid;gap:6px;padding-top:16px;border-top:1px solid var(--hair)}
+.vo-row b{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--sage-lt);font-weight:500}
+.vo-row p{margin:0;font-family:var(--accent);font-size:21px;line-height:1.45}
+
 /* ---------- Responsive ---------- */
 @media (max-width:900px){
   .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -570,8 +593,37 @@ em.g{color:var(--gold)}
   <div class="ctl">
     <button class="ib" id="bPrev" type="button" aria-label="Lámina anterior"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
     <button class="ib" id="bNext" type="button" aria-label="Lámina siguiente"><svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg></button>
+    <button class="ib off" id="bAuto" type="button" aria-label="Avance automático (A)" title="Avance automático (A)"><svg viewBox="0 0 16 16"><path d="M2 8a6 6 0 0110.4-4M14 8a6 6 0 01-10.4 4"/><path d="M12.6 1.5V4H10M3.4 14.5V12H6"/></svg></button>
+    <button class="ib off" id="bVoice" type="button" aria-label="Locución (V)" title="Locución (V)"><svg viewBox="0 0 16 16"><rect x="6" y="2" width="4" height="8" rx="2"/><path d="M3.5 8a4.5 4.5 0 009 0M8 12.5V14"/></svg></button>
+    <button class="ib" id="bScript" type="button" aria-label="Guion de locución (G)" title="Guion de locución (G)"><svg viewBox="0 0 16 16"><path d="M3 3h10M3 6.5h10M3 10h7M3 13.5h5"/></svg></button>
     <button class="ib" id="bSrc" type="button" aria-label="Fuentes"><svg viewBox="0 0 16 16"><path d="M4 2h6l3 3v9H4zM6 7h5M6 10h5"/></svg></button>
     <button class="ib" id="bFull" type="button" aria-label="Pantalla completa"><svg viewBox="0 0 16 16"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg></button>
+  </div>
+</div>
+
+<div class="intro" id="intro">
+  <p class="chap">REGEN · Benchmark competitivo</p>
+  <h1>¿Contra quién compite <em>REGEN?</em></h1>
+  <p class="note">Con locución, la presentación avanza sola y dura unos cuatro minutos. Subí el volumen.</p>
+  <div class="row">
+    <button class="play" id="startAuto" type="button"><svg viewBox="0 0 12 12"><path d="M2 1l9 5-9 5z" fill="currentColor"/></svg>Ver con locución</button>
+    <button class="play alt" id="startManual" type="button">Ver a mi ritmo</button>
+  </div>
+  <div class="links">
+    <button class="lnk" id="openScript" type="button">Ver guion de locución</button>
+    <button class="lnk" id="loadVo" type="button">Cargar voces grabadas</button>
+    <button class="lnk" id="testVo" type="button">Probar voz</button>
+  </div>
+  <p class="vstat" id="vstat" aria-live="polite"></p>
+  <p class="keys">→ o espacio avanzar · ← volver · A automático · V voz · G guion · F pantalla completa</p>
+  <input type="file" id="voFiles" accept="audio/*" multiple hidden>
+</div>
+
+<div class="sheet" id="script" hidden>
+  <div class="wrap">
+    <div class="bar2"><h2>Guion de locución</h2><button class="btn" id="copyScript" type="button">Copiar guion</button><button class="btn" id="closeScript" type="button">Cerrar</button></div>
+    <p class="small">Un texto por lámina. Para una voz profesional, generá un archivo por lámina (por ejemplo <b>lamina-1.mp3</b> … <b>lamina-14.mp3</b>) y cargalos con “Cargar voces grabadas”. Las láminas sin archivo usan la voz del navegador.</p>
+    <div id="scriptRows"></div>
   </div>
 </div>
 
@@ -682,9 +734,9 @@ slides.forEach((s,i) => {
   b.addEventListener('click', e => { e.stopPropagation(); go(i); });
   dots.appendChild(b);
 });
-function go(i){
+function go(i, force){
   i = Math.max(0, Math.min(N - 1, i));
-  if (i === cur) return;
+  if (i === cur && !force) return;
   cur = i;
   slides.forEach((s,k) => { s.classList.toggle('on', k === i); s.setAttribute('aria-hidden', k === i ? 'false' : 'true'); });
   [...dots.children].forEach((d,k) => d.classList.toggle('on', k === i));
@@ -694,6 +746,7 @@ function go(i){
   runCounts(slides[i]);
   if (slides[i].contains(scale)) requestAnimationFrame(clampLabels);
   try { history.replaceState(null, '', '#s' + (i+1)); } catch(e) {}
+  enter(i);
 }
 const next = () => go(cur + 1), prev = () => go(cur - 1);
 $('#bNext').addEventListener('click', e => { e.stopPropagation(); next(); });
@@ -712,12 +765,17 @@ $('#srcBtn2').addEventListener('click', openSrc);
 $('#closeSrc').addEventListener('click', () => { sheet.hidden = true; });
 
 document.addEventListener('keydown', e => {
-  if (!sheet.hidden) { if (e.key === 'Escape') sheet.hidden = true; return; }
+  if (!sheet.hidden || !scriptSheet.hidden) { if (e.key === 'Escape') { sheet.hidden = true; scriptSheet.hidden = true; } return; }
+  if (!intro.classList.contains('gone')) return;
+  const k = e.key.toLowerCase();
   if (['ArrowRight','PageDown',' ','Enter'].includes(e.key)) { e.preventDefault(); next(); }
   else if (['ArrowLeft','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
   else if (e.key === 'Home') go(0);
   else if (e.key === 'End') go(N - 1);
-  else if (e.key === 'f' || e.key === 'F') $('#bFull').click();
+  else if (k === 'f') $('#bFull').click();
+  else if (k === 'a') setAuto(!auto);
+  else if (k === 'v') setVoice(!voiceOn);
+  else if (k === 'g') openScript();
 });
 stage.addEventListener('click', e => {
   if (e.target.closest('a,button')) return;
@@ -759,8 +817,158 @@ function frame(){
 size(); frame();
 window.addEventListener('resize', size);
 
+/* ---------- Locución y avance automático ---------- */
+const VO = [
+  '¿Contra quién compite Regen? Miramos tres círculos: los que venden lo mismo, los que podrían llegar, y lo que hace nuestro cliente cuando no nos elige.',
+  'La respuesta corta: en Argentina, nadie hace lo que hace Regen. Una suscripción desde sesenta mil pesos por mes, con coach humano, inteligencia artificial las veinticuatro horas, firma médica y análisis a domicilio en todo el país. El rival más cercano es una clínica presencial. El más peligroso es no hacer nada.',
+  'Hay seis jugadores que venden prevención en el país. ERA Longevity, una clínica en San Isidro con más de tres mil setecientos pacientes. Kiwell, una app de bienestar sin biomarcadores. Genix, con estudios genéticos de pago único. Longevity Co, que vende suplementos. Motivia, que le vende a las prepagas. Y los chequeos ejecutivos: una foto al año, sin plan. Ninguno tiene nuestro modelo.',
+  'El rival a vigilar es ERA Longevity. Juega en la misma liga, pero en otra cancha: es presencial, cobra ciento cincuenta mil pesos la consulta y trabaja con especialistas. Ojo: ya tiene una app, y quiere licenciar su modelo para crecer en la región.',
+  'En la región, nadie opera todavía en Argentina. Pero cualquiera podría llegar. Humanolab, en Colombia, es lo más parecido a Regen. Fleury, en Brasil, invirtió treinta y cinco millones de reales en una unidad de longevidad para mayores de treinta y cinco. Y Axo, desde Londres, ya llegó a Perú.',
+  'Afuera, el mercado se partió en dos. De un lado, membresías de laboratorio masivas: Function Health ya superó el medio millón de miembros, por unos trescientos sesenta dólares al año. Del otro, programas de lujo que llegan a ciento veinte mil dólares. Regen queda en el medio: más acompañamiento que un laboratorio, a una fracción del lujo.',
+  'Pero la competencia más fuerte no se parece a Regen. El chico que no va al salón de videojuegos no se queda en casa: va a la plaza, o al cine. El que no contrata Regen hace el chequeo de la prepaga, va al gimnasio, consulta a un nutricionista, le pregunta a ChatGPT… o no hace nada.',
+  'Relevamos doce alternativas, ordenadas por necesidad. Las amenazas más altas son el chequeo anual, el gimnasio, el nutricionista, la inteligencia artificial gratuita, y no hacer nada. Cada una resuelve una parte. Ninguna resuelve el sistema.',
+  'Y no son chicas. Tres coma seis millones de argentinos van al gimnasio. Doscientos treinta millones de personas le preguntan de salud a ChatGPT cada semana. Y uno de cada cinco argentinos cree que la inteligencia artificial responde mejor que un médico. El target ya invierte en salud. Solo que en pedazos.',
+  'Hicimos la cuenta. Armar algo parecido por cuenta propia, con un nutricionista online, una pulsera Whoop y un chequeo particular, cuesta unos ciento noventa y cinco mil pesos por mes. Regen Activo cuesta ciento cuarenta mil. El armado propio sale un treinta y nueve por ciento más, y nadie une los datos. Ya gastás esto. Nadie lo une.',
+  'En el mapa se ve claro. Lo integral es caro y presencial. Lo barato resuelve un solo pilar, o da datos sin acompañamiento. El cuadrante integral y accesible está casi vacío. Ahí está Regen.',
+  'El espacio está libre hoy, pero no por mucho. ERA puede escalar su app. Una prepaga puede armar su propio programa. Function o Superpower pueden llegar a la región. Y la inteligencia artificial gratuita puede volverse suficiente para muchos. Nuestro diferencial no es la inteligencia artificial: es el sistema completo, con personas y firma médica.',
+  'Qué hacemos. Vender contra el chequeo anual, y mostrar la cuenta. Aliarnos con gimnasios, running clubs y estudios de pilates. Integrar los wearables. Explorar empresas y prepagas antes que otros. Y monitorear a la competencia cada trimestre.',
+  'El chequeo es una foto. Regen es la película. Volver a la raíz, con datos.'
+];
+const intro = $('#intro'), scriptSheet = $('#script'), vstat = $('#vstat');
+const bAuto = $('#bAuto'), bVoice = $('#bVoice');
+/* Locución integrada: { índiceDeLámina: 'data:audio/mpeg;base64,…' }. Vacío hasta tener las grabaciones. */
+const VO_SRC = {};
+const files = {};
+Object.keys(VO_SRC).forEach(k => { files[+k] = VO_SRC[k]; });
+let auto = false, voiceOn = false, tok = 0, timer = null, guard = null, voice = null, enteredAt = 0;
+const audio = new Audio(); audio.preload = 'auto';
+const hasTTS = 'speechSynthesis' in window;
+
+function pickVoice(){
+  if (!hasTTS) return;
+  const vs = speechSynthesis.getVoices().filter(v => /^es/i.test(v.lang));
+  const score = v => (/es-AR/i.test(v.lang) ? 40 : /es-(419|US|MX|CO|CL|UY)/i.test(v.lang) ? 28 : /es-ES/i.test(v.lang) ? 18 : 10)
+    + (/natural|neural|online|premium|enhanced|google/i.test(v.name) ? 25 : 0);
+  vs.sort((a,b) => score(b) - score(a));
+  voice = vs[0] || null;
+}
+if (hasTTS) { pickVoice(); try { speechSynthesis.addEventListener('voiceschanged', pickVoice); } catch(e) {} }
+
+const estMs = i => Math.round(VO[i].split(/\s+/).length / 2.55 * 1000);
+function minDwell(i){
+  let m = 0;
+  slides[i].querySelectorAll('[data-r]').forEach(el => { const d = parseFloat(el.style.getPropertyValue('--d')) || 0; if (d > m) m = d; });
+  return m + 1600;
+}
+function stopVoice(){
+  try { if (hasTTS) speechSynthesis.cancel(); } catch(e) {}
+  try { audio.onended = null; audio.onerror = null; audio.pause(); } catch(e) {}
+}
+function tts(i, t, fin){
+  if (!hasTTS) { clearTimeout(guard); guard = setTimeout(fin, estMs(i)); return; }
+  try { speechSynthesis.cancel(); } catch(e) {}
+  const parts = VO[i].split(/(?<=[.?!…:])\s+/).filter(Boolean);
+  parts.forEach((p, k) => {
+    const u = new SpeechSynthesisUtterance(p);
+    if (voice) { u.voice = voice; u.lang = voice.lang; } else u.lang = 'es-AR';
+    u.rate = .96; u.pitch = .92; u.volume = 1;
+    if (k === parts.length - 1) { u.onend = fin; u.onerror = fin; }
+    speechSynthesis.speak(u);
+  });
+}
+function speak(i, t, done){
+  const fin = () => { if (t !== tok) return; clearTimeout(guard); done(); };
+  clearTimeout(guard);
+  guard = setTimeout(fin, estMs(i) * 1.8 + 4000); /* por si el navegador no avisa que terminó */
+  if (files[i]) {
+    audio.src = files[i];
+    audio.onended = fin;
+    audio.onerror = () => { if (t === tok) tts(i, t, fin); };
+    const p = audio.play(); if (p && p.catch) p.catch(() => { if (t === tok) tts(i, t, fin); });
+    return;
+  }
+  tts(i, t, fin);
+}
+function enter(i){
+  const t = ++tok;
+  clearTimeout(timer); clearTimeout(guard); stopVoice();
+  enteredAt = performance.now();
+  if (!auto && !voiceOn) return;
+  const lead = i === 0 ? 1400 : 900;
+  timer = setTimeout(() => {
+    if (t !== tok) return;
+    const after = () => {
+      if (t !== tok || !auto || i >= N - 1) return;
+      const wait = Math.max(1800, minDwell(i) - (performance.now() - enteredAt));
+      timer = setTimeout(() => { if (t === tok) go(i + 1); }, wait);
+    };
+    if (voiceOn) speak(i, t, after);
+    else timer = setTimeout(after, estMs(i));
+  }, lead);
+}
+function setAuto(on){ auto = on; bAuto.classList.toggle('off', !on); bAuto.classList.toggle('live', on); if (cur >= 0) enter(cur); }
+function setVoice(on){ voiceOn = on; bVoice.classList.toggle('off', !on); bVoice.classList.toggle('live', on); if (cur >= 0) enter(cur); }
+bAuto.addEventListener('click', e => { e.stopPropagation(); setAuto(!auto); });
+bVoice.addEventListener('click', e => { e.stopPropagation(); setVoice(!voiceOn); });
+
+/* guion */
+const rows = $('#scriptRows');
+VO.forEach((txt, i) => {
+  const r = document.createElement('div'); r.className = 'vo-row';
+  const b = document.createElement('b'); b.textContent = 'Lámina ' + (i+1) + ' · ' + slides[i].dataset.name;
+  const p = document.createElement('p'); p.textContent = txt;
+  r.append(b, p); rows.appendChild(r);
+});
+function openScript(e){ if (e) e.stopPropagation(); scriptSheet.hidden = false; $('#closeScript').focus(); }
+$('#bScript').addEventListener('click', openScript);
+$('#openScript').addEventListener('click', openScript);
+$('#closeScript').addEventListener('click', () => { scriptSheet.hidden = true; });
+$('#copyScript').addEventListener('click', () => {
+  const text = VO.map((t,i) => 'Lámina ' + (i+1) + ' · ' + slides[i].dataset.name + '\n' + t).join('\n\n');
+  const btn = $('#copyScript');
+  const ok = () => { btn.textContent = 'Copiado'; setTimeout(() => { btn.textContent = 'Copiar guion'; }, 1800); };
+  try { navigator.clipboard.writeText(text).then(ok, () => { btn.textContent = 'Seleccioná el texto y copialo'; }); } catch(err) { btn.textContent = 'Seleccioná el texto y copialo'; }
+});
+
+/* grabaciones propias: lamina-1.mp3 … lamina-14.mp3 */
+$('#loadVo').addEventListener('click', () => $('#voFiles').click());
+$('#voFiles').addEventListener('change', e => {
+  const got = [];
+  [...e.target.files].forEach(f => {
+    const m = /(\d+)/.exec(f.name); if (!m) return;
+    const n = parseInt(m[1], 10); if (n < 1 || n > N) return;
+    files[n-1] = URL.createObjectURL(f); got.push(n);
+  });
+  got.sort((a,b) => a - b);
+  vstat.textContent = got.length ? 'Voces cargadas para las láminas: ' + got.join(', ') + '.' : 'No encontré un número de lámina en los nombres de archivo (por ejemplo lamina-3.mp3).';
+});
+$('#testVo').addEventListener('click', () => {
+  stopVoice();
+  if (files[0]) { audio.src = files[0]; audio.play().catch(() => {}); return; }
+  if (!hasTTS) { vstat.textContent = 'Este navegador no tiene voz integrada. Cargá las grabaciones.'; return; }
+  pickVoice();
+  const u = new SpeechSynthesisUtterance('Así suena la locución de Regen.');
+  if (voice) { u.voice = voice; u.lang = voice.lang; } else u.lang = 'es-AR';
+  u.rate = .96; u.pitch = .92;
+  speechSynthesis.speak(u);
+  vstat.textContent = voice ? 'Voz del navegador: ' + voice.name + '.' : 'Voz del navegador en español.';
+});
+
+function start(withVoice){
+  if (hasTTS) { try { pickVoice(); const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u); } catch(e) {} }
+  intro.classList.add('gone');
+  auto = withVoice; voiceOn = withVoice;
+  bAuto.classList.toggle('off', !auto); bAuto.classList.toggle('live', auto);
+  bVoice.classList.toggle('off', !voiceOn); bVoice.classList.toggle('live', voiceOn);
+  const s = slides[cur]; s.classList.remove('on'); void s.offsetWidth;
+  go(cur, true);
+}
+$('#startAuto').addEventListener('click', () => start(true));
+$('#startManual').addEventListener('click', () => start(false));
+
 const m = /^#s(\d+)$/.exec(location.hash);
 go(m ? parseInt(m[1],10) - 1 : 0);
+$('#startAuto').focus();
 })();
 </script>
 </body>
