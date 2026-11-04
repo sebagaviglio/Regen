@@ -452,11 +452,16 @@
         body: offer.sdp,
         headers: { Authorization: `Bearer ${session.clientSecret}`, 'Content-Type': 'application/sdp' },
       });
-      if (!sdp.ok) throw new Error(`sdp ${sdp.status}`);
+      if (!sdp.ok) {
+        const detail = await sdp.text().catch(() => '');
+        let msg = '';
+        try { msg = JSON.parse(detail).error?.message || ''; } catch { msg = detail; }
+        throw new Error(`OpenAI ${sdp.status}${msg ? `: ${msg.slice(0, 140)}` : ''}`);
+      }
       await pc.setRemoteDescription({ type: 'answer', sdp: await sdp.text() });
     } catch (err) {
       console.error('[REGEN voz]', err);
-      return fail('No pudimos abrir el audio. Probá de nuevo en unos segundos.', 'error');
+      return fail(`No pudimos abrir el audio. Probá de nuevo en unos segundos. (Detalle: ${String(err?.message || err).slice(0, 180)})`, 'error');
     }
   }
 
