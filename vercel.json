@@ -7,6 +7,11 @@
       { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
       { "key": "Referrer-Policy", "value": "no-referrer" },
       { "key": "Cache-Control", "value": "no-store" }
+    ] },
+    { "source": "/inversores(.*)", "headers": [
+      { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+      { "key": "Permissions-Policy", "value": "microphone=(self), camera=(), geolocation=()" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
     ] }
   ]
 }

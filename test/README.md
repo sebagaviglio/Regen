@@ -18,3 +18,8 @@ Qué cuidan:
 - Todo texto (también el menú abierto y los mensajes del formulario) usa una variante de
   fuente que la página pide a Google Fonts. Si sumás una negrita o itálica nueva, agregala al
   link de Google Fonts o esta prueba avisa.
+- Voz para inversores (`inversores/index.html`): sin red, con el Worker y OpenAI simulados y un
+  RTCPeerConnection falso. Cuida que la página pida la sesión con el perfil y la versión del
+  aviso que espera el Worker, que nunca mande `session.update` (las instrucciones son del
+  servidor), que guarde las herramientas en el Worker y pida una sola respuesta después, que
+  mande la transcripción al terminar y que en el celular no desborde.

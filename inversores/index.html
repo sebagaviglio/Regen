@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>REGEN · Conversá con REGEN — inversores, socios y especialistas</title>
+<meta name="description" content="Una conversación de voz con REGEN sobre el negocio, la tecnología y cómo cuidamos los datos. Para inversores, socios y especialistas en IA y software.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="REGEN">
+<meta property="og:title" content="Conversá con REGEN">
+<meta property="og:description" content="Negocio, tecnología y seguridad de REGEN, en una conversación de voz.">
+<meta property="og:image" content="https://regen.ar/og-image.png">
+<meta property="og:locale" content="es_AR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Cormorant:ital,wght@1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#191917; --black-2:#22221f; --black-3:#2c2c28;
+    --linen:#F4EFE5; --sage:#788F76; --sage-l:#9fb39c; --stone:#BFB19C; --stone-d:#8f8473;
+    --line:rgba(244,239,229,.14); --line-2:rgba(244,239,229,.24);
+    --danger:#d98b6f;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--black);color:var(--linen);font-family:'DM Sans',system-ui,sans-serif;font-weight:300;line-height:1.55;min-height:100svh;display:flex;flex-direction:column}
+  a{color:inherit}
+  button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+  :focus-visible{outline:2px solid var(--sage-l);outline-offset:3px;border-radius:6px}
+  .display{font-family:'Bodoni Moda',serif;font-weight:400;letter-spacing:.01em}
+  .serif-i{font-family:'Cormorant',serif;font-style:italic;font-weight:300}
+  .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone)}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px clamp(20px,5vw,56px);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:baseline;gap:14px;text-decoration:none}
+  .brand b{font-family:'Bodoni Moda',serif;font-weight:400;font-size:22px;letter-spacing:.24em}
+  .brand span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-d)}
+  header nav a{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone);text-decoration:none}
+  header nav a:hover{color:var(--linen)}
+  @media(max-width:600px){.brand span{display:none}header nav a{letter-spacing:.08em}}
+
+  main{flex:1;width:100%;max-width:1180px;margin:0 auto;padding:clamp(28px,6vw,72px) clamp(20px,5vw,56px) 40px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(28px,6vw,80px);align-items:start}
+  @media(max-width:900px){main{grid-template-columns:1fr}}
+
+  .intro h1{font-size:clamp(40px,6.2vw,76px);line-height:1.02;margin:14px 0 18px}
+  .intro h1 em{font-family:'Cormorant',serif;font-style:italic;font-weight:300;color:var(--sage-l)}
+  .lede{font-size:clamp(16px,1.6vw,18px);color:rgba(244,239,229,.82);max-width:540px}
+  .promises{list-style:none;margin:26px 0 0;display:grid;gap:10px;max-width:540px}
+  .promises li{display:flex;gap:12px;font-size:14px;color:rgba(244,239,229,.78)}
+  .promises li::before{content:"";flex:0 0 7px;height:7px;margin-top:8px;border-radius:50%;background:var(--sage)}
+
+  .panel{background:var(--black-2);border:1px solid var(--line);border-radius:22px;padding:clamp(20px,3vw,30px);position:relative}
+  .step-title{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .step-title .n{width:22px;height:22px;border-radius:50%;border:1px solid var(--line-2);font-size:11px;display:grid;place-items:center;color:var(--stone)}
+
+  .profiles{display:grid;gap:10px;margin-bottom:22px}
+  .profile{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius);transition:border-color .2s,background .2s}
+  .profile:hover{border-color:var(--line-2)}
+  .profile[aria-checked="true"]{border-color:var(--sage);background:rgba(120,143,118,.12)}
+  .profile .dot{grid-row:span 2;width:16px;height:16px;border-radius:50%;border:1px solid var(--line-2);position:relative}
+  .profile[aria-checked="true"] .dot{border-color:var(--sage-l)}
+  .profile[aria-checked="true"] .dot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--sage-l)}
+  .profile strong{font-weight:500;font-size:15px}
+  .profile small{font-size:13px;color:var(--stone-d)}
+
+  .consent{display:flex;gap:12px;align-items:flex-start;font-size:12.5px;color:rgba(244,239,229,.72);padding:14px 16px;border-radius:var(--radius);background:rgba(244,239,229,.04);margin-bottom:20px}
+  .consent input{margin-top:3px;width:16px;height:16px;accent-color:var(--sage)}
+  .consent a{color:var(--stone)}
+
+  .stage{display:flex;flex-direction:column;align-items:center;gap:14px;padding:6px 0 2px}
+  .orb-wrap{position:relative;width:min(240px,62vw);aspect-ratio:1}
+  .orb-wrap canvas{width:100%;height:100%;display:block}
+  .status{font-size:14px;color:var(--stone);min-height:22px;text-align:center}
+  .status.err{color:var(--danger)}
+  .timer{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone-d);min-height:16px}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 24px;border-radius:999px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;transition:opacity .2s,background .2s,border-color .2s}
+  .btn-primary{background:var(--linen);color:var(--black)}
+  .btn-primary:hover{background:#fff}
+  .btn-primary:disabled{opacity:.35;cursor:not-allowed}
+  .btn-ghost{border:1px solid var(--line-2)}
+  .btn-ghost:hover{border-color:var(--linen)}
+  .btn-ghost[aria-pressed="true"]{background:rgba(217,139,111,.16);border-color:var(--danger)}
+  .btn-end{border:1px solid var(--danger);color:#f0c4b4}
+  .hidden{display:none!important}
+
+  .captions{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+  .captions:empty::before{content:"Los subtítulos de la conversación aparecen acá.";font-size:13px;color:var(--stone-d)}
+  .line{font-size:14.5px;line-height:1.5}
+  .line .who{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-d);margin-bottom:2px}
+  .line.assistant .who{color:var(--sage-l)}
+  .line.user{color:rgba(244,239,229,.75)}
+  .line.note{font-size:12.5px;color:var(--stone);border-left:2px solid var(--sage);padding-left:10px}
+
+  .suggest{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{font-size:12.5px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:rgba(244,239,229,.8);text-align:left}
+  .chip:hover{border-color:var(--sage)}
+  .typed{display:flex;gap:8px;margin-top:12px}
+  .typed input{flex:1;min-width:0;background:transparent;border:1px solid var(--line);border-radius:999px;padding:11px 16px;color:var(--linen);font:inherit;font-size:14px}
+  .typed input::placeholder{color:var(--stone-d)}
+  .typed button{padding:0 16px;border-radius:999px;border:1px solid var(--line-2);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+
+  .done h2{font-size:clamp(28px,3.4vw,38px);margin:6px 0 10px}
+  .done ul{list-style:none;display:grid;gap:8px;margin:16px 0}
+  .done li{font-size:14px;display:flex;gap:10px}
+  .done li::before{content:"✓";color:var(--sage-l)}
+
+  footer{border-top:1px solid var(--line);padding:22px clamp(20px,5vw,56px);font-size:12px;color:var(--stone-d);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+  footer p{max-width:780px}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="/" aria-label="REGEN, ir al inicio"><b>REGEN</b><span>Inversores · Socios · Especialistas</span></a>
+  <nav><a href="mailto:contacto@regen.ar">contacto@regen.ar</a></nav>
+</header>
+
+<main>
+  <section class="intro">
+    <p class="eyebrow">Salud biológica basada en evidencia · Córdoba</p>
+    <h1 class="display">Preguntale a <em>REGEN</em>.</h1>
+    <p class="lede">Una conversación de voz sobre el negocio, el producto, la arquitectura y cómo cuidamos los datos. Hablale como a alguien del equipo: si no sabe algo, no lo inventa, lo anota para la dirección.</p>
+    <ul class="promises">
+      <li>Lo construido, separado de lo planificado. Las cifras de mercado, con su fuente.</li>
+      <li>Sin promesas de retorno ni asesoramiento financiero: para eso está la reunión con la dirección.</li>
+      <li>Para especialistas: voz en tiempo real, guardrails, privacidad y el harness de evaluación, a nivel de diseño.</li>
+    </ul>
+  </section>
+
+  <section class="panel" aria-labelledby="panel-title">
+    <h2 id="panel-title" class="sr">Conversación</h2>
+
+    <div id="setup">
+      <div class="step-title"><span class="n">1</span><span class="eyebrow">¿Desde dónde venís?</span></div>
+      <div class="profiles" role="radiogroup" aria-label="Perfil">
+        <button class="profile" role="radio" aria-checked="false" data-profile="inversor"><span class="dot"></span><strong>Inversor</strong><small>Tesis, mercado, modelos de negocio y hoja de ruta.</small></button>
+        <button class="profile" role="radio" aria-checked="false" data-profile="socio"><span class="dot"></span><strong>Socio o aliado</strong><small>Laboratorios, empresas, farmacias, gimnasios, marcas.</small></button>
+        <button class="profile" role="radio" aria-checked="false" data-profile="especialista"><span class="dot"></span><strong>Especialista en IA o software</strong><small>Arquitectura, seguridad, evals y frentes abiertos.</small></button>
+      </div>
+      <div class="step-title"><span class="n">2</span><span class="eyebrow">Antes de empezar</span></div>
+      <label class="consent">
+        <input type="checkbox" id="consent">
+        <span>Entiendo que hablo con un asistente de inteligencia artificial que puede equivocarse, y que lo importante lo confirma la dirección de REGEN. Acepto que la conversación se transcriba para darle seguimiento; la transcripción se borra a los 90 días y mis datos de contacto solo se guardan si yo los dejo. Puedo pedir acceso o baja en <a href="mailto:hola@regen.ar">hola@regen.ar</a> (Ley 25.326). No es un canal de salud ni de urgencias: ante una urgencia, 107 o 911.</span>
+      </label>
+    </div>
+
+    <div class="stage">
+      <div class="orb-wrap"><canvas id="orb" width="480" height="480" aria-hidden="true"></canvas></div>
+      <p class="status" id="status" role="status" aria-live="polite">Elegí tu perfil y aceptá el aviso para empezar.</p>
+      <p class="timer" id="timer" aria-live="off"></p>
+      <div class="controls">
+        <button class="btn btn-primary" id="start" disabled>Empezar a hablar</button>
+        <button class="btn btn-ghost hidden" id="mute" aria-pressed="false">Silenciar micrófono</button>
+        <button class="btn btn-end hidden" id="end">Terminar</button>
+      </div>
+    </div>
+
+    <div id="live" class="hidden">
+      <div class="suggest" id="suggest" aria-label="Preguntas sugeridas"></div>
+      <form class="typed" id="typed" autocomplete="off">
+        <label class="sr" for="typed-input">Escribí tu pregunta</label>
+        <input id="typed-input" maxlength="400" placeholder="O escribí tu pregunta…">
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
+    <div class="captions" id="captions" aria-live="polite" aria-label="Subtítulos"></div>
+
+    <div id="done" class="done hidden">
+      <p class="eyebrow">Gracias</p>
+      <h2 class="display">Seguimos la conversación.</h2>
+      <p class="lede" id="done-text">La llamada terminó.</p>
+      <ul id="done-list"></ul>
+      <div class="controls" style="justify-content:flex-start">
+        <button class="btn btn-ghost" id="again">Volver a hablar</button>
+        <a class="btn btn-ghost" href="mailto:contacto@regen.ar">Escribir a la dirección</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>REGEN · Plataforma de salud biológica basada en evidencia · Córdoba, Argentina. Este asistente informa sobre REGEN; no constituye asesoramiento financiero, legal ni médico, ni una oferta de valores. Las cifras de los modelos de negocio son referencias de diseño a validar.</p>
+  <p><a href="/">regen.ar</a> · <a href="mailto:contacto@regen.ar">contacto@regen.ar</a></p>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  // ── Configuración ────────────────────────────────────────────────────
+  const IS_LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  const params = new URLSearchParams(location.search);
+  // En local se puede apuntar a otro Worker (pruebas): ?worker=http://...
+  const WORKER = (IS_LOCAL && params.get('worker')) || 'https://regen-agente.sebagaviglio.workers.dev';
+  const REALTIME_CALLS = 'https://api.openai.com/v1/realtime/calls';
+  const CONSENT_VERSION = 'inv-2026-11-04'; // = INVESTOR_CONSENT_VERSION del Worker
+  const SUGGESTIONS = {
+    inversor: ['¿Qué es REGEN y por qué ahora?', '¿Cuáles son los modelos de negocio?', '¿Qué está construido hoy?', '¿Cuáles son los principales riesgos?'],
+    socio: ['Tengo un laboratorio, ¿cómo trabajaríamos?', '¿Qué ofrecen para empresas?', '¿Cómo funciona la licencia del agente?', '¿Qué condiciones no se negocian?'],
+    especialista: ['¿Cómo está armada la voz?', '¿Cómo evitan que el modelo diagnostique?', '¿Cómo es el harness de evals?', '¿Qué frentes técnicos están abiertos?'],
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const ui = {
+    setup: $('setup'), consent: $('consent'), start: $('start'), mute: $('mute'), end: $('end'),
+    status: $('status'), timer: $('timer'), live: $('live'), suggest: $('suggest'), typed: $('typed'),
+    typedInput: $('typed-input'), captions: $('captions'), done: $('done'), doneText: $('done-text'),
+    doneList: $('done-list'), again: $('again'), orb: $('orb'),
+  };
+
+  const state = {
+    profile: null, phase: 'idle', // idle | connecting | live | ending | done
+    callId: null, pc: null, dc: null, mic: null, audio: null, maxSeconds: 900, startedAt: 0, tick: null,
+    transcript: [], // [{role, text}]
+    pending: new Map(), // item_id/response_id → elemento de subtítulo en curso
+    tools: new Map(), // call_id → promesa del guardado en el Worker
+    saved: { contact: false, meeting: false, questions: 0 },
+    levels: { in: 0, out: 0 }, analysers: [],
+  };
+
+  // ── Paso 1 y 2 ───────────────────────────────────────────────────────
+  document.querySelectorAll('.profile').forEach((b) => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.profile').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+      state.profile = b.dataset.profile;
+      refreshStart();
+    });
+  });
+  ui.consent.addEventListener('change', refreshStart);
+  function refreshStart() {
+    const ready = !!state.profile && ui.consent.checked;
+    ui.start.disabled = !ready;
+    if (state.phase === 'idle') setStatus(ready ? 'Cuando quieras. Vas a necesitar el micrófono.' : 'Elegí tu perfil y aceptá el aviso para empezar.');
+  }
+  function setStatus(text, err = false) {
+    ui.status.textContent = text;
+    ui.status.classList.toggle('err', err);
+  }
+
+  // ── Subtítulos y transcripción ───────────────────────────────────────
+  function addLine(role, text = '', key) {
+    const el = document.createElement('p');
+    el.className = `line ${role}`;
+    const who = document.createElement('span');
+    who.className = 'who';
+    who.textContent = role === 'assistant' ? 'REGEN' : role === 'user' ? 'Vos' : 'Nota';
+    const body = document.createElement('span');
+    body.textContent = text;
+    el.append(who, body);
+    ui.captions.append(el);
+    ui.captions.scrollTop = ui.captions.scrollHeight;
+    if (key) state.pending.set(key, body);
+    return body;
+  }
+  function appendDelta(key, delta) {
+    const body = state.pending.get(key) || addLine('assistant', '', key);
+    body.textContent += delta;
+    ui.captions.scrollTop = ui.captions.scrollHeight;
+  }
+  function finishLine(key, role, text) {
+    const body = state.pending.get(key);
+    const finalText = (text || body?.textContent || '').trim();
+    if (body) body.textContent = finalText;
+    else if (finalText) addLine(role, finalText);
+    state.pending.delete(key);
+    if (finalText) state.transcript.push({ role, text: finalText });
+  }
+
+  // ── Llamada ──────────────────────────────────────────────────────────
+  ui.start.addEventListener('click', start);
+  ui.end.addEventListener('click', () => end('usuario'));
+  ui.again.addEventListener('click', resetToIdle);
+  ui.mute.addEventListener('click', () => {
+    const track = state.mic?.getAudioTracks()[0];
+    if (!track) return;
+    track.enabled = !track.enabled;
+    ui.mute.setAttribute('aria-pressed', String(!track.enabled));
+    ui.mute.textContent = track.enabled ? 'Silenciar micrófono' : 'Activar micrófono';
+    setStatus(track.enabled ? 'Te escucho.' : 'Micrófono en silencio. Podés escribir tu pregunta.');
+  });
+
+  async function start() {
+    if (state.phase !== 'idle') return;
+    state.phase = 'connecting';
+    ui.start.disabled = true;
+    setStatus('Pidiendo permiso para el micrófono…');
+    try {
+      state.mic = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+    } catch {
+      return fail('Sin micrófono no podemos hablar. Revisá el permiso del navegador y probá de nuevo.');
+    }
+
+    setStatus('Conectando con REGEN…');
+    let session;
+    try {
+      const r = await fetch(`${WORKER}/investor/session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profile: state.profile, consent: true, consentVersion: CONSENT_VERSION }),
+      });
+      session = await r.json().catch(() => ({}));
+      if (!r.ok) return fail(session.error || 'No pudimos iniciar la llamada. Probá de nuevo.');
+    } catch {
+      return fail('No pudimos conectarnos. Revisá tu conexión y probá de nuevo.');
+    }
+    state.callId = session.callId;
+    state.maxSeconds = session.maxSeconds || 900;
+
+    try {
+      const pc = new RTCPeerConnection();
+      state.pc = pc;
+      state.audio = new Audio();
+      state.audio.autoplay = true;
+      pc.ontrack = (e) => {
+        state.audio.srcObject = e.streams[0];
+        meter(e.streams[0], 'out');
+      };
+      pc.addTrack(state.mic.getAudioTracks()[0], state.mic);
+      meter(state.mic, 'in');
+      pc.onconnectionstatechange = () => {
+        if (['failed', 'disconnected'].includes(pc.connectionState) && state.phase === 'live') {
+          addLine('note', 'Se cortó la conexión.');
+          end('error');
+        }
+      };
+      const dc = pc.createDataChannel('oai-events');
+      state.dc = dc;
+      dc.addEventListener('open', onLive);
+      dc.addEventListener('message', (m) => {
+        try { onEvent(JSON.parse(m.data)); } catch (err) { console.error('[REGEN voz] evento', err); }
+      });
+
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      const sdp = await fetch(REALTIME_CALLS, {
+        method: 'POST',
+        body: offer.sdp,
+        headers: { Authorization: `Bearer ${session.clientSecret}`, 'Content-Type': 'application/sdp' },
+      });
+      if (!sdp.ok) throw new Error(`sdp ${sdp.status}`);
+      await pc.setRemoteDescription({ type: 'answer', sdp: await sdp.text() });
+    } catch (err) {
+      console.error('[REGEN voz]', err);
+      return fail('No pudimos abrir el audio. Probá de nuevo en unos segundos.', 'error');
+    }
+  }
+
+  function onLive() {
+    state.phase = 'live';
+    state.startedAt = Date.now();
+    ui.setup.classList.add('hidden');
+    ui.start.classList.add('hidden');
+    ui.mute.classList.remove('hidden');
+    ui.end.classList.remove('hidden');
+    ui.live.classList.remove('hidden');
+    renderSuggestions();
+    setStatus('REGEN está por hablar…');
+    // Con detección de voz del servidor, el modelo espera a que hables: le pedimos que salude.
+    send({ type: 'response.create' });
+    state.tick = setInterval(tickTimer, 1000);
+    tickTimer();
+  }
+
+  function tickTimer() {
+    const left = state.maxSeconds - Math.floor((Date.now() - state.startedAt) / 1000);
+    const mm = Math.max(0, Math.floor(left / 60));
+    const ss = String(Math.max(0, left % 60)).padStart(2, '0');
+    ui.timer.textContent = `Quedan ${mm}:${ss}`;
+    if (left === 60) addLine('note', 'Queda un minuto de llamada. Si querés seguir, dejá tu contacto y la dirección te escribe.');
+    if (left <= 0) end('tiempo');
+  }
+
+  function send(obj) {
+    if (state.dc?.readyState === 'open') state.dc.send(JSON.stringify(obj));
+  }
+
+  async function onEvent(ev) {
+    switch (ev.type) {
+      case 'input_audio_buffer.speech_started':
+        setStatus('Te escucho…');
+        break;
+      case 'input_audio_buffer.speech_stopped':
+        setStatus('Pensando…');
+        break;
+      case 'conversation.item.input_audio_transcription.completed':
+        if (ev.transcript?.trim()) finishLine(`u:${ev.item_id}`, 'user', ev.transcript);
+        break;
+      case 'response.output_audio_transcript.delta':
+      case 'response.output_text.delta':
+        setStatus('REGEN está hablando. Podés interrumpir cuando quieras.');
+        appendDelta(`a:${ev.item_id || ev.response_id}`, ev.delta || '');
+        break;
+      case 'response.output_audio_transcript.done':
+      case 'response.output_text.done':
+        finishLine(`a:${ev.item_id || ev.response_id}`, 'assistant', ev.transcript ?? ev.text);
+        break;
+      case 'response.done': {
+        // Si la respuesta pidió herramientas, se espera a que terminen todas y recién
+        // ahí se pide la respuesta siguiente (una sola, aunque haya varias llamadas).
+        const calls = (ev.response?.output || []).filter((o) => o.type === 'function_call');
+        if (calls.length) {
+          for (const c of calls) if (!state.tools.has(c.call_id)) state.tools.set(c.call_id, runTool(c));
+          await Promise.all(calls.map((c) => state.tools.get(c.call_id)));
+          calls.forEach((c) => state.tools.delete(c.call_id));
+          send({ type: 'response.create' });
+        } else if (state.phase === 'live') setStatus('Te escucho.');
+        break;
+      }
+      case 'response.function_call_arguments.done':
+        // Se arranca apenas llegan los argumentos (el guardado no espera al fin de la respuesta).
+        if (!state.tools.has(ev.call_id)) state.tools.set(ev.call_id, runTool(ev));
+        break;
+      case 'error':
+        console.error('[REGEN voz] error', ev.error);
+        break;
+    }
+  }
+
+  async function runTool(ev) {
+    let args = {};
+    try { args = JSON.parse(ev.arguments || '{}'); } catch { /* argumentos inválidos */ }
+    let result = { ok: false, message: 'No se pudo guardar. Ofrecé el email contacto@regen.ar.' };
+    try {
+      const r = await fetch(`${WORKER}/investor/event`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ callId: state.callId, tool: ev.name, args }),
+      });
+      result = await r.json().catch(() => result);
+      if (r.ok && result.ok) {
+        if (ev.name === 'save_contact') { state.saved.contact = true; addLine('note', 'Contacto guardado para la dirección.'); }
+        if (ev.name === 'request_meeting') { state.saved.meeting = true; addLine('note', 'Pedido de reunión registrado.'); }
+        if (ev.name === 'log_open_question') { state.saved.questions++; addLine('note', 'Pregunta anotada para la dirección.'); }
+      }
+    } catch { /* se informa al modelo con el mensaje por defecto */ }
+    send({ type: 'conversation.item.create', item: { type: 'function_call_output', call_id: ev.call_id, output: JSON.stringify(result) } });
+  }
+
+  function renderSuggestions() {
+    ui.suggest.replaceChildren(...(SUGGESTIONS[state.profile] || []).map((q) => {
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.type = 'button';
+      b.textContent = q;
+      b.addEventListener('click', () => ask(q));
+      return b;
+    }));
+  }
+  ui.typed.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = ui.typedInput.value.trim();
+    if (q) ask(q);
+    ui.typedInput.value = '';
+  });
+  function ask(text) {
+    if (state.phase !== 'live') return;
+    addLine('user', text);
+    state.transcript.push({ role: 'user', text });
+    send({ type: 'response.cancel' }); // si estaba hablando, que escuche la pregunta nueva
+    send({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text }] } });
+    send({ type: 'response.create' });
+  }
+
+  function teardown() {
+    clearInterval(state.tick);
+    try { state.dc?.close(); } catch { /* ya cerrado */ }
+    try { state.pc?.close(); } catch { /* ya cerrado */ }
+    state.mic?.getTracks().forEach((t) => t.stop());
+    if (state.audio) state.audio.srcObject = null;
+    state.analysers = [];
+    state.pc = state.dc = state.mic = null;
+  }
+
+  function closingPayload(reason, maxChars = Infinity) {
+    let items = state.transcript.slice();
+    // Para el cierre de pestaña (keepalive tiene tope de ~64 KB) se mandan los últimos turnos.
+    while (items.length && JSON.stringify(items).length > maxChars) items.shift();
+    return JSON.stringify({ callId: state.callId, reason, transcript: items });
+  }
+
+  async function end(reason) {
+    if (state.phase !== 'live' && state.phase !== 'connecting') return;
+    const hadCall = !!state.callId && state.phase === 'live';
+    state.phase = 'ending';
+    for (const [key] of state.pending) finishLine(key, key.startsWith('u:') ? 'user' : 'assistant');
+    teardown();
+    setStatus('Cerrando…');
+    if (state.callId) {
+      try {
+        await fetch(`${WORKER}/investor/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: closingPayload(reason) });
+      } catch { /* el Worker la cierra solo con la tarea programada */ }
+    }
+    showDone(reason, hadCall);
+  }
+
+  function showDone(reason, hadCall) {
+    state.phase = 'done';
+    ui.live.classList.add('hidden');
+    ui.mute.classList.add('hidden');
+    ui.end.classList.add('hidden');
+    ui.timer.textContent = '';
+    ui.done.classList.remove('hidden');
+    setStatus('');
+    ui.doneText.textContent = reason === 'tiempo'
+      ? 'Llegamos al tiempo máximo de la llamada.'
+      : reason === 'error' && hadCall ? 'La llamada se cortó.' : 'La llamada terminó.';
+    const items = [];
+    if (state.saved.contact) items.push('Tu contacto quedó guardado: la dirección te escribe.');
+    if (state.saved.meeting) items.push('Pediste una reunión: te escribimos para coordinarla.');
+    if (state.saved.questions) items.push(`${state.saved.questions === 1 ? 'Una pregunta quedó anotada' : `${state.saved.questions} preguntas quedaron anotadas`} para que te responda la dirección.`);
+    if (!items.length) items.push('Si querés seguir, escribinos a contacto@regen.ar.');
+    ui.doneList.replaceChildren(...items.map((t) => { const li = document.createElement('li'); li.textContent = t; return li; }));
+  }
+
+  function fail(message, reason) {
+    const wasCall = !!state.callId;
+    teardown();
+    if (wasCall && reason) {
+      fetch(`${WORKER}/investor/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: closingPayload(reason) }).catch(() => {});
+    }
+    state.phase = 'idle';
+    state.callId = null;
+    ui.start.disabled = !(state.profile && ui.consent.checked);
+    setStatus(message, true);
+  }
+
+  function resetToIdle() {
+    state.phase = 'idle';
+    state.callId = null;
+    state.transcript = [];
+    state.pending.clear();
+    state.tools.clear();
+    state.saved = { contact: false, meeting: false, questions: 0 };
+    ui.captions.replaceChildren();
+    ui.done.classList.add('hidden');
+    ui.setup.classList.remove('hidden');
+    ui.start.classList.remove('hidden');
+    refreshStart();
+  }
+
+  // Si cierran la pestaña en plena llamada, se avisa el cierre (sin esperar respuesta).
+  window.addEventListener('pagehide', () => {
+    if (state.phase !== 'live' || !state.callId) return;
+    try {
+      fetch(`${WORKER}/investor/end`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: closingPayload('usuario', 60000) });
+    } catch { /* la tarea programada la cierra */ }
+  });
+
+  // ── Esfera ───────────────────────────────────────────────────────────
+  function meter(stream, kind) {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      state.ctx ||= new AC();
+      const src = state.ctx.createMediaStreamSource(stream);
+      const an = state.ctx.createAnalyser();
+      an.fftSize = 512;
+      src.connect(an);
+      state.analysers.push({ kind, an, buf: new Uint8Array(an.fftSize) });
+    } catch { /* sin medidor: la esfera respira igual */ }
+  }
+  function readLevels() {
+    for (const a of state.analysers) {
+      a.an.getByteTimeDomainData(a.buf);
+      let sum = 0;
+      for (const v of a.buf) { const x = (v - 128) / 128; sum += x * x; }
+      const rms = Math.min(1, Math.sqrt(sum / a.buf.length) * 4);
+      state.levels[a.kind] += (rms - state.levels[a.kind]) * 0.25;
+    }
+  }
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const g = ui.orb.getContext('2d');
+  function draw(t) {
+    readLevels();
+    const W = ui.orb.width, H = ui.orb.height, cx = W / 2, cy = H / 2;
+    g.clearRect(0, 0, W, H);
+    const live = state.phase === 'live';
+    const out = live ? state.levels.out : 0, inn = live ? state.levels.in : 0;
+    const breathe = reduce ? 0 : Math.sin(t / 1400) * 0.02;
+    const R = W * (0.3 + breathe + out * 0.07);
+    // halo
+    const halo = g.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 1.7);
+    halo.addColorStop(0, `rgba(120,143,118,${0.18 + out * 0.35})`);
+    halo.addColorStop(1, 'rgba(120,143,118,0)');
+    g.fillStyle = halo;
+    g.beginPath(); g.arc(cx, cy, R * 1.7, 0, Math.PI * 2); g.fill();
+    // anillo (isotipo)
+    g.lineWidth = W * 0.012;
+    g.strokeStyle = `rgba(244,239,229,${live ? 0.9 : 0.55})`;
+    g.beginPath();
+    const steps = 96;
+    for (let i = 0; i <= steps; i++) {
+      const a = (i / steps) * Math.PI * 2;
+      const wob = reduce ? 0 : Math.sin(a * 5 + t / 380) * out * W * 0.018 + Math.sin(a * 3 - t / 520) * inn * W * 0.012;
+      const x = cx + Math.cos(a) * (R + wob), y = cy * 0.96 + Math.sin(a) * (R + wob);
+      i ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
+    // núcleo sage y punto
+    g.fillStyle = '#788F76';
+    g.beginPath(); g.arc(cx, cy * 0.96 + R * 0.48, R * (0.42 + inn * 0.12), 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(191,177,156,.95)';
+    g.beginPath(); g.arc(cx, cy * 0.96 - R * 1.0, W * 0.016, 0, Math.PI * 2); g.fill();
+    if (!document.hidden) requestAnimationFrame(draw);
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) requestAnimationFrame(draw); });
+  requestAnimationFrame(draw);
+
+  // Para pruebas automáticas (test/inversores.test.mjs).
+  window.__regenVoice = { state };
+})();
+</script>
+</body>
+</html>

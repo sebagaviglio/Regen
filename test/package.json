@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test home.test.mjs"
+    "test": "node --test home.test.mjs inversores.test.mjs"
   },
   "devDependencies": {
     "playwright": "1.63.0"
