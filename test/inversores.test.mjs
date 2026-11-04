@@ -238,6 +238,23 @@ test('durante la llamada la conversación ocupa la pantalla y no se pierde el co
   await ctx.close();
 });
 
+test('si falla el audio, el visitante ve un mensaje prolijo y el detalle va al Worker', async () => {
+  const { page, ctx, calls } = await open();
+  await page.route('https://api.openai.com/v1/realtime/calls', (r) => r.fulfill({ status: 429, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: { message: 'You have no credits remaining.' } }) }));
+  await page.click('[data-profile="inversor"]');
+  await fillContact(page);
+  await page.check('#consent');
+  await page.click('#start');
+  await page.waitForSelector('#status.err');
+  const status = await page.textContent('#status');
+  assert.match(status, /no está disponible en este momento/);
+  assert.ok(!/credits|OpenAI|429/.test(status), 'sin detalle técnico en pantalla');
+  for (let i = 0; i < 20 && !calls.end.length; i++) await page.waitForTimeout(50);
+  assert.equal(calls.end[0].reason, 'error');
+  assert.match(calls.end[0].error, /OpenAI 429: You have no credits remaining/);
+  await ctx.close();
+});
+
 test('en el celular entra sin desbordar', async () => {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
   const page = await ctx.newPage();

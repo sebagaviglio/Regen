@@ -261,6 +261,7 @@
   const WORKER = (IS_LOCAL && params.get('worker')) || 'https://regen-agente.sebagaviglio.workers.dev';
   const REALTIME_CALLS = 'https://api.openai.com/v1/realtime/calls';
   const CONSENT_VERSION = 'inv-2026-11-04b'; // = INVESTOR_CONSENT_VERSION del Worker
+  const UNAVAILABLE = 'La llamada no está disponible en este momento. Probá de nuevo en un rato o escribinos a contacto@regen.ar.';
   const SUGGESTIONS = {
     inversor: ['¿Qué es REGEN y por qué ahora?', '¿Cuáles son los modelos de negocio?', '¿Qué está construido hoy?', '¿Cuáles son los principales riesgos?'],
     socio: ['Tengo un laboratorio, ¿cómo trabajaríamos?', '¿Qué ofrecen para empresas?', '¿Cómo funciona la licencia del agente?', '¿Qué condiciones no se negocian?'],
@@ -412,7 +413,7 @@
       session = await r.json().catch(() => ({}));
       if (!r.ok) return fail(session.error || 'No pudimos iniciar la llamada. Probá de nuevo.');
     } catch {
-      return fail('No pudimos conectarnos. Revisá tu conexión y probá de nuevo.');
+      return fail('No pudimos conectarnos. Revisá tu conexión a internet y probá de nuevo.');
     }
     try {
       localStorage.setItem('regen_inv_email', ui.email.value.trim());
@@ -461,7 +462,8 @@
       await pc.setRemoteDescription({ type: 'answer', sdp: await sdp.text() });
     } catch (err) {
       console.error('[REGEN voz]', err);
-      return fail(`No pudimos abrir el audio. Probá de nuevo en unos segundos. (Detalle: ${String(err?.message || err).slice(0, 180)})`, 'error');
+      // El detalle técnico no se muestra: viaja al Worker y le llega a la dirección en el resumen.
+      return fail(UNAVAILABLE, 'error', String(err?.message || err).slice(0, 300));
     }
   }
 
@@ -620,11 +622,13 @@
     scrollEnd(true);
   }
 
-  function fail(message, reason) {
+  function fail(message, reason, detail) {
     const wasCall = !!state.callId;
     teardown();
     if (wasCall && reason) {
-      fetch(`${WORKER}/investor/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: closingPayload(reason) }).catch(() => {});
+      const body = JSON.parse(closingPayload(reason));
+      if (detail) body.error = detail;
+      fetch(`${WORKER}/investor/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(() => {});
     }
     setPhase('idle');
     state.callId = null;
