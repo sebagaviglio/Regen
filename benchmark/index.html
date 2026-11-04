@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0E0F0D">
+<meta name="description" content="Benchmark competitivo de REGEN: competidores directos, regionales, globales e indirectos.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+<title>REGEN · Benchmark competitivo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant:ital,wght@0,300;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+/* Concepto: presentación a pantalla completa en el mundo nocturno de REGEN (mismo sistema que Noche Elite).
+   Cada lámina se revela por capas con desenfoque; el cierre vira a linen como en las demás piezas. */
+:root{
+  --night:#0E0F0D; --ink:#191917; --bone:#F9F8F4; --linen:#F4EFE5;
+  --sage:#788F76; --sage-lt:#A8BEA6; --stone:#BFB19C; --stone-dk:#8C7F6A; --gold:#C8A55E;
+  --muted:rgba(249,248,244,.58); --faint:rgba(249,248,244,.38); --hair:rgba(249,248,244,.14); --panel:rgba(25,25,23,.72);
+  --display:'Bodoni Moda','Didot',Georgia,serif;
+  --accent:'Cormorant','Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --ease:cubic-bezier(.16,.8,.3,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--night);color:var(--bone);font-family:var(--sans);font-weight:300;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+a{color:var(--sage-lt)}
+:focus-visible{outline:1px solid var(--sage-lt);outline-offset:3px}
+
+/* ---------- Escenario ---------- */
+.stage{position:fixed;inset:0;background:var(--night);transition:background 1.8s var(--ease)}
+.stage[data-bg="light"]{background:var(--linen)}
+#fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;transition:opacity 1.5s}
+.stage[data-bg="light"] #fx{opacity:.15}
+.grain{position:absolute;inset:-50%;z-index:6;pointer-events:none;opacity:.06;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation:grain 1.2s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+.vignette{position:absolute;inset:0;z-index:5;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.5) 100%);transition:opacity 1.8s}
+.stage[data-bg="light"] .vignette{opacity:.15}
+
+.slide{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;
+  padding-left:max(clamp(16px,6vw,104px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,6vw,104px),env(safe-area-inset-right,0px));
+  padding-block:calc(64px + env(safe-area-inset-top,0px)) calc(88px + env(safe-area-inset-bottom,0px));
+  opacity:0;visibility:hidden;transform:scale(1.015);transition:opacity .9s ease,transform 1.2s var(--ease),visibility 0s linear .9s}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity 1s ease .15s,transform 1.4s var(--ease),visibility 0s}
+.inner{width:min(1200px,100%);margin-inline:auto;max-height:100%;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;display:flex;flex-direction:column;gap:clamp(18px,3.4vh,36px);min-width:0}
+.inner::-webkit-scrollbar{display:none}
+.center{align-items:center;text-align:center}
+
+/* revelados: visibles por defecto; con JS se ocultan y entran por capas */
+.js [data-r]{opacity:0;transform:translateY(18px);filter:blur(8px);transition:opacity 1.3s var(--ease),transform 1.3s var(--ease),filter 1.3s var(--ease);transition-delay:0s}
+.js .slide.on [data-r]{opacity:1;transform:none;filter:none;transition-delay:calc(var(--d,0) * 1ms)}
+
+/* ---------- Tipografía ---------- */
+.chap{margin:0;font-weight:500;font-size:clamp(10px,1vw,12px);letter-spacing:.32em;text-transform:uppercase;color:var(--sage-lt)}
+.big{font-family:var(--display);font-weight:400;font-size:clamp(34px,5.6vw,88px);line-height:1.04;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.mid{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.4vw,52px);line-height:1.08;margin:0;text-wrap:balance}
+.lede{font-family:var(--accent);font-style:italic;font-weight:300;font-size:clamp(19px,2.1vw,32px);line-height:1.3;color:var(--muted);margin:0;max-width:40ch;text-wrap:balance}
+em{font-family:var(--accent);font-style:italic;font-weight:300;color:var(--sage-lt)}
+em.g{color:var(--gold)}
+.small{font-size:clamp(12px,1.05vw,14px);line-height:1.55;color:var(--muted);margin:0}
+.src{font-size:11px;letter-spacing:.04em;color:var(--faint);margin:0}
+.num{font-family:var(--display);font-variant-numeric:tabular-nums lining-nums}
+
+/* ---------- 1 · Portada ---------- */
+.logo{width:clamp(84px,11vw,150px);height:auto;overflow:visible}
+.logo circle{fill:none;stroke-width:1.3;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset 3s var(--ease)}
+.logo .c{stroke:var(--bone)}.logo .s{stroke:var(--sage-lt)}
+.logo circle:nth-child(2){transition-delay:.4s}.logo circle:nth-child(3){transition-delay:.7s}.logo circle:nth-child(4){transition-delay:1s}
+.slide.on .logo circle,html:not(.js).logo circle{stroke-dashoffset:0}
+.logo .sg{transform-origin:300px 300px;transform:rotate(-200deg);transition:transform 4s cubic-bezier(.45,0,.15,1) .6s}
+.slide.on .logo .sg{transform:rotate(0)}
+.cover .meta{display:flex;flex-wrap:wrap;gap:8px 26px;justify-content:center}
+.cover .meta span{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+
+/* ---------- 2 · Respuesta ---------- */
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair);width:100%}
+.trio div{background:var(--night);padding:clamp(16px,2.4vw,30px);display:grid;gap:10px;align-content:start;text-align:left}
+.trio b{font-family:var(--display);font-weight:400;font-size:clamp(20px,2vw,30px);line-height:1.15}
+.trio p{margin:0;color:var(--muted);font-size:clamp(13px,1.1vw,15px);line-height:1.5}
+.trio i{font-style:normal;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+
+/* ---------- Tarjetas de competidores ---------- */
+.head{display:grid;gap:10px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.4vw,18px)}
+.card{border:1px solid var(--hair);background:var(--panel);padding:clamp(14px,1.6vw,22px);display:flex;flex-direction:column;gap:8px;min-width:0;position:relative}
+.card .k{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--stone-dk);font-weight:500}
+.card h3{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(19px,1.8vw,26px);line-height:1.15}
+.card p{margin:0;font-size:clamp(12.5px,1vw,14px);line-height:1.5;color:var(--muted)}
+.card .price{color:var(--bone);font-variant-numeric:tabular-nums}
+.card .read{margin-top:auto;padding-top:10px;border-top:1px solid var(--hair);color:var(--stone)}
+.card.hot{border-color:rgba(200,165,94,.55)}
+.card.hot::after{content:"Rival a vigilar";position:absolute;top:-1px;right:-1px;background:var(--gold);color:var(--ink);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;padding:5px 9px}
+
+/* ---------- 4 · ERA vs REGEN ---------- */
+.vs{display:grid;grid-template-columns:minmax(90px,.55fr) minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--hair)}
+.vs > div{padding:clamp(12px,1.8vh,20px) clamp(10px,1.4vw,20px);border-bottom:1px solid var(--hair);font-size:clamp(13px,1.15vw,16px);line-height:1.45;min-width:0}
+.vs .lab{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone-dk);font-weight:500;padding-left:0}
+.vs .th{font-family:var(--display);font-size:clamp(20px,2.2vw,32px);font-weight:400;border-bottom-color:var(--stone-dk)}
+.vs .th.r{color:var(--sage-lt)}
+.vs .r{background:rgba(120,143,118,.08)}
+.callout{display:flex;gap:16px;align-items:flex-start;border-left:1px solid var(--gold);padding:4px 0 4px 18px}
+.callout p{margin:0;font-family:var(--accent);font-style:italic;font-size:clamp(18px,1.8vw,26px);line-height:1.3}
+
+/* ---------- 6 · Escala de precios ---------- */
+.scale{position:relative;height:clamp(230px,34vh,300px);margin:8px 0 0}
+.scale .axis{position:absolute;left:0;right:0;top:50%;height:1px;background:var(--hair)}
+.scale .fill{position:absolute;left:0;top:50%;height:1px;background:linear-gradient(90deg,var(--sage),var(--gold));transform-origin:left;transform:scaleX(0);transition:transform 2.6s var(--ease) .4s;width:100%}
+.slide.on .scale .fill,html:not(.js).scale .fill{transform:scaleX(1)}
+.tick{position:absolute;bottom:0;transform:translateX(-50%);font-size:10.5px;color:var(--faint);letter-spacing:.06em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tick::before{content:"";position:absolute;left:50%;bottom:calc(clamp(230px,34vh,300px) / 2 - 4px);width:1px;height:8px;background:var(--hair)}
+.pt{position:absolute;top:50%;width:0;height:0}
+.pt .dot{position:absolute;left:-6px;top:-6px;width:12px;height:12px;border-radius:50%;background:var(--night);border:1px solid var(--stone)}
+.pt .stem{position:absolute;left:0;width:1px;background:var(--hair)}
+.pt .lb{position:absolute;transform:translateX(-50%);white-space:nowrap;text-align:center;display:grid;gap:2px}
+.pt .lb b{font-weight:500;font-size:clamp(11px,1vw,13px);color:var(--bone)}
+.pt .lb span{font-size:clamp(10.5px,.9vw,12px);color:var(--muted);font-variant-numeric:tabular-nums}
+.pt.dn .stem{top:6px;height:var(--h)}.pt.dn .lb{top:calc(var(--h) + 8px)}
+.pt.up .stem{bottom:6px;height:var(--h)}.pt.up .lb{bottom:calc(var(--h) + 8px)}
+.pt.rg .dot{background:var(--sage);border-color:var(--sage-lt);box-shadow:0 0 0 0 rgba(168,190,166,.5);animation:pulse 2.6s infinite 2s}
+.pt.rg .lb b{color:var(--sage-lt)}
+.pt.lx .dot{border-color:var(--gold)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(168,190,166,.55)}70%{box-shadow:0 0 0 14px rgba(168,190,166,0)}100%{box-shadow:0 0 0 0 rgba(168,190,166,0)}}
+.zones{display:flex;justify-content:space-between;gap:16px}
+.zones span{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--stone)}
+.facts{display:flex;flex-wrap:wrap;gap:8px 10px}
+.facts span{border:1px solid var(--hair);padding:7px 12px;font-size:clamp(11.5px,.95vw,13px);color:var(--muted)}
+.facts b{color:var(--bone);font-weight:500}
+
+/* ---------- 7 · Videojuegos ---------- */
+.alts{list-style:none;margin:0;padding:0;display:grid;gap:clamp(4px,1vh,10px)}
+.alts li{font-family:var(--accent);font-style:italic;font-weight:300;font-size:clamp(24px,3.4vw,50px);line-height:1.15}
+.alts li.last{color:var(--gold)}
+
+/* ---------- 8 · Amenazas ---------- */
+.legend{display:flex;gap:18px;flex-wrap:wrap}
+.legend span,.lvl{display:inline-flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.legend i,.lvl i{width:8px;height:8px;border-radius:50%}
+.a i{background:var(--gold)} .m i{background:var(--sage-lt)} .b i{background:transparent;border:1px solid var(--stone-dk)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.tile{background:var(--night);padding:clamp(12px,1.3vw,18px);display:flex;flex-direction:column;gap:6px;min-width:0}
+.tile .need{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone-dk);font-weight:500}
+.tile h3{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(16px,1.45vw,21px);line-height:1.15}
+.tile .cost{font-size:clamp(11.5px,.95vw,13px);color:var(--bone);font-variant-numeric:tabular-nums}
+.tile .miss{font-size:clamp(11.5px,.92vw,12.5px);color:var(--muted);line-height:1.4;margin-top:auto}
+.tile.A{box-shadow:inset 0 2px 0 var(--gold)} .tile.M{box-shadow:inset 0 2px 0 var(--sage)} .tile.B{box-shadow:inset 0 2px 0 var(--hair)}
+
+/* ---------- 9 · Cifras ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,2.4vw,40px)}
+.stat{display:grid;gap:10px;align-content:start;border-top:1px solid var(--hair);padding-top:16px}
+.stat .num{font-size:clamp(40px,5vw,78px);line-height:.95;color:var(--bone)}
+.stat .num small{font-family:var(--accent);font-style:italic;font-size:.42em;color:var(--gold);margin-left:.15em}
+.stat p{margin:0;font-size:clamp(12.5px,1.05vw,15px);line-height:1.45;color:var(--muted)}
+
+/* ---------- 10 · Por cuenta propia ---------- */
+.bars{display:grid;gap:clamp(22px,4vh,40px)}
+.bar{display:grid;gap:10px}
+.bar .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.bar .top b{font-family:var(--display);font-weight:400;font-size:clamp(20px,2.2vw,32px)}
+.bar .top span{font-family:var(--display);font-size:clamp(24px,3vw,44px);font-variant-numeric:tabular-nums}
+.track{display:flex;height:clamp(30px,5vh,46px);gap:2px}
+.seg{height:100%;transform-origin:left;transform:scaleX(0);transition:transform 1.6s var(--ease);display:flex;align-items:center;padding-left:10px;overflow:hidden;text-overflow:ellipsis;font-size:11px;letter-spacing:.06em;color:var(--ink);white-space:nowrap;font-weight:500;min-width:0}
+.slide.on .seg,html:not(.js).seg{transform:scaleX(1)}
+.seg.s1{background:var(--stone)} .seg.s2{background:var(--stone-dk);color:var(--bone)} .seg.s3{background:#6B6152;color:var(--bone)}
+.seg.rg{background:var(--sage);color:var(--ink)}
+.slide.on .seg.s2{transition-delay:.35s}.slide.on .seg.s3{transition-delay:.6s}.slide.on .seg.rg{transition-delay:1.2s}
+.keyrow{display:flex;flex-wrap:wrap;gap:8px 22px}
+.keyrow span{display:inline-flex;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.keyrow i{width:10px;height:10px}
+.punch{font-family:var(--display);font-size:clamp(24px,3vw,44px);line-height:1.1;margin:0;text-wrap:balance}
+
+/* ---------- 11 · Mapa ---------- */
+.mapwrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:stretch}
+.yax{writing-mode:vertical-rl;transform:rotate(180deg);display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone)}
+.yax b{color:var(--bone);font-weight:500}
+.quad{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--hair)}
+.q{padding:clamp(12px,1.6vw,22px);display:flex;flex-direction:column;gap:8px;min-width:0}
+.q:nth-child(1){background:rgba(120,143,118,.1);border-right:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.q:nth-child(2){border-bottom:1px solid var(--hair)}
+.q:nth-child(3){border-right:1px solid var(--hair)}
+.q h4{margin:0 0 4px;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);font-weight:500}
+.chip{border:1px solid var(--hair);padding:7px 11px;font-size:clamp(12px,1vw,14px);line-height:1.25}
+.chip.me{border-color:var(--sage-lt);background:rgba(120,143,118,.22);font-weight:500;animation:glow 3s infinite 1.5s}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(168,190,166,0)}50%{box-shadow:0 0 0 4px rgba(168,190,166,.18)}}
+.xax{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--stone);grid-column:2}
+.xax b{color:var(--bone);font-weight:500}
+
+/* ---------- 12-13 · Listas ---------- */
+.two{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(20px,5vw,80px);align-items:start}
+.risks{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.risks li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;padding:clamp(12px,2vh,20px) 0;border-top:1px solid var(--hair)}
+.risks li:last-child{border-bottom:1px solid var(--hair)}
+.risks .who{grid-row:span 2;font-family:var(--display);font-size:clamp(16px,1.5vw,22px);color:var(--gold);min-width:7.5em}
+.risks h3{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(17px,1.6vw,23px);line-height:1.2}
+.risks p{margin:0;color:var(--muted);font-size:clamp(12.5px,1.05vw,14.5px);line-height:1.45}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,2.4vh,26px) clamp(20px,3vw,48px);counter-reset:s}
+.steps li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 16px;counter-increment:s}
+.steps li::before{content:counter(s);grid-row:span 2;font-family:var(--display);font-size:clamp(22px,2.2vw,32px);color:var(--sage-lt);line-height:1}
+.steps h3{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(18px,1.7vw,25px);line-height:1.15}
+.steps p{margin:0;color:var(--muted);font-size:clamp(12.5px,1.05vw,14.5px);line-height:1.5}
+
+/* ---------- 14 · Cierre (luz) ---------- */
+.slide.light{color:var(--ink)}
+.slide.light .lede{color:var(--stone-dk)}
+.slide.light em{color:var(--sage)}
+.slide.light .chap{color:var(--sage)}
+.wordmark{font-family:var(--display);font-weight:400;font-size:clamp(56px,11vw,170px);line-height:1;letter-spacing:.12em;margin:0;padding-left:.12em;display:flex;justify-content:center}
+.wordmark span{display:inline-block}
+.js .wordmark span{opacity:0;filter:blur(14px);transform:scale(1.2);transition:opacity 2s var(--ease),filter 2s var(--ease),transform 2.4s var(--ease)}
+.js .slide.on .wordmark span{opacity:1;filter:none;transform:none}
+.slide.on .wordmark span:nth-child(2){transition-delay:.2s}.slide.on .wordmark span:nth-child(3){transition-delay:.4s}.slide.on .wordmark span:nth-child(4){transition-delay:.6s}.slide.on .wordmark span:nth-child(5){transition-delay:.8s}
+.close-line{font-family:var(--accent);font-style:italic;font-weight:300;font-size:clamp(28px,4vw,62px);line-height:1.12;margin:0;text-wrap:balance}
+.slide.light .src{color:var(--stone-dk)}
+.srcbtn{background:none;border:0;border-bottom:1px solid currentColor;padding:2px 0;cursor:pointer;font-size:13px;color:var(--stone-dk)}
+
+/* ---------- HUD ---------- */
+.hud{position:fixed;left:0;right:0;bottom:0;z-index:15;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(0deg,rgba(14,15,13,.85),transparent);transition:background 1.8s}
+.stage[data-bg="light"] ~ .hud{background:linear-gradient(0deg,rgba(244,239,229,.9),transparent);color:var(--ink)}
+.where{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.where b{color:var(--bone);font-weight:500}
+.stage[data-bg="light"] ~ .hud .where{color:var(--stone-dk)} .stage[data-bg="light"] ~ .hud .where b{color:var(--ink)}
+.ctl{display:flex;gap:6px;flex-shrink:0}
+.ib{width:40px;height:40px;display:grid;place-items:center;border:1px solid var(--hair);background:rgba(14,15,13,.6);cursor:pointer;border-radius:50%;transition:border-color .3s;color:var(--bone)}
+.ib:hover{border-color:var(--sage-lt)}
+.ib svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.4}
+.stage[data-bg="light"] ~ .hud .ib{background:rgba(244,239,229,.7);border-color:rgba(25,25,23,.2);color:var(--ink)}
+.dots{position:fixed;top:calc(18px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:15;display:flex;gap:5px}
+.dots button{width:18px;height:14px;padding:0;border:0;background:none;cursor:pointer;display:grid;align-items:center}
+.dots button::after{content:"";height:2px;background:rgba(249,248,244,.2);transition:background .5s}
+.dots button.on::after{background:var(--sage-lt)}
+.stage[data-bg="light"] ~ .dots button::after{background:rgba(25,25,23,.18)}
+.stage[data-bg="light"] ~ .dots button.on::after{background:var(--sage)}
+.brand{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:max(16px,env(safe-area-inset-left,0px));z-index:15;display:flex;align-items:center;gap:9px;font-family:var(--display);letter-spacing:.14em;font-size:13px;color:var(--bone);opacity:.75;transition:color 1.8s}
+.stage[data-bg="light"] ~ .brand{color:var(--ink)}
+.brand svg{width:20px;height:20px}
+
+/* ---------- Fuentes ---------- */
+.sheet{position:fixed;inset:0;z-index:30;background:rgba(14,15,13,.97);overflow:auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:calc(40px + env(safe-area-inset-top,0px)) calc(60px + env(safe-area-inset-bottom,0px))}
+.sheet .wrap{max-width:760px;margin:0 auto;display:grid;gap:18px}
+.sheet h2{font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);margin:0;flex:1}
+.sheet .bar2{display:flex;gap:12px;align-items:center}
+.sheet ul{margin:0;padding:0;list-style:none;display:grid;gap:0}
+.sheet li{padding:10px 0;border-top:1px solid var(--hair);font-size:14px;line-height:1.45}
+.sheet li span{color:var(--faint);font-size:12px;margin-left:6px}
+.btn{padding:10px 18px;border:1px solid var(--hair);background:transparent;cursor:pointer;font-size:13px;color:var(--bone)}
+.btn:hover{border-color:var(--sage-lt)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .slide{justify-content:flex-start;padding-block:calc(52px + env(safe-area-inset-top,0px)) calc(76px + env(safe-area-inset-bottom,0px))}
+  .center{justify-content:center}
+  .inner{gap:16px}
+  .trio,.cards{grid-template-columns:1fr}
+  .vs{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .vs .lab{grid-column:1 / -1;padding-bottom:0;border-bottom:0}
+  .vs .blank{display:none}
+  .quad{grid-template-columns:1fr}
+  .q:nth-child(n){border-right:0;border-bottom:1px solid var(--hair)}
+  .mapwrap{grid-template-columns:1fr}
+  .yax{display:none}
+  .xax{grid-column:1}
+  .scale{height:260px}
+  .pt .lb b{font-size:10.5px}.pt .lb span{font-size:10px}
+  .tick.hide-sm{display:none}
+  .tick::before{display:none}
+  .brand{display:none}
+  .dots{gap:3px}.dots button{width:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .js [data-r],.js .wordmark span{filter:none!important;transform:none!important;transition-duration:.5s!important}
+  .grain,.pt.rg .dot,.chip.me{animation:none}
+  .logo .sg{transition:none;transform:none}
+  .slide{transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <!-- 1 · Portada -->
+  <section class="slide cover" data-name="Portada">
+    <div class="inner center">
+      <svg class="logo" viewBox="0 0 600 600" aria-hidden="true">
+        <g><circle class="c" cx="300" cy="300" r="240" pathLength="1"/><circle class="c" cx="300" cy="300" r="150" pathLength="1"/></g>
+        <g class="sg"><circle class="s" cx="357" cy="243" r="240" pathLength="1"/><circle class="s" cx="357" cy="243" r="150" pathLength="1"/></g>
+      </svg>
+      <p class="chap" data-r style="--d:500">Benchmark competitivo · Noviembre 2026</p>
+      <h1 class="big" data-r style="--d:900">¿Contra quién compite <em>REGEN?</em></h1>
+      <p class="lede" data-r style="--d:1700">Los que venden lo mismo, los que podrían llegar, y lo que el target hace cuando no nos elige.</p>
+      <div class="meta" data-r style="--d:2400"><span>Argentina</span><span>LATAM</span><span>Global</span><span>Indirectos</span></div>
+    </div>
+  </section>
+
+  <!-- 2 · La respuesta corta -->
+  <section class="slide" data-name="La respuesta corta">
+    <div class="inner">
+      <p class="chap" data-r>La respuesta corta</p>
+      <h2 class="big" data-r style="--d:300">En Argentina, nadie hace <em>lo que hace REGEN.</em></h2>
+      <div class="trio" data-r style="--d:1100">
+        <div><i>Precio</i><b>Suscripción desde $59.999 por mes</b><p>Core ~US$39 y Activo ~US$91, al dólar MEP del modelo ($1.539).</p></div>
+        <div><i>Acompañamiento</i><b>Coach humano, IA 24 horas y firma médica</b><p>Lo que ningún competidor local junta en un mismo plan.</p></div>
+        <div><i>Medición</i><b>Biomarcadores a domicilio en todo el país</b><p>El ciclo medir, intervenir y volver a medir, por suscripción.</p></div>
+      </div>
+      <p class="lede" data-r style="--d:2000">El rival más cercano es una clínica presencial. El más peligroso es <em class="g">no hacer nada.</em></p>
+    </div>
+  </section>
+
+  <!-- 3 · Directos Argentina -->
+  <section class="slide" data-name="Directos en Argentina">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>Competidores directos · Argentina</p>
+        <h2 class="mid" data-r style="--d:250">Seis jugadores venden prevención. <em>Ninguno con el mismo modelo.</em></h2>
+      </div>
+      <div class="cards">
+        <article class="card hot" data-r style="--d:700"><span class="k">Clínica · San Isidro</span><h3>ERA Longevity</h3><p>Score de longevidad, especialistas, terapias regenerativas y app con teleconsulta.</p><p class="price">Consulta $150.000 · protocolo 3 meses ~$300.000</p><p class="read">+3.700 pacientes · capacidad 1.500 por mes</p></article>
+        <article class="card" data-r style="--d:850"><span class="k">Startup · CABA</span><h3>Kiwell</h3><p>App de bienestar con IA y plan armado por profesionales. Freemium, con actividades presenciales.</p><p class="price">Plan básico gratis · personalizado por suscripción</p><p class="read">3.500 usuarios pagos · sin biomarcadores</p></article>
+        <article class="card" data-r style="--d:1000"><span class="k">Genómica · Recoleta</span><h3>Genix</h3><p>Estudios genéticos preventivos con consejería y especialistas.</p><p class="price">US$800 a US$4.000 por estudio</p><p class="read">Pago único, sin seguimiento continuo</p></article>
+        <article class="card" data-r style="--d:1150"><span class="k">E-commerce</span><h3>Longevity Co</h3><p>Suplementos y wearables de terceros, curados por un board médico, más un servicio de edad biológica.</p><p class="price">NMN $127.992 · Omega 3 $59.492</p><p class="read">Vende producto, no programa</p></article>
+        <article class="card" data-r style="--d:1300"><span class="k">B2B · Crónicos</span><h3>Motivia</h3><p>IA para adherencia en obesidad, diabetes e hipertensión. Vende a prepagas, clínicas y laboratorios.</p><p class="price">Pre-seed US$1,2M · clientes Omint y Cormillot</p><p class="read">Compite si REGEN entra en empresas</p></article>
+        <article class="card" data-r style="--d:1450"><span class="k">Instituciones</span><h3>Chequeos ejecutivos</h3><p>Favaloro, Ineba, Rossi, Deragopyan, Diagnóstico Maipú, Swiss Medical Welltest.</p><p class="price">$170.000 a $652.622 particular · cubierto por prepagas</p><p class="read">Una foto al año, sin plan</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · ERA vs REGEN -->
+  <section class="slide" data-name="ERA vs REGEN">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>El rival a vigilar</p>
+        <h2 class="mid" data-r style="--d:250">ERA Longevity juega en <em>la misma liga</em>, con otra cancha.</h2>
+      </div>
+      <div class="vs" data-r style="--d:700">
+        <div class="lab blank"></div><div class="th">ERA Longevity</div><div class="th r">REGEN</div>
+        <div class="lab">Formato</div><div>Clínica presencial en San Isidro, más de 20 consultorios</div><div class="r">Plataforma digital con alcance nacional y análisis a domicilio</div>
+        <div class="lab">Precio</div><div>Consulta $150.000 · protocolo de 3 meses ~$300.000 · ticket medio US$300–400</div><div class="r">Core $59.999 por mes · Activo $139.999 por mes</div>
+        <div class="lab">Equipo</div><div>Más de 20 especialistas, terapias regenerativas</div><div class="r">Coach humano certificado, IA 24 horas, validación médica periódica</div>
+      </div>
+      <div class="callout" data-r style="--d:1400"><p>Ya tiene app (desde US$35 por 3 meses) y planea licenciar su modelo como software para escalar en la región.</p></div>
+      <p class="src" data-r style="--d:1700">Forbes Argentina, 20/10/2026 · iProfesional, 15/10/2026 · Perfil, 19/10/2026</p>
+    </div>
+  </section>
+
+  <!-- 5 · LATAM -->
+  <section class="slide" data-name="Referentes LATAM">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>Referentes en la región</p>
+        <h2 class="mid" data-r style="--d:250">Nadie opera aún en Argentina. <em>Cualquiera podría llegar.</em></h2>
+      </div>
+      <div class="cards">
+        <article class="card hot" data-r style="--d:700"><span class="k">Colombia · expandiéndose</span><h3>Humanolab</h3><p>100+ biomarcadores en una extracción, médico asignado, asistente con IA, score y edad biológica, plan en app por 12 meses.</p><p class="price">Membresías Base y Pro, más ventas a empresas</p><p class="read">El análogo regional más cercano. No tiene coach humano asignado</p></article>
+        <article class="card" data-r style="--d:900"><span class="k">Brasil · São Paulo</span><h3>Fleury Lifecare</h3><p>Unidad de longevidad del grupo Fleury: alimentación, movimiento, sueño, estrés, menopausia y vínculos.</p><p class="price">Consulta inicial R$1.500 · inversión R$35 millones</p><p class="read">Público premium desde los 35 años: el mismo ICP de REGEN</p></article>
+        <article class="card" data-r style="--d:1100"><span class="k">Londres · opera en Perú</span><h3>Axo Longevity</h3><p>Suscripción de laboratorio: 100+ biomarcadores, dos análisis por año en 1.400 laboratorios asociados.</p><p class="price">€190 a €490 por año · seed US$5M</p><p class="read">~1.000 miembros, +50% mensual. A un paso del Cono Sur</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Global -->
+  <section class="slide" data-name="Referentes globales">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>Referentes globales · costo anual en dólares</p>
+        <h2 class="mid" data-r style="--d:250">Dos mundos: laboratorio barato o lujo. <em>REGEN queda en el medio.</em></h2>
+      </div>
+      <div class="zones" data-r style="--d:500"><span>Membresía de laboratorio</span><span>Concierge de lujo</span></div>
+      <div class="scale" id="scale" data-r style="--d:600" aria-label="Escala logarítmica de costo anual: Superpower y Function cerca de US$350, REGEN Core US$468, REGEN Activo US$1.092, Preamble US$6.500, Equinox US$42.000, Continuum US$120.000">
+        <div class="axis"></div><div class="fill"></div>
+      </div>
+      <div class="facts" data-r style="--d:1600">
+        <span><b>Function Health</b> · +500.000 miembros · valuación US$2.500M</span>
+        <span><b>Superpower</b> · US$34M levantados</span>
+        <span><b>Neko Health</b> · £299 por escaneo · Serie C US$700M</span>
+        <span><b>Hone Health</b> · ~US$113M de ingresos anuales</span>
+      </div>
+      <p class="src" data-r style="--d:1900">Escala logarítmica. REGEN anualizado (Core $59.999 y Activo $139.999 × 12 al MEP $1.539). Continuum: US$10.000 por mes.</p>
+    </div>
+  </section>
+
+  <!-- 7 · Videojuegos -->
+  <section class="slide" data-name="Los indirectos">
+    <div class="inner center">
+      <p class="chap" data-r>Competidores indirectos</p>
+      <p class="lede" data-r style="--d:300">El chico que no va al salón de videojuegos no se queda en casa: va a la plaza o al cine.</p>
+      <h2 class="mid" data-r style="--d:1500">El que no contrata REGEN…</h2>
+      <ul class="alts">
+        <li data-r style="--d:2400">hace el chequeo de la prepaga,</li>
+        <li data-r style="--d:3000">va al gimnasio,</li>
+        <li data-r style="--d:3600">consulta a un nutricionista,</li>
+        <li data-r style="--d:4200">le pregunta a ChatGPT,</li>
+        <li class="last" data-r style="--d:5000">o no hace nada.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 8 · Mapa de amenazas -->
+  <section class="slide" data-name="Alternativas del target">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>Doce alternativas, por necesidad</p>
+        <h2 class="mid" data-r style="--d:250">Cada una resuelve una parte. <em>Ninguna, el sistema.</em></h2>
+        <div class="legend" data-r style="--d:450"><span class="a"><i></i>Amenaza alta</span><span class="m"><i></i>Media</span><span class="b"><i></i>Baja</span></div>
+      </div>
+      <div class="tiles" data-r style="--d:700">
+        <div class="tile A"><span class="need">Saber cómo estoy</span><h3>Chequeo anual de la prepaga</h3><span class="cost">$0 con prepaga · $170.000–652.622 particular</span><span class="miss">Le falta: plan y seguimiento</span></div>
+        <div class="tile A"><span class="need">Ponerme en forma</span><h3>Gimnasio</h3><span class="cost">$38.250–275.000 por mes</span><span class="miss">Le falta: medición biológica y nutrición</span></div>
+        <div class="tile A"><span class="need">Comer mejor</span><h3>Nutricionista</h3><span class="cost">Online $150.000–600.000 por mes</span><span class="miss">Le falta: los otros pilares</span></div>
+        <div class="tile A"><span class="need">Tener respuestas</span><h3>IA gratuita</h3><span class="cost">ChatGPT Health · Google Health Coach US$9,99</span><span class="miss">Le falta: médico que firme y análisis propios</span></div>
+        <div class="tile A"><span class="need">Esperar síntomas</span><h3>No hacer nada</h3><span class="cost">$0 hoy</span><span class="miss">Le falta: todo</span></div>
+        <div class="tile M"><span class="need">Entrenar con guía</span><h3>Personal trainer y pilates</h3><span class="cost">Pilates $45.000–140.000 por 8 clases</span><span class="miss">Le falta: biomarcadores y médico</span></div>
+        <div class="tile M"><span class="need">Bajar de peso rápido</span><h3>GLP-1</h3><span class="cost">$350.000–1.000.000 por mes</span><span class="miss">Le falta: hábitos y masa muscular</span></div>
+        <div class="tile M"><span class="need">Medirme</span><h3>Wearables</h3><span class="cost">Whoop US$199–359 por año · Oura US$399</span><span class="miss">Le falta: interpretación clínica</span></div>
+        <div class="tile M"><span class="need">Suplementarme</span><h3>Farmacia y Mercado Libre</h3><span class="cost">$40.000–130.000 por producto</span><span class="miss">Le falta: diagnóstico y dosis</span></div>
+        <div class="tile M"><span class="need">Aprender solo</span><h3>Podcasts e influencers</h3><span class="cost">Gratis</span><span class="miss">Le falta: un plan medido</span></div>
+        <div class="tile B"><span class="need">Moverme en grupo</span><h3>Running clubs</h3><span class="cost">$0 o la inscripción</span><span class="miss">Le falta: personalización</span></div>
+        <div class="tile B"><span class="need">Usar lo que tengo</span><h3>Beneficios de la prepaga</h3><span class="cost">Incluido en la cuota</span><span class="miss">Le falta: médico y biomarcadores</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · Cifras -->
+  <section class="slide" data-name="El tamaño de los indirectos">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>El tamaño de los indirectos</p>
+        <h2 class="mid" data-r style="--d:250">El target ya invierte en salud. <em>Solo que en pedazos.</em></h2>
+      </div>
+      <div class="stats">
+        <div class="stat" data-r style="--d:600"><span class="num"><span class="count" data-to="3.6" data-dec="1">3,6</span><small>millones</small></span><p>usan gimnasio en Argentina: 9% de la población, la penetración más alta de LATAM.</p></div>
+        <div class="stat" data-r style="--d:850"><span class="num"><span class="count" data-to="230">230</span><small>millones</small></span><p>de personas preguntan de salud a ChatGPT cada semana en el mundo.</p></div>
+        <div class="stat" data-r style="--d:1100"><span class="num"><span class="count" data-to="21.5" data-dec="1">21,5</span><small>%</small></span><p>de los argentinos cree que Google o ChatGPT responden mejor que un médico.</p></div>
+        <div class="stat" data-r style="--d:1350"><span class="num"><span class="count" data-to="47884">47.884</span></span><p>inscripciones en la Maratón y la Media de Buenos Aires 2026.</p></div>
+      </div>
+      <p class="src" data-r style="--d:1700">Mercado Fitness vía El Cronista (sept-2026) · OpenAI (ene-2026) · DatosClaros vía Forbes Argentina · Forbes Argentina (2026)</p>
+    </div>
+  </section>
+
+  <!-- 10 · Por cuenta propia -->
+  <section class="slide" data-name="Por cuenta propia vs REGEN">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>Costo mensual · sin contar el gimnasio</p>
+        <h2 class="mid" data-r style="--d:250">Armarlo por cuenta propia sale <em class="g">39% más</em>, y nadie une los datos.</h2>
+      </div>
+      <div class="bars" data-r style="--d:600">
+        <div class="bar">
+          <div class="top"><b>Por cuenta propia</b><span>~$194.700</span></div>
+          <div class="track" role="img" aria-label="Nutricionista online $150.000, Whoop $25.500, chequeo particular $19.200">
+            <div class="seg s1" style="flex:0 0 77.05%">Nutricionista $150.000</div>
+            <div class="seg s2" style="flex:0 0 13.1%">Whoop</div>
+            <div class="seg s3" style="flex:0 0 9.85%">Chequeo</div>
+          </div>
+        </div>
+        <div class="bar">
+          <div class="top"><b style="color:var(--sage-lt)">REGEN Activo</b><span>$139.999</span></div>
+          <div class="track"><div class="seg rg" style="flex:0 0 71.9%">Coach + IA + análisis a domicilio + médico</div></div>
+        </div>
+      </div>
+      <div class="keyrow" data-r style="--d:1500">
+        <span><i style="background:var(--stone)"></i>Nutricionista online, piso de mercado</span>
+        <span><i style="background:var(--stone-dk)"></i>Whoop One US$199 por año: ~$25.500</span>
+        <span><i style="background:#6B6152"></i>Chequeo particular $230.000 por año: ~$19.200</span>
+      </div>
+      <p class="punch" data-r style="--d:1900">“Ya gastás esto. <em>Nadie lo une.</em>”</p>
+      <p class="src" data-r style="--d:2100">Con gimnasio (Megatlon $90.000): ~$284.700 por cuenta propia contra ~$230.000 con REGEN. No incluye el Diagnóstico Inicial ($299.999, pago único).</p>
+    </div>
+  </section>
+
+  <!-- 11 · Mapa -->
+  <section class="slide" data-name="Mapa de posicionamiento">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>Mapa de posicionamiento</p>
+        <h2 class="mid" data-r style="--d:250">El cuadrante integral y accesible <em>está casi vacío.</em></h2>
+      </div>
+      <div class="mapwrap" data-r style="--d:700">
+        <div class="yax"><span>Bajo</span><b>Acompañamiento humano y médico</b><span>Alto</span></div>
+        <div class="quad">
+          <div class="q"><h4>Integral y accesible</h4><span class="chip me">REGEN · desde $59.999 por mes</span><span class="chip">Humanolab (Colombia)</span><span class="chip">Kiwell (sin biomarcadores)</span></div>
+          <div class="q"><h4>Integral y premium</h4><span class="chip">ERA Longevity (San Isidro)</span><span class="chip">Fleury Lifecare (Brasil)</span><span class="chip">Equinox · Continuum (EE.UU.)</span></div>
+          <div class="q"><h4>Herramientas sueltas y baratas</h4><span class="chip">ChatGPT Health · Google Health Coach</span><span class="chip">Wearables · gimnasio · running</span><span class="chip">Function · Superpower (EE.UU.)</span><span class="chip">Beneficios de la prepaga</span></div>
+          <div class="q"><h4>Una foto o un solo pilar</h4><span class="chip">Chequeo ejecutivo anual</span><span class="chip">Genix · Neko · Prenuvo</span><span class="chip">Nutricionista particular</span><span class="chip">GLP-1</span></div>
+        </div>
+        <div class="xax"><span>Gratis o bajo</span><b>Costo para el usuario</b><span>Alto ticket</span></div>
+      </div>
+      <p class="src" data-r style="--d:1200">Posición cualitativa por cuadrante, no a escala.</p>
+    </div>
+  </section>
+
+  <!-- 12 · Amenazas -->
+  <section class="slide" data-name="Amenazas">
+    <div class="inner">
+      <div class="two">
+        <div class="head">
+          <p class="chap" data-r>Amenazas a vigilar</p>
+          <h2 class="mid" data-r style="--d:250">El espacio está libre hoy. <em>No por mucho.</em></h2>
+          <p class="lede" data-r style="--d:600">El diferencial defendible no es la IA. Es el sistema completo, con humanos y firma médica.</p>
+        </div>
+        <ul class="risks">
+          <li data-r style="--d:800"><span class="who">ERA</span><h3>Escala su app o lanza un plan digital</h3><p>Ya tiene app, 3.700 pacientes y ambición de licenciar su modelo.</p></li>
+          <li data-r style="--d:1050"><span class="who">Prepagas</span><h3>Arman su propio programa de longevidad</h3><p>O se asocian con Humanolab o Motivia para hacerlo.</p></li>
+          <li data-r style="--d:1300"><span class="who">Globales</span><h3>Function o Superpower llegan a LATAM</h3><p>Con marca global y US$30 por mes.</p></li>
+          <li data-r style="--d:1550"><span class="who">IA gratuita</span><h3>Se vuelve “suficiente”</h3><p>ChatGPT Health y Google Health Coach para el usuario poco comprometido.</p></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · Qué hacer -->
+  <section class="slide" data-name="Qué hacer">
+    <div class="inner">
+      <div class="head">
+        <p class="chap" data-r>Qué hacer</p>
+        <h2 class="mid" data-r style="--d:250">Competir contra el statu quo, <em>aliarse con los indirectos.</em></h2>
+      </div>
+      <ol class="steps">
+        <li data-r style="--d:600"><h3>Vender contra el chequeo anual</h3><p>“El chequeo es una foto. REGEN es la película.”</p></li>
+        <li data-r style="--d:750"><h3>Mostrar la cuenta</h3><p>Por cuenta propia contra REGEN, en la web y en cada llamada de venta.</p></li>
+        <li data-r style="--d:900"><h3>Aliarse con gimnasios y comunidades</h3><p>Megatlon, SportClub, running clubs y estudios de pilates como canal de adquisición.</p></li>
+        <li data-r style="--d:1050"><h3>Integrar wearables</h3><p>Whoop, Oura, Garmin y Apple como puerta de entrada, no como sustituto.</p></li>
+        <li data-r style="--d:1200"><h3>Explorar empresas y prepagas</h3><p>Antes de que ese canal lo ocupen Motivia o Humanolab.</p></li>
+        <li data-r style="--d:1350"><h3>Monitorear cada trimestre</h3><p>Precios, países y lanzamientos de ERA, Humanolab, Axo, Function y Superpower.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 14 · Cierre -->
+  <section class="slide light" data-name="Cierre" data-bg="light">
+    <div class="inner center">
+      <p class="chap" data-r style="--d:300">Benchmark competitivo</p>
+      <p class="close-line" data-r style="--d:700">El chequeo es una foto. <em>REGEN es la película.</em></p>
+      <h2 class="wordmark" aria-label="REGEN"><span>R</span><span>E</span><span>G</span><span>E</span><span>N</span></h2>
+      <p class="lede" data-r style="--d:2200">Volver a la raíz, con datos.</p>
+      <p class="src" data-r style="--d:2600">Datos públicos relevados en noviembre de 2026. <button class="srcbtn" id="srcBtn2" type="button">Ver fuentes</button></p>
+    </div>
+  </section>
+
+  <div class="vignette"></div>
+  <div class="grain"></div>
+</div>
+
+<div class="brand" aria-hidden="true">
+  <svg viewBox="0 0 600 600"><g fill="none" stroke-width="26"><circle cx="300" cy="300" r="240" stroke="currentColor"/><circle cx="300" cy="300" r="120" stroke="currentColor"/><circle cx="357" cy="243" r="240" stroke="#788F76"/><circle cx="357" cy="243" r="120" stroke="#788F76"/></g></svg>
+  <span>REGEN</span>
+</div>
+<div class="dots" id="dots" role="tablist" aria-label="Láminas"></div>
+<div class="hud" id="hud">
+  <div class="where" id="where"></div>
+  <div class="ctl">
+    <button class="ib" id="bPrev" type="button" aria-label="Lámina anterior"><svg viewBox="0 0 16 16"><path d="M10 3L5 8l5 5"/></svg></button>
+    <button class="ib" id="bNext" type="button" aria-label="Lámina siguiente"><svg viewBox="0 0 16 16"><path d="M6 3l5 5-5 5"/></svg></button>
+    <button class="ib" id="bSrc" type="button" aria-label="Fuentes"><svg viewBox="0 0 16 16"><path d="M4 2h6l3 3v9H4zM6 7h5M6 10h5"/></svg></button>
+    <button class="ib" id="bFull" type="button" aria-label="Pantalla completa"><svg viewBox="0 0 16 16"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg></button>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="wrap">
+    <div class="bar2"><h2>Fuentes</h2><button class="btn" id="closeSrc" type="button">Cerrar</button></div>
+    <ul>
+      <li><a href="https://www.forbesargentina.com/negocios/la-economia-longevidad-nuevo-negocio-millonario-atrae-gigantes-cosmetica-medicina-alimentacion-n100674" target="_blank" rel="noopener">Forbes Argentina: La economía de la longevidad</a><span>20-oct-2026</span></li>
+      <li><a href="https://www.iprofesional.com/salud/466726-era-longevity-inaugura-la-primera-clinica-de-longevidad-de-argentina" target="_blank" rel="noopener">iProfesional: ERA Longevity inaugura la primera clínica de longevidad</a><span>15-oct-2026</span></li>
+      <li><a href="https://www.perfil.com/noticias/empresas-y-protagonistas/medicina-de-precision-la-nueva-clinica-que-busca-evitar-patologias-cronicas.phtml" target="_blank" rel="noopener">Perfil: Medicina de precisión, la nueva clínica</a><span>19-oct-2026</span></li>
+      <li><a href="https://www.cronista.com/infotechnology/actualidad/el-futuro-de-la-medicina-preventiva-llego-a-la-argentina-que-es-genix" target="_blank" rel="noopener">El Cronista: Genix, genómica preventiva</a></li>
+      <li><a href="https://longevity.ar/" target="_blank" rel="noopener">Longevity Co</a> · <a href="https://www.humanolab.ai/intl" target="_blank" rel="noopener">Humanolab</a></li>
+      <li><a href="https://www.iproup.com/startups/62681-argentinos-crean-inteligencia-artificial-para-mejorar-tu-salud-y-se-puede-usar-gratis" target="_blank" rel="noopener">iProUP: Kiwell</a><span>dic-2025</span></li>
+      <li><a href="https://www.iproup.com/startups/59086-argentinos-crean-una-ia-que-te-ayuda-a-cuidar-la-salud-levantaron-us12-millones" target="_blank" rel="noopener">iProUP: Motivia</a><span>ago-2025</span></li>
+      <li><a href="https://www.miobrasocial.com.ar/blog/chequeo-medico-preventivo-coberturas/" target="_blank" rel="noopener">Mi Obra Social: precios de chequeos preventivos</a><span>oct-2026</span></li>
+      <li><a href="https://www.moneytimes.com.br/fleury-flry3-inaugura-unidade-lifecare-focada-em-envelhecimento-saudavel-veja-lmrs/" target="_blank" rel="noopener">Money Times: Fleury Lifecare</a><span>may-2026</span></li>
+      <li><a href="https://forbes.pe/negocios/2026-09-16/conoce-al-peruano-detras-de-esta-startup-de-salud-preventiva-global-que-ha-levantado-us5-millones/" target="_blank" rel="noopener">Forbes Perú: Axo Longevity</a><span>sept-2026</span></li>
+      <li><a href="https://athletechnews.com/function-450-million-growth-financing-general-catalyst/" target="_blank" rel="noopener">Athletech News: Function Health</a><span>jul-2026</span></li>
+      <li><a href="https://sacra.com/c/superpower/" target="_blank" rel="noopener">Sacra: Superpower</a> · <a href="https://crowncounseling.com/reviews/function-health-vs-superpower-vs-outlive/" target="_blank" rel="noopener">Crown Counseling: Function vs Superpower</a></li>
+      <li><a href="https://pulse2.com/neko-health-raises-700-million-series-c-ahead-of-u-s-launch/amp/" target="_blank" rel="noopener">Pulse 2.0: Neko Health Serie C</a><span>jul-2026</span></li>
+      <li><a href="https://newmarketpitch.com/blogs/news/longevity-top-revenue" target="_blank" rel="noopener">New Market Pitch: ranking de longevidad por ingresos</a><span>sept-2026</span></li>
+      <li><a href="https://www.cronista.com/apertura/empresas/estas-empresas-venden-una-vida-mas-larga-y-de-calidad-como-son-sus-programas-y-cuanto-salen" target="_blank" rel="noopener">El Cronista / Bloomberg: programas de longevidad y precios</a><span>ago-2024</span></li>
+      <li><a href="https://www.kiro7.com/news/trending/equinox-wants-you-live-be-100-it-will-only-cost-42000-year/DJSRXHQ7UBH3THGVSLHRY5GEQE" target="_blank" rel="noopener">KIRO 7: Equinox Optimize</a><span>may-2024</span></li>
+      <li><a href="https://www.cronista.com/negocios/el-lider-brasileno-de-los-gimnasios-low-cost-acelera-su-expansion-en-la-argentina-con-nuevas-aperturas/" target="_blank" rel="noopener">El Cronista: Smart Fit y el mercado de gimnasios</a><span>sept-2026</span></li>
+      <li><a href="https://cuantomecuesta.com/ar/gimnasio/" target="_blank" rel="noopener">Cuánto me cuesta: gimnasios</a> · <a href="https://cuantomecuesta.com/ar/dietetica-nutricionista/" target="_blank" rel="noopener">nutricionista</a> · <a href="https://cuantomecuesta.com/ar/ozempic/" target="_blank" rel="noopener">GLP-1</a><span>abr-2026</span></li>
+      <li><a href="https://www.syncrofitness.com/blog/cuanto-cobrar-clases-pilates-argentina" target="_blank" rel="noopener">SyncroFitness: precios de pilates</a></li>
+      <li><a href="https://www.sensai.fit/es/blog/oura-vs-whoop-2026" target="_blank" rel="noopener">Sensai: Oura vs Whoop</a><span>oct-2026</span></li>
+      <li><a href="https://ecosistemastartup.com/google-health-coach-999-mes-y-lanzamiento-19-mayo/" target="_blank" rel="noopener">Ecosistema Startup: Google Health Coach</a> · <a href="https://fourweekmba.com/chatgpt-health-launches-230-million-users-ask-health-questions-weekly/" target="_blank" rel="noopener">FourWeekMBA: ChatGPT Health</a></li>
+      <li><a href="https://www.forbesargentina.com/innovacion/la-inteligencia-artificial-gana-terreno-temas-salud-sobre-todo-jovenes-cobertura-medica-n70737" target="_blank" rel="noopener">Forbes Argentina: IA y salud (encuesta DatosClaros)</a></li>
+      <li><a href="https://www.forbesargentina.com/lifestyle/buenos-aires-destino-runner-uno-cada-tres-maratonistas-llego-exterior-n98347" target="_blank" rel="noopener">Forbes Argentina: Maratón de Buenos Aires 2026</a></li>
+      <li><a href="https://www.iprofesional.com/salud/354432-wellness-services-y-medife-se-unen-para-ayudar-a-sus-asociados" target="_blank" rel="noopener">iProfesional: Medifé Vitality</a> · <a href="https://www.cronista.com/el-futuro-de-la-salud-llego-a-argentina-osde-flux-el-plan-moderno-para-jovenes-profesionales-con-vida-activa-y-digital" target="_blank" rel="noopener">El Cronista: OSDE Flux</a></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+document.documentElement.classList.add('js');
+const $ = s => document.querySelector(s);
+const stage = $('#stage');
+const slides = [...document.querySelectorAll('.slide')];
+const N = slides.length;
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let cur = -1;
+
+/* ---------- Escala de precios (logarítmica) ---------- */
+const PTS = [
+  {n:'Function · Superpower', v:357, t:'US$349–365', pos:'dn', h:34},
+  {n:'REGEN Core', v:468, t:'~US$470', pos:'up', h:70, cls:'rg'},
+  {n:'REGEN Activo', v:1092, t:'~US$1.090', pos:'up', h:26, cls:'rg'},
+  {n:'Preamble', v:6500, t:'US$6.500', pos:'dn', h:34},
+  {n:'Equinox Optimize', v:42000, t:'US$42.000', pos:'up', h:34, cls:'lx'},
+  {n:'Continuum', v:120000, t:'US$120.000', pos:'dn', h:34, cls:'lx'}
+];
+const LO = 100, HI = 200000;
+const X = v => (Math.log10(v) - Math.log10(LO)) / (Math.log10(HI) - Math.log10(LO)) * 100;
+const scale = $('#scale');
+[[100,'100'],[1000,'1.000'],[10000,'10.000'],[100000,'100.000']].forEach(([v,l],i) => {
+  const t = document.createElement('span'); t.className = 'tick' + (i % 2 ? ' hide-sm' : ''); t.style.left = X(v) + '%'; t.textContent = 'US$' + l; scale.appendChild(t);
+});
+PTS.forEach((p,i) => {
+  const el = document.createElement('div');
+  el.className = 'pt ' + p.pos + (p.cls ? ' ' + p.cls : '');
+  el.style.left = X(p.v) + '%';
+  el.style.setProperty('--h', p.h + 'px');
+  el.innerHTML = '<span class="stem"></span><span class="dot"></span><span class="lb"><b></b><span></span></span>';
+  el.querySelector('b').textContent = p.n;
+  el.querySelector('.lb span').textContent = p.t;
+  el.setAttribute('data-r','');
+  el.style.setProperty('--d', String(900 + i * 220));
+  scale.appendChild(el);
+});
+/* evitar que las etiquetas de los extremos se salgan del ancho */
+function clampLabels(){
+  const W = scale.clientWidth;
+  scale.querySelectorAll('.pt').forEach(pt => {
+    const lb = pt.querySelector('.lb'); const x = pt.offsetLeft; const w = lb.offsetWidth;
+    let shift = 0;
+    if (x - w/2 < 0) shift = w/2 - x;
+    if (x + w/2 > W) shift = W - x - w/2;
+    lb.style.transform = 'translateX(calc(-50% + ' + shift + 'px))';
+  });
+}
+
+/* ---------- Contadores ---------- */
+const fmt = (v, dec) => v.toLocaleString('es-AR', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+function runCounts(slide){
+  slide.querySelectorAll('.count').forEach(el => {
+    const to = parseFloat(el.dataset.to), dec = parseInt(el.dataset.dec || '0', 10);
+    if (reduce) { el.textContent = fmt(to, dec); return; }
+    const t0 = performance.now() + 500, dur = 1800;
+    const step = now => {
+      const k = Math.min(1, Math.max(0, (now - t0) / dur));
+      const e = 1 - Math.pow(1 - k, 3);
+      el.textContent = fmt(to * e, dec);
+      if (k < 1) requestAnimationFrame(step);
+    };
+    el.textContent = fmt(0, dec);
+    requestAnimationFrame(step);
+  });
+}
+
+/* ---------- Navegación ---------- */
+const dots = $('#dots');
+slides.forEach((s,i) => {
+  const b = document.createElement('button'); b.type = 'button'; b.setAttribute('aria-label', 'Lámina ' + (i+1) + ': ' + s.dataset.name);
+  b.addEventListener('click', e => { e.stopPropagation(); go(i); });
+  dots.appendChild(b);
+});
+function go(i){
+  i = Math.max(0, Math.min(N - 1, i));
+  if (i === cur) return;
+  cur = i;
+  slides.forEach((s,k) => { s.classList.toggle('on', k === i); s.setAttribute('aria-hidden', k === i ? 'false' : 'true'); });
+  [...dots.children].forEach((d,k) => d.classList.toggle('on', k === i));
+  stage.dataset.bg = slides[i].dataset.bg || 'dark';
+  $('#where').innerHTML = '<b>' + String(i+1).padStart(2,'0') + '</b> / ' + String(N).padStart(2,'0') + ' · ' + slides[i].dataset.name;
+  const inner = slides[i].querySelector('.inner'); if (inner) inner.scrollTop = 0;
+  runCounts(slides[i]);
+  if (slides[i].contains(scale)) requestAnimationFrame(clampLabels);
+  try { history.replaceState(null, '', '#s' + (i+1)); } catch(e) {}
+}
+const next = () => go(cur + 1), prev = () => go(cur - 1);
+$('#bNext').addEventListener('click', e => { e.stopPropagation(); next(); });
+$('#bPrev').addEventListener('click', e => { e.stopPropagation(); prev(); });
+$('#bFull').addEventListener('click', e => {
+  e.stopPropagation();
+  try {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else { const p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(() => {}); }
+  } catch(err) {}
+});
+const sheet = $('#sheet');
+const openSrc = e => { if (e) e.stopPropagation(); sheet.hidden = false; $('#closeSrc').focus(); };
+$('#bSrc').addEventListener('click', openSrc);
+$('#srcBtn2').addEventListener('click', openSrc);
+$('#closeSrc').addEventListener('click', () => { sheet.hidden = true; });
+
+document.addEventListener('keydown', e => {
+  if (!sheet.hidden) { if (e.key === 'Escape') sheet.hidden = true; return; }
+  if (['ArrowRight','PageDown',' ','Enter'].includes(e.key)) { e.preventDefault(); next(); }
+  else if (['ArrowLeft','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); prev(); }
+  else if (e.key === 'Home') go(0);
+  else if (e.key === 'End') go(N - 1);
+  else if (e.key === 'f' || e.key === 'F') $('#bFull').click();
+});
+stage.addEventListener('click', e => {
+  if (e.target.closest('a,button')) return;
+  if (window.getSelection && String(window.getSelection()).length) return;
+  if (e.clientX < window.innerWidth * 0.3) prev(); else next();
+});
+let tx = 0, ty = 0;
+stage.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, {passive:true});
+stage.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) { dx < 0 ? next() : prev(); }
+}, {passive:true});
+window.addEventListener('resize', () => { if (slides[cur] && slides[cur].contains(scale)) clampLabels(); });
+window.addEventListener('hashchange', () => { const m = /^#s(\d+)$/.exec(location.hash); if (m) go(parseInt(m[1],10) - 1); });
+
+/* ---------- Ambiente: red de puntos (datos) ---------- */
+const cv = $('#fx'), cx = cv.getContext('2d');
+let W = 0, H = 0, P = [];
+function size(){
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; cx.setTransform(dpr,0,0,dpr,0,0);
+  const n = Math.round(Math.min(70, W * H / 22000));
+  P = Array.from({length:n}, () => ({x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.18, vy:(Math.random()-.5)*.18, r:Math.random()*1.4+.4}));
+}
+function frame(){
+  cx.clearRect(0,0,W,H);
+  for (const p of P){
+    if (!reduce){ p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > W) p.vx *= -1; if (p.y < 0 || p.y > H) p.vy *= -1; }
+  }
+  for (let i = 0; i < P.length; i++){
+    for (let j = i + 1; j < P.length; j++){
+      const a = P[i], b = P[j], dx = a.x - b.x, dy = a.y - b.y, d = dx*dx + dy*dy;
+      if (d < 16000){ cx.strokeStyle = 'rgba(168,190,166,' + (0.09 * (1 - d/16000)).toFixed(3) + ')'; cx.lineWidth = 1; cx.beginPath(); cx.moveTo(a.x,a.y); cx.lineTo(b.x,b.y); cx.stroke(); }
+    }
+  }
+  for (const p of P){ cx.fillStyle = 'rgba(168,190,166,.35)'; cx.beginPath(); cx.arc(p.x,p.y,p.r,0,Math.PI*2); cx.fill(); }
+  if (!reduce) requestAnimationFrame(frame);
+}
+size(); frame();
+window.addEventListener('resize', size);
+
+const m = /^#s(\d+)$/.exec(location.hash);
+go(m ? parseInt(m[1],10) - 1 : 0);
+})();
+</script>
+</body>
+</html>
