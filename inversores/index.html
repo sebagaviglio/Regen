@@ -7,6 +7,7 @@
 <meta name="description" content="Una conversación de voz con REGEN sobre el negocio, la tecnología y cómo cuidamos los datos. Para inversores, socios y especialistas en IA y software.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#191917">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta property="og:type" content="website">
@@ -20,186 +21,235 @@
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Cormorant:ital,wght@1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --black:#191917; --black-2:#22221f; --black-3:#2c2c28;
+    --black:#191917; --black-2:#22221f; --black-3:#2b2b27;
     --linen:#F4EFE5; --sage:#788F76; --sage-l:#9fb39c; --stone:#BFB19C; --stone-d:#8f8473;
-    --line:rgba(244,239,229,.14); --line-2:rgba(244,239,229,.24);
-    --danger:#d98b6f;
-    --radius:14px;
+    --line:rgba(244,239,229,.13); --line-2:rgba(244,239,229,.24);
+    --danger:#d98b6f; --r:14px;
+    --header:56px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{-webkit-text-size-adjust:100%}
-  body{background:var(--black);color:var(--linen);font-family:'DM Sans',system-ui,sans-serif;font-weight:300;line-height:1.55;min-height:100svh;display:flex;flex-direction:column}
+  html{-webkit-text-size-adjust:100%;height:100%}
+  body{background:var(--black);color:var(--linen);font-family:'DM Sans',system-ui,sans-serif;font-weight:300;line-height:1.5;min-height:100%;display:flex;flex-direction:column}
   a{color:inherit}
   button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
-  :focus-visible{outline:2px solid var(--sage-l);outline-offset:3px;border-radius:6px}
-  .display{font-family:'Bodoni Moda',serif;font-weight:400;letter-spacing:.01em}
-  .serif-i{font-family:'Cormorant',serif;font-style:italic;font-weight:300}
-  .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone)}
+  :focus-visible{outline:2px solid var(--sage-l);outline-offset:3px;border-radius:8px}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-  header{display:flex;align-items:center;justify-content:space-between;padding:22px clamp(20px,5vw,56px);border-bottom:1px solid var(--line)}
-  .brand{display:flex;align-items:baseline;gap:14px;text-decoration:none}
-  .brand b{font-family:'Bodoni Moda',serif;font-weight:400;font-size:22px;letter-spacing:.24em}
-  .brand span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-d)}
-  header nav a{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--stone);text-decoration:none}
+  /* ── Encabezado: liviano, no compite con el asistente ── */
+  header{height:var(--header);flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 clamp(16px,4vw,40px);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:baseline;gap:12px;text-decoration:none;min-width:0}
+  .brand b{font-family:'Bodoni Moda',serif;font-weight:400;font-size:19px;letter-spacing:.24em}
+  .brand span{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone-d);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  header nav a{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone);text-decoration:none;white-space:nowrap}
   header nav a:hover{color:var(--linen)}
-  @media(max-width:600px){.brand span{display:none}header nav a{letter-spacing:.08em}}
+  @media(max-width:560px){.brand span{display:none}}
 
-  main{flex:1;width:100%;max-width:1180px;margin:0 auto;padding:clamp(28px,6vw,72px) clamp(20px,5vw,56px) 40px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(28px,6vw,80px);align-items:start}
-  @media(max-width:900px){main{grid-template-columns:1fr}}
+  main{flex:1;display:flex;flex-direction:column;min-height:0}
 
-  .intro h1{font-size:clamp(40px,6.2vw,76px);line-height:1.02;margin:14px 0 18px}
-  .intro h1 em{font-family:'Cormorant',serif;font-style:italic;font-weight:300;color:var(--sage-l)}
-  .lede{font-size:clamp(16px,1.6vw,18px);color:rgba(244,239,229,.82);max-width:540px}
-  .promises{list-style:none;margin:26px 0 0;display:grid;gap:10px;max-width:540px}
-  .promises li{display:flex;gap:12px;font-size:14px;color:rgba(244,239,229,.78)}
-  .promises li::before{content:"";flex:0 0 7px;height:7px;margin-top:8px;border-radius:50%;background:var(--sage)}
+  /* ── Antes de la llamada: todo en una pantalla ── */
+  .setup{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(16px,3.5vh,40px) 16px}
+  .card{width:100%;max-width:520px}
+  .hero{display:flex;align-items:center;gap:16px;margin-bottom:clamp(16px,3vh,26px)}
+  .hero .orb-slot{flex:0 0 auto;width:clamp(64px,9vh,84px);aspect-ratio:1}
+  .hero h1{font-family:'Bodoni Moda',serif;font-weight:400;font-size:clamp(26px,3.6vh,32px);line-height:1.1}
+  .hero h1 em{font-family:'Cormorant',serif;font-style:italic;color:var(--sage-l)}
+  .hero p{font-size:13.5px;color:rgba(244,239,229,.7);margin-top:4px}
 
-  .panel{background:var(--black-2);border:1px solid var(--line);border-radius:22px;padding:clamp(20px,3vw,30px);position:relative}
-  .step-title{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-  .step-title .n{width:22px;height:22px;border-radius:50%;border:1px solid var(--line-2);font-size:11px;display:grid;place-items:center;color:var(--stone)}
+  .label{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone);margin:0 0 8px}
+  .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px;border:1px solid var(--line);border-radius:999px}
+  .seg button{padding:10px 6px;border-radius:999px;font-size:13.5px;font-weight:400;color:rgba(244,239,229,.78);transition:background .15s,color .15s}
+  .seg button:hover{color:var(--linen)}
+  .seg button[aria-checked="true"]{background:var(--linen);color:var(--black);font-weight:500}
+  .hint{font-size:12.5px;color:var(--stone-d);min-height:19px;margin:8px 4px 0}
 
-  .profiles{display:grid;gap:10px;margin-bottom:22px}
-  .profile{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center;text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:var(--radius);transition:border-color .2s,background .2s}
-  .profile:hover{border-color:var(--line-2)}
-  .profile[aria-checked="true"]{border-color:var(--sage);background:rgba(120,143,118,.12)}
-  .profile .dot{grid-row:span 2;width:16px;height:16px;border-radius:50%;border:1px solid var(--line-2);position:relative}
-  .profile[aria-checked="true"] .dot{border-color:var(--sage-l)}
-  .profile[aria-checked="true"] .dot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--sage-l)}
-  .profile strong{font-weight:500;font-size:15px}
-  .profile small{font-size:13px;color:var(--stone-d)}
-
-  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
-  @media(max-width:520px){.fields{grid-template-columns:1fr}}
-  .field{display:grid;gap:6px;font-size:12px;letter-spacing:.06em;color:var(--stone)}
-  .field input{background:transparent;border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;color:var(--linen);font:inherit;font-size:15px;letter-spacing:0}
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:clamp(12px,2.2vh,18px)}
+  @media(max-width:440px){.fields{grid-template-columns:1fr}}
+  .field input{width:100%;background:transparent;border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;color:var(--linen);font:inherit;font-size:16px}
   .field input::placeholder{color:var(--stone-d)}
   .field input:focus{border-color:var(--sage);outline:none}
   .field input[aria-invalid="true"]{border-color:var(--danger)}
-  .consent{display:flex;gap:12px;align-items:flex-start;font-size:12.5px;color:rgba(244,239,229,.72);padding:14px 16px;border-radius:var(--radius);background:rgba(244,239,229,.04);margin-bottom:20px}
-  .consent input{margin-top:3px;width:16px;height:16px;accent-color:var(--sage)}
-  .consent a{color:var(--stone)}
+  .field small{display:block;font-size:11px;color:var(--danger);min-height:0;margin:4px 4px 0}
 
-  .stage{display:flex;flex-direction:column;align-items:center;gap:14px;padding:6px 0 2px}
-  .orb-wrap{position:relative;width:min(240px,62vw);aspect-ratio:1}
-  .orb-wrap canvas{width:100%;height:100%;display:block}
-  .status{font-size:14px;color:var(--stone);min-height:22px;text-align:center}
+  .consent{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;line-height:1.45;color:rgba(244,239,229,.72);margin-top:clamp(12px,2.2vh,18px)}
+  .consent input{margin-top:2px;flex:0 0 auto;width:17px;height:17px;accent-color:var(--sage)}
+  details.more{font-size:12px;color:var(--stone-d);margin:6px 0 0 27px}
+  details.more summary{cursor:pointer;color:var(--stone);width:max-content}
+  details.more p{margin-top:6px;line-height:1.5}
+  details.more a{color:var(--stone)}
+
+  .go{width:100%;margin-top:clamp(14px,2.6vh,22px);padding:15px 20px;border-radius:999px;background:var(--linen);color:var(--black);font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;display:flex;align-items:center;justify-content:center;gap:10px;transition:opacity .2s,background .2s}
+  .go:hover{background:#fff}
+  .go:disabled{opacity:.32;cursor:not-allowed}
+  .go svg{width:16px;height:16px}
+  .status{font-size:13px;color:var(--stone);text-align:center;min-height:20px;margin-top:10px}
   .status.err{color:var(--danger)}
-  .timer{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone-d);min-height:16px}
-  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
-  .btn{display:inline-flex;align-items:center;gap:10px;padding:14px 24px;border-radius:999px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;transition:opacity .2s,background .2s,border-color .2s}
-  .btn-primary{background:var(--linen);color:var(--black)}
-  .btn-primary:hover{background:#fff}
-  .btn-primary:disabled{opacity:.35;cursor:not-allowed}
-  .btn-ghost{border:1px solid var(--line-2)}
-  .btn-ghost:hover{border-color:var(--linen)}
-  .btn-ghost[aria-pressed="true"]{background:rgba(217,139,111,.16);border-color:var(--danger)}
-  .btn-end{border:1px solid var(--danger);color:#f0c4b4}
-  .hidden{display:none!important}
 
-  .captions{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
-  .captions:empty::before{content:"Los subtítulos de la conversación aparecen acá.";font-size:13px;color:var(--stone-d)}
-  .line{font-size:14.5px;line-height:1.5}
-  .line .who{display:block;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--stone-d);margin-bottom:2px}
-  .line.assistant .who{color:var(--sage-l)}
-  .line.user{color:rgba(244,239,229,.75)}
-  .line.note{font-size:12.5px;color:var(--stone);border-left:2px solid var(--sage);padding-left:10px}
+  .expect{max-width:520px;width:100%;margin-top:clamp(18px,4vh,34px);padding-top:14px;border-top:1px solid var(--line);display:grid;gap:4px}
+  .expect li{list-style:none;font-size:12px;color:var(--stone-d);padding-left:14px;position:relative}
+  .expect li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--sage)}
 
-  .suggest{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-  .chip{font-size:12.5px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:rgba(244,239,229,.8);text-align:left}
+  /* ── Durante la llamada: pantalla de llamada ── */
+  .call{display:none;flex:1;min-height:0;flex-direction:column;width:100%;max-width:760px;margin:0 auto}
+  .callbar{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--line)}
+  .callbar .orb-slot{flex:0 0 auto;width:56px;aspect-ratio:1}
+  .callbar .who{flex:1;min-width:0}
+  .callbar .who b{display:block;font-weight:500;font-size:15px}
+  .callbar .who span{display:block;font-size:12.5px;color:var(--stone);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .callbar .timer{font-size:11px;letter-spacing:.12em;color:var(--stone-d);font-variant-numeric:tabular-nums}
+  .icon-btn{width:44px;height:44px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center}
+  .icon-btn svg{width:19px;height:19px}
+  .icon-btn:hover{border-color:var(--linen)}
+  .icon-btn[aria-pressed="true"]{background:rgba(217,139,111,.18);border-color:var(--danger)}
+  .icon-btn.end{background:#b5543c;border-color:#b5543c}
+  .icon-btn.end:hover{background:#c8644a}
+
+  .thread{flex:1;min-height:0;overflow-y:auto;padding:18px 16px 8px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
+  .msg{max-width:86%;font-size:15.5px;line-height:1.55}
+  .msg.assistant{align-self:flex-start}
+  .msg.user{align-self:flex-end;background:var(--black-3);border:1px solid var(--line);padding:9px 14px;border-radius:16px 16px 4px 16px;color:rgba(244,239,229,.9)}
+  .msg.assistant .tag{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage-l);margin-bottom:3px}
+  .msg.assistant.speaking .text::after{content:"";display:inline-block;width:6px;height:6px;margin-left:6px;border-radius:50%;background:var(--sage-l);vertical-align:middle;animation:blink 1s infinite}
+  @keyframes blink{50%{opacity:.2}}
+  .msg.note{align-self:center;max-width:100%;font-size:12px;color:var(--stone);display:flex;gap:6px;align-items:center}
+  .msg.note::before{content:"✓";color:var(--sage-l)}
+  .thread .empty{margin:auto;text-align:center;color:var(--stone-d);font-size:13.5px}
+  .jump{position:sticky;bottom:6px;align-self:center;display:none;padding:7px 14px;border-radius:999px;background:var(--linen);color:var(--black);font-size:12px;font-weight:500;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+  .jump.show{display:block}
+
+  .composer{flex:0 0 auto;padding:8px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--black)}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;font-size:12.5px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;color:rgba(244,239,229,.82);white-space:nowrap}
   .chip:hover{border-color:var(--sage)}
-  .typed{display:flex;gap:8px;margin-top:12px}
-  .typed input{flex:1;min-width:0;background:transparent;border:1px solid var(--line);border-radius:999px;padding:11px 16px;color:var(--linen);font:inherit;font-size:14px}
+  .typed{display:flex;gap:8px}
+  .typed input{flex:1;min-width:0;background:var(--black-2);border:1px solid var(--line);border-radius:999px;padding:12px 16px;color:var(--linen);font:inherit;font-size:16px}
   .typed input::placeholder{color:var(--stone-d)}
-  .typed button{padding:0 16px;border-radius:999px;border:1px solid var(--line-2);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .typed input:focus{outline:none;border-color:var(--sage)}
+  .typed button{width:46px;height:46px;flex:0 0 auto;border-radius:50%;background:var(--linen);color:var(--black);display:grid;place-items:center}
+  .typed button svg{width:18px;height:18px}
 
-  .done h2{font-size:clamp(28px,3.4vw,38px);margin:6px 0 10px}
-  .done ul{list-style:none;display:grid;gap:8px;margin:16px 0}
-  .done li{font-size:14px;display:flex;gap:10px}
+  .done{display:none;padding:18px 16px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+  .done h2{font-family:'Bodoni Moda',serif;font-weight:400;font-size:24px;margin-bottom:4px}
+  .done p{font-size:14px;color:rgba(244,239,229,.78)}
+  .done ul{list-style:none;display:grid;gap:6px;margin:12px 0 16px}
+  .done li{font-size:13.5px;display:flex;gap:8px;color:rgba(244,239,229,.85)}
   .done li::before{content:"✓";color:var(--sage-l)}
+  .done .row{display:flex;gap:10px;flex-wrap:wrap}
+  .pill{padding:11px 18px;border-radius:999px;border:1px solid var(--line-2);font-size:12px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none}
+  .pill:hover{border-color:var(--linen)}
 
-  footer{border-top:1px solid var(--line);padding:22px clamp(20px,5vw,56px);font-size:12px;color:var(--stone-d);display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
-  footer p{max-width:780px}
-  @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+  /* Fases */
+  body.in-call .setup, body.in-call footer, body.is-done .setup, body.is-done footer{display:none}
+  body.in-call .call, body.is-done .call{display:flex}
+  body.in-call main, body.is-done main{flex:0 0 auto;height:calc(100svh - var(--header));overflow:hidden}
+  body.is-done .composer, body.is-done .callbar .controls{display:none}
+  body.is-done .done{display:block}
+
+  footer{flex:0 0 auto;border-top:1px solid var(--line);padding:14px clamp(16px,4vw,40px);font-size:11px;line-height:1.5;color:var(--stone-d)}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 <header>
-  <a class="brand" href="/" aria-label="REGEN, ir al inicio"><b>REGEN</b><span>Inversores · Socios · Especialistas</span></a>
+  <a class="brand" href="/" aria-label="REGEN, ir al inicio"><b>REGEN</b><span>Para inversores, socios y especialistas</span></a>
   <nav><a href="mailto:contacto@regen.ar">contacto@regen.ar</a></nav>
 </header>
 
 <main>
-  <section class="intro">
-    <p class="eyebrow">Salud biológica basada en evidencia · Córdoba</p>
-    <h1 class="display">Preguntale a <em>REGEN</em>.</h1>
-    <p class="lede">Una conversación de voz sobre el negocio, el producto, la arquitectura y cómo cuidamos los datos. Hablale como a alguien del equipo: si no sabe algo, no lo inventa, lo anota para la dirección.</p>
-    <ul class="promises">
-      <li>Lo construido, separado de lo planificado. Las cifras de mercado, con su fuente.</li>
-      <li>Sin promesas de retorno ni asesoramiento financiero: para eso está la reunión con la dirección.</li>
-      <li>Para especialistas: voz en tiempo real, guardrails, privacidad y el harness de evaluación, a nivel de diseño.</li>
+  <!-- Antes de la llamada -->
+  <section class="setup" id="setup" aria-labelledby="title">
+    <div class="card">
+      <div class="hero">
+        <div class="orb-slot" id="orb-home"><canvas id="orb" width="240" height="240" aria-hidden="true"></canvas></div>
+        <div>
+          <h1 id="title">Conversá con <em>REGEN</em></h1>
+          <p>Negocio, producto, tecnología y datos, por voz. Si no sabe algo, lo anota para la dirección.</p>
+        </div>
+      </div>
+
+      <span class="label" id="profile-label">Soy</span>
+      <div class="seg" role="radiogroup" aria-labelledby="profile-label">
+        <button type="button" role="radio" aria-checked="false" data-profile="inversor" data-hint="Tesis, mercado, modelos de negocio y hoja de ruta.">Inversor</button>
+        <button type="button" role="radio" aria-checked="false" data-profile="socio" data-hint="Laboratorios, empresas, farmacias, gimnasios y marcas.">Socio</button>
+        <button type="button" role="radio" aria-checked="false" data-profile="especialista" data-hint="IA y software: arquitectura, seguridad, evals y frentes abiertos.">Especialista</button>
+      </div>
+      <p class="hint" id="profile-hint">Elegí uno para que la conversación vaya al grano.</p>
+
+      <div class="fields">
+        <label class="field"><span class="sr">Email</span><input id="email" type="email" inputmode="email" autocomplete="email" maxlength="200" placeholder="Email" required aria-describedby="email-err"><small id="email-err"></small></label>
+        <label class="field"><span class="sr">Celular</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="Celular" required aria-describedby="phone-err"><small id="phone-err"></small></label>
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" id="consent">
+        <span>Acepto que REGEN guarde mi email y celular, y que la dirección reciba la transcripción y un resumen de la llamada para contactarme. Es una IA y puede equivocarse.</span>
+      </label>
+      <details class="more">
+        <summary>Más detalle</summary>
+        <p>Lo importante lo confirma la dirección de REGEN. La transcripción y el resumen se borran a los 90 días. Podés pedir acceso o baja en <a href="mailto:hola@regen.ar">hola@regen.ar</a> (Ley 25.326). No es un canal de salud ni de urgencias: ante una urgencia, 107 o 911. Nada de lo que diga el asistente es asesoramiento financiero, legal ni médico, ni una oferta de valores.</p>
+      </details>
+
+      <button class="go" id="start" type="button" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+        Empezar a hablar
+      </button>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </div>
+
+    <ul class="expect" aria-label="Qué esperar">
+      <li>Separa lo construido de lo planificado, y da las cifras de mercado con su fuente.</li>
+      <li>No promete retornos ni da asesoramiento financiero: eso queda para la reunión con la dirección.</li>
+      <li>Para especialistas: voz en tiempo real, guardrails, privacidad y harness de evaluación, a nivel de diseño.</li>
     </ul>
   </section>
 
-  <section class="panel" aria-labelledby="panel-title">
-    <h2 id="panel-title" class="sr">Conversación</h2>
-
-    <div id="setup">
-      <div class="step-title"><span class="n">1</span><span class="eyebrow">¿Desde dónde venís?</span></div>
-      <div class="profiles" role="radiogroup" aria-label="Perfil">
-        <button class="profile" role="radio" aria-checked="false" data-profile="inversor"><span class="dot"></span><strong>Inversor</strong><small>Tesis, mercado, modelos de negocio y hoja de ruta.</small></button>
-        <button class="profile" role="radio" aria-checked="false" data-profile="socio"><span class="dot"></span><strong>Socio o aliado</strong><small>Laboratorios, empresas, farmacias, gimnasios, marcas.</small></button>
-        <button class="profile" role="radio" aria-checked="false" data-profile="especialista"><span class="dot"></span><strong>Especialista en IA o software</strong><small>Arquitectura, seguridad, evals y frentes abiertos.</small></button>
+  <!-- Durante y después de la llamada -->
+  <section class="call" id="call" aria-label="Llamada con REGEN">
+    <div class="callbar">
+      <div class="orb-slot" id="orb-call"></div>
+      <div class="who">
+        <b>REGEN</b>
+        <span id="call-status" role="status" aria-live="polite">Conectando…</span>
       </div>
-      <div class="step-title"><span class="n">2</span><span class="eyebrow">¿Cómo te contactamos?</span></div>
-      <div class="fields">
-        <label class="field"><span>Email</span><input id="email" type="email" inputmode="email" autocomplete="email" maxlength="200" placeholder="nombre@empresa.com" required></label>
-        <label class="field"><span>Celular</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="+54 9 351 555 1234" required></label>
-      </div>
-      <div class="step-title"><span class="n">3</span><span class="eyebrow">Antes de empezar</span></div>
-      <label class="consent">
-        <input type="checkbox" id="consent">
-        <span>Entiendo que hablo con un asistente de inteligencia artificial que puede equivocarse, y que lo importante lo confirma la dirección de REGEN. Acepto que REGEN guarde mi email y mi celular, que la conversación se transcriba y que la dirección reciba un resumen para contactarme y darle seguimiento. La transcripción y el resumen se borran a los 90 días. Puedo pedir acceso o baja en <a href="mailto:hola@regen.ar">hola@regen.ar</a> (Ley 25.326). No es un canal de salud ni de urgencias: ante una urgencia, 107 o 911.</span>
-      </label>
-    </div>
-
-    <div class="stage">
-      <div class="orb-wrap"><canvas id="orb" width="480" height="480" aria-hidden="true"></canvas></div>
-      <p class="status" id="status" role="status" aria-live="polite">Elegí tu perfil para empezar.</p>
-      <p class="timer" id="timer" aria-live="off"></p>
-      <div class="controls">
-        <button class="btn btn-primary" id="start" disabled>Empezar a hablar</button>
-        <button class="btn btn-ghost hidden" id="mute" aria-pressed="false">Silenciar micrófono</button>
-        <button class="btn btn-end hidden" id="end">Terminar</button>
+      <span class="timer" id="timer"></span>
+      <div class="controls" style="display:flex;gap:8px">
+        <button class="icon-btn" id="mute" type="button" aria-pressed="false" aria-label="Silenciar micrófono" title="Silenciar micrófono">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/><path class="slash" d="M4 4l16 16" style="display:none"/></svg>
+        </button>
+        <button class="icon-btn end" id="end" type="button" aria-label="Terminar la llamada" title="Terminar">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 9c-2.6 0-5.1.5-7.4 1.4-.9.4-1.4 1.2-1.4 2.2v1.6c0 .7.6 1.2 1.3 1.1l2.9-.5c.6-.1 1-.6 1-1.2v-1.5a12 12 0 0 1 7.2 0v1.5c0 .6.4 1.1 1 1.2l2.9.5c.7.1 1.3-.4 1.3-1.1v-1.6c0-1-.5-1.8-1.4-2.2A19.6 19.6 0 0 0 12 9z"/></svg>
+        </button>
       </div>
     </div>
 
-    <div id="live" class="hidden">
-      <div class="suggest" id="suggest" aria-label="Preguntas sugeridas"></div>
+    <div class="thread" id="captions" aria-live="polite" aria-label="Conversación">
+      <p class="empty" id="empty">REGEN va a saludarte. Hablá cuando quieras, o escribí abajo.</p>
+      <button class="jump" id="jump" type="button">↓ Ir al final</button>
+    </div>
+
+    <div class="composer" id="live">
+      <div class="chips" id="suggest" aria-label="Preguntas sugeridas"></div>
       <form class="typed" id="typed" autocomplete="off">
         <label class="sr" for="typed-input">Escribí tu pregunta</label>
-        <input id="typed-input" maxlength="400" placeholder="O escribí tu pregunta…">
-        <button type="submit">Enviar</button>
+        <input id="typed-input" maxlength="400" placeholder="Escribí una pregunta…" enterkeyhint="send">
+        <button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       </form>
     </div>
-    <div class="captions" id="captions" aria-live="polite" aria-label="Subtítulos"></div>
 
-    <div id="done" class="done hidden">
-      <p class="eyebrow">Gracias</p>
-      <h2 class="display">Seguimos la conversación.</h2>
-      <p class="lede" id="done-text">La llamada terminó.</p>
+    <div class="done" id="done">
+      <h2>Gracias por la conversación</h2>
+      <p id="done-text">La llamada terminó.</p>
       <ul id="done-list"></ul>
-      <div class="controls" style="justify-content:flex-start">
-        <button class="btn btn-ghost" id="again">Volver a hablar</button>
-        <a class="btn btn-ghost" href="mailto:contacto@regen.ar">Escribir a la dirección</a>
+      <div class="row">
+        <button class="pill" id="again" type="button">Volver a hablar</button>
+        <a class="pill" href="mailto:contacto@regen.ar">Escribir a la dirección</a>
       </div>
     </div>
   </section>
 </main>
 
 <footer>
-  <p>REGEN · Plataforma de salud biológica basada en evidencia · Córdoba, Argentina. Este asistente informa sobre REGEN; no constituye asesoramiento financiero, legal ni médico, ni una oferta de valores. Las cifras de los modelos de negocio son referencias de diseño a validar.</p>
-  <p><a href="/">regen.ar</a> · <a href="mailto:contacto@regen.ar">contacto@regen.ar</a></p>
+  REGEN · Plataforma de salud biológica basada en evidencia · Córdoba, Argentina. Este asistente informa sobre REGEN; no constituye asesoramiento financiero, legal ni médico, ni una oferta de valores. Las cifras de los modelos de negocio son referencias de diseño a validar.
 </footer>
 
 <script>
@@ -208,7 +258,6 @@
   // ── Configuración ────────────────────────────────────────────────────
   const IS_LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   const params = new URLSearchParams(location.search);
-  // En local se puede apuntar a otro Worker (pruebas): ?worker=http://...
   const WORKER = (IS_LOCAL && params.get('worker')) || 'https://regen-agente.sebagaviglio.workers.dev';
   const REALTIME_CALLS = 'https://api.openai.com/v1/realtime/calls';
   const CONSENT_VERSION = 'inv-2026-11-04b'; // = INVESTOR_CONSENT_VERSION del Worker
@@ -220,27 +269,37 @@
 
   const $ = (id) => document.getElementById(id);
   const ui = {
-    setup: $('setup'), consent: $('consent'), email: $('email'), phone: $('phone'), start: $('start'), mute: $('mute'), end: $('end'),
-    status: $('status'), timer: $('timer'), live: $('live'), suggest: $('suggest'), typed: $('typed'),
-    typedInput: $('typed-input'), captions: $('captions'), done: $('done'), doneText: $('done-text'),
-    doneList: $('done-list'), again: $('again'), orb: $('orb'),
+    consent: $('consent'), email: $('email'), phone: $('phone'), emailErr: $('email-err'), phoneErr: $('phone-err'),
+    start: $('start'), mute: $('mute'), end: $('end'), status: $('status'), callStatus: $('call-status'),
+    timer: $('timer'), suggest: $('suggest'), typed: $('typed'), typedInput: $('typed-input'),
+    captions: $('captions'), empty: $('empty'), jump: $('jump'), doneText: $('done-text'), doneList: $('done-list'),
+    again: $('again'), orb: $('orb'), orbHome: $('orb-home'), orbCall: $('orb-call'), hint: $('profile-hint'),
   };
 
   const state = {
     profile: null, phase: 'idle', // idle | connecting | live | ending | done
     callId: null, pc: null, dc: null, mic: null, audio: null, maxSeconds: 900, startedAt: 0, tick: null,
-    transcript: [], // [{role, text}]
-    pending: new Map(), // item_id/response_id → elemento de subtítulo en curso
-    tools: new Map(), // call_id → promesa del guardado en el Worker
+    transcript: [],
+    pending: new Map(), // clave → mensaje en curso
+    tools: new Map(),   // call_id → promesa del guardado en el Worker
     saved: { contact: false, meeting: false, questions: 0 },
-    levels: { in: 0, out: 0 }, analysers: [],
+    levels: { in: 0, out: 0 }, analysers: [], stick: true,
   };
 
-  // ── Paso 1 y 2 ───────────────────────────────────────────────────────
-  document.querySelectorAll('.profile').forEach((b) => {
+  function setPhase(phase) {
+    state.phase = phase;
+    const inCall = phase === 'live' || phase === 'ending';
+    document.body.classList.toggle('in-call', inCall);
+    document.body.classList.toggle('is-done', phase === 'done');
+    (inCall || phase === 'done' ? ui.orbCall : ui.orbHome).append(ui.orb);
+  }
+
+  // ── Formulario ───────────────────────────────────────────────────────
+  document.querySelectorAll('[data-profile]').forEach((b) => {
     b.addEventListener('click', () => {
-      document.querySelectorAll('.profile').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+      document.querySelectorAll('[data-profile]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
       state.profile = b.dataset.profile;
+      ui.hint.textContent = b.dataset.hint;
       refreshStart();
     });
   });
@@ -253,49 +312,64 @@
     ui.email.value = localStorage.getItem('regen_inv_email') || '';
     ui.phone.value = localStorage.getItem('regen_inv_phone') || '';
   } catch { /* sin almacenamiento */ }
-  for (const [el, ok] of [[ui.email, validEmail], [ui.phone, validPhone]]) {
-    el.addEventListener('input', () => { el.removeAttribute('aria-invalid'); refreshStart(); });
-    el.addEventListener('blur', () => { if (el.value.trim() && !ok(el.value)) el.setAttribute('aria-invalid', 'true'); });
+  for (const [el, ok, err, msg] of [[ui.email, validEmail, ui.emailErr, 'Revisá el email.'], [ui.phone, validPhone, ui.phoneErr, 'Con código de área, ej. 351 555 1234.']]) {
+    el.addEventListener('input', () => { el.removeAttribute('aria-invalid'); err.textContent = ''; refreshStart(); });
+    el.addEventListener('blur', () => { if (el.value.trim() && !ok(el.value)) { el.setAttribute('aria-invalid', 'true'); err.textContent = msg; } });
   }
   function refreshStart() {
     const contactOk = validEmail(ui.email.value) && validPhone(ui.phone.value);
     const ready = !!state.profile && contactOk && ui.consent.checked;
     ui.start.disabled = !ready;
     if (state.phase !== 'idle') return;
-    if (ready) setStatus('Cuando quieras. Vas a necesitar el micrófono.');
-    else if (!state.profile) setStatus('Elegí tu perfil para empezar.');
-    else if (!contactOk) setStatus('Dejanos tu email y tu celular.');
-    else setStatus('Aceptá el aviso para empezar.');
+    setStatus(ready ? 'Vas a necesitar el micrófono.' : !state.profile ? 'Elegí tu perfil para empezar.' : !contactOk ? 'Dejanos tu email y tu celular.' : 'Aceptá el aviso para empezar.');
   }
   function setStatus(text, err = false) {
     ui.status.textContent = text;
     ui.status.classList.toggle('err', err);
   }
+  function setCallStatus(text) { ui.callStatus.textContent = text; }
 
-  // ── Subtítulos y transcripción ───────────────────────────────────────
-  function addLine(role, text = '', key) {
-    const el = document.createElement('p');
-    el.className = `line ${role}`;
-    const who = document.createElement('span');
-    who.className = 'who';
-    who.textContent = role === 'assistant' ? 'REGEN' : role === 'user' ? 'Vos' : 'Nota';
-    const body = document.createElement('span');
-    body.textContent = text;
-    el.append(who, body);
-    ui.captions.append(el);
+  // ── Conversación ─────────────────────────────────────────────────────
+  // Se pega al final solo si la persona no subió a releer.
+  ui.captions.addEventListener('scroll', () => {
+    const el = ui.captions;
+    state.stick = el.scrollHeight - el.scrollTop - el.clientHeight < 60;
+    ui.jump.classList.toggle('show', !state.stick);
+  });
+  ui.jump.addEventListener('click', () => { state.stick = true; scrollEnd(true); });
+  function scrollEnd(force) {
+    if (!state.stick && !force) { ui.jump.classList.add('show'); return; }
     ui.captions.scrollTop = ui.captions.scrollHeight;
-    if (key) state.pending.set(key, body);
+    ui.jump.classList.remove('show');
+  }
+  function addLine(role, text = '', key) {
+    ui.empty.remove();
+    const el = document.createElement('div');
+    el.className = `msg ${role}`;
+    if (role === 'assistant') {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = 'REGEN';
+      el.append(tag);
+    }
+    const body = document.createElement('span');
+    body.className = 'text';
+    body.textContent = text;
+    el.append(body);
+    ui.captions.insertBefore(el, ui.jump);
+    if (key) { state.pending.set(key, body); if (role === 'assistant') el.classList.add('speaking'); }
+    scrollEnd(role === 'user');
     return body;
   }
   function appendDelta(key, delta) {
     const body = state.pending.get(key) || addLine('assistant', '', key);
     body.textContent += delta;
-    ui.captions.scrollTop = ui.captions.scrollHeight;
+    scrollEnd();
   }
   function finishLine(key, role, text) {
     const body = state.pending.get(key);
     const finalText = (text || body?.textContent || '').trim();
-    if (body) body.textContent = finalText;
+    if (body) { body.textContent = finalText; body.parentElement.classList.remove('speaking'); }
     else if (finalText) addLine(role, finalText);
     state.pending.delete(key);
     if (finalText) state.transcript.push({ role, text: finalText });
@@ -309,9 +383,11 @@
     const track = state.mic?.getAudioTracks()[0];
     if (!track) return;
     track.enabled = !track.enabled;
-    ui.mute.setAttribute('aria-pressed', String(!track.enabled));
-    ui.mute.textContent = track.enabled ? 'Silenciar micrófono' : 'Activar micrófono';
-    setStatus(track.enabled ? 'Te escucho.' : 'Micrófono en silencio. Podés escribir tu pregunta.');
+    const muted = !track.enabled;
+    ui.mute.setAttribute('aria-pressed', String(muted));
+    ui.mute.setAttribute('aria-label', muted ? 'Activar micrófono' : 'Silenciar micrófono');
+    ui.mute.querySelector('.slash').style.display = muted ? '' : 'none';
+    setCallStatus(muted ? 'Micrófono en silencio · podés escribir' : 'Te escucho');
   });
 
   async function start() {
@@ -385,17 +461,11 @@
   }
 
   function onLive() {
-    state.phase = 'live';
+    setPhase('live');
     state.startedAt = Date.now();
-    ui.setup.classList.add('hidden');
-    ui.start.classList.add('hidden');
-    ui.mute.classList.remove('hidden');
-    ui.end.classList.remove('hidden');
-    ui.live.classList.remove('hidden');
     renderSuggestions();
-    setStatus('REGEN está por hablar…');
-    // Con detección de voz del servidor, el modelo espera a que hables: le pedimos que salude.
-    send({ type: 'response.create' });
+    setCallStatus('Está por hablar…');
+    send({ type: 'response.create' }); // que salude primero
     state.tick = setInterval(tickTimer, 1000);
     tickTimer();
   }
@@ -404,8 +474,9 @@
     const left = state.maxSeconds - Math.floor((Date.now() - state.startedAt) / 1000);
     const mm = Math.max(0, Math.floor(left / 60));
     const ss = String(Math.max(0, left % 60)).padStart(2, '0');
-    ui.timer.textContent = `Quedan ${mm}:${ss}`;
-    if (left === 60) addLine('note', 'Queda un minuto de llamada. Si querés seguir, dejá tu contacto y la dirección te escribe.');
+    ui.timer.textContent = `${mm}:${ss}`;
+    ui.timer.setAttribute('aria-label', `Quedan ${mm} minutos ${ss} segundos`);
+    if (left === 60) addLine('note', 'Queda un minuto de llamada.');
     if (left <= 0) end('tiempo');
   }
 
@@ -416,17 +487,17 @@
   async function onEvent(ev) {
     switch (ev.type) {
       case 'input_audio_buffer.speech_started':
-        setStatus('Te escucho…');
+        setCallStatus('Te escucho…');
         break;
       case 'input_audio_buffer.speech_stopped':
-        setStatus('Pensando…');
+        setCallStatus('Pensando…');
         break;
       case 'conversation.item.input_audio_transcription.completed':
         if (ev.transcript?.trim()) finishLine(`u:${ev.item_id}`, 'user', ev.transcript);
         break;
       case 'response.output_audio_transcript.delta':
       case 'response.output_text.delta':
-        setStatus('REGEN está hablando. Podés interrumpir cuando quieras.');
+        setCallStatus('Hablando · podés interrumpir');
         appendDelta(`a:${ev.item_id || ev.response_id}`, ev.delta || '');
         break;
       case 'response.output_audio_transcript.done':
@@ -434,19 +505,16 @@
         finishLine(`a:${ev.item_id || ev.response_id}`, 'assistant', ev.transcript ?? ev.text);
         break;
       case 'response.done': {
-        // Si la respuesta pidió herramientas, se espera a que terminen todas y recién
-        // ahí se pide la respuesta siguiente (una sola, aunque haya varias llamadas).
         const calls = (ev.response?.output || []).filter((o) => o.type === 'function_call');
         if (calls.length) {
           for (const c of calls) if (!state.tools.has(c.call_id)) state.tools.set(c.call_id, runTool(c));
           await Promise.all(calls.map((c) => state.tools.get(c.call_id)));
           calls.forEach((c) => state.tools.delete(c.call_id));
           send({ type: 'response.create' });
-        } else if (state.phase === 'live') setStatus('Te escucho.');
+        } else if (state.phase === 'live') setCallStatus('Te escucho');
         break;
       }
       case 'response.function_call_arguments.done':
-        // Se arranca apenas llegan los argumentos (el guardado no espera al fin de la respuesta).
         if (!state.tools.has(ev.call_id)) state.tools.set(ev.call_id, runTool(ev));
         break;
       case 'error':
@@ -467,9 +535,9 @@
       });
       result = await r.json().catch(() => result);
       if (r.ok && result.ok) {
-        if (ev.name === 'save_contact') { state.saved.contact = true; addLine('note', 'Contacto guardado para la dirección.'); }
-        if (ev.name === 'request_meeting') { state.saved.meeting = true; addLine('note', 'Pedido de reunión registrado.'); }
-        if (ev.name === 'log_open_question') { state.saved.questions++; addLine('note', 'Pregunta anotada para la dirección.'); }
+        if (ev.name === 'save_contact') { state.saved.contact = true; addLine('note', 'Contacto guardado para la dirección'); }
+        if (ev.name === 'request_meeting') { state.saved.meeting = true; addLine('note', 'Pedido de reunión registrado'); }
+        if (ev.name === 'log_open_question') { state.saved.questions++; addLine('note', 'Pregunta anotada para la dirección'); }
       }
     } catch { /* se informa al modelo con el mensaje por defecto */ }
     send({ type: 'conversation.item.create', item: { type: 'function_call_output', call_id: ev.call_id, output: JSON.stringify(result) } });
@@ -493,9 +561,10 @@
   });
   function ask(text) {
     if (state.phase !== 'live') return;
+    state.stick = true;
     addLine('user', text);
     state.transcript.push({ role: 'user', text });
-    send({ type: 'response.cancel' }); // si estaba hablando, que escuche la pregunta nueva
+    send({ type: 'response.cancel' });
     send({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text }] } });
     send({ type: 'response.create' });
   }
@@ -512,7 +581,6 @@
 
   function closingPayload(reason, maxChars = Infinity) {
     let items = state.transcript.slice();
-    // Para el cierre de pestaña (keepalive tiene tope de ~64 KB) se mandan los últimos turnos.
     while (items.length && JSON.stringify(items).length > maxChars) items.shift();
     return JSON.stringify({ callId: state.callId, reason, transcript: items });
   }
@@ -523,7 +591,7 @@
     state.phase = 'ending';
     for (const [key] of state.pending) finishLine(key, key.startsWith('u:') ? 'user' : 'assistant');
     teardown();
-    setStatus('Cerrando…');
+    setCallStatus('Cerrando…');
     if (state.callId) {
       try {
         await fetch(`${WORKER}/investor/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: closingPayload(reason) });
@@ -533,22 +601,18 @@
   }
 
   function showDone(reason, hadCall) {
-    state.phase = 'done';
-    ui.live.classList.add('hidden');
-    ui.mute.classList.add('hidden');
-    ui.end.classList.add('hidden');
+    setPhase('done');
     ui.timer.textContent = '';
-    ui.done.classList.remove('hidden');
-    setStatus('');
+    setCallStatus('Llamada terminada');
     ui.doneText.textContent = reason === 'tiempo'
       ? 'Llegamos al tiempo máximo de la llamada.'
-      : reason === 'error' && hadCall ? 'La llamada se cortó.' : 'La llamada terminó.';
-    const items = [];
-    items.push('La dirección de REGEN recibe un resumen de la conversación y te contacta por email o celular.');
+      : reason === 'error' && hadCall ? 'La llamada se cortó.' : 'La llamada terminó. La conversación queda arriba para que la repases.';
+    const items = ['La dirección de REGEN recibe un resumen y te contacta por email o celular.'];
     if (state.saved.meeting) items.push('Pediste una reunión: te escribimos para coordinarla.');
     if (state.saved.questions) items.push(`${state.saved.questions === 1 ? 'Una pregunta quedó anotada' : `${state.saved.questions} preguntas quedaron anotadas`} para que te responda la dirección.`);
-    items.push('Si querés sumar algo, escribinos a contacto@regen.ar.');
     ui.doneList.replaceChildren(...items.map((t) => { const li = document.createElement('li'); li.textContent = t; return li; }));
+    state.stick = true;
+    scrollEnd(true);
   }
 
   function fail(message, reason) {
@@ -557,27 +621,23 @@
     if (wasCall && reason) {
       fetch(`${WORKER}/investor/end`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: closingPayload(reason) }).catch(() => {});
     }
-    state.phase = 'idle';
+    setPhase('idle');
     state.callId = null;
     refreshStart();
     setStatus(message, true);
   }
 
   function resetToIdle() {
-    state.phase = 'idle';
     state.callId = null;
     state.transcript = [];
     state.pending.clear();
     state.tools.clear();
     state.saved = { contact: false, meeting: false, questions: 0 };
-    ui.captions.replaceChildren();
-    ui.done.classList.add('hidden');
-    ui.setup.classList.remove('hidden');
-    ui.start.classList.remove('hidden');
+    ui.captions.replaceChildren(ui.empty, ui.jump);
+    setPhase('idle');
     refreshStart();
   }
 
-  // Si cierran la pestaña en plena llamada, se avisa el cierre (sin esperar respuesta).
   window.addEventListener('pagehide', () => {
     if (state.phase !== 'live' || !state.callId) return;
     try {
@@ -585,7 +645,7 @@
     } catch { /* la tarea programada la cierra */ }
   });
 
-  // ── Esfera ───────────────────────────────────────────────────────────
+  // ── Esfera (isotipo animado con la voz) ──────────────────────────────
   function meter(stream, kind) {
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -608,43 +668,41 @@
   }
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const g = ui.orb.getContext('2d');
+  ui.orb.style.width = ui.orb.style.height = '100%';
+  ui.orb.style.display = 'block';
   function draw(t) {
     readLevels();
     const W = ui.orb.width, H = ui.orb.height, cx = W / 2, cy = H / 2;
     g.clearRect(0, 0, W, H);
     const live = state.phase === 'live';
     const out = live ? state.levels.out : 0, inn = live ? state.levels.in : 0;
-    const breathe = reduce ? 0 : Math.sin(t / 1400) * 0.02;
-    const R = W * (0.3 + breathe + out * 0.07);
-    // halo
-    const halo = g.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 1.7);
-    halo.addColorStop(0, `rgba(120,143,118,${0.18 + out * 0.35})`);
+    const breathe = reduce ? 0 : Math.sin(t / 1400) * 0.015;
+    const R = W * (0.3 + breathe + out * 0.06);
+    const halo = g.createRadialGradient(cx, cy, R * 0.6, cx, cy, R * 1.6);
+    halo.addColorStop(0, `rgba(120,143,118,${0.16 + out * 0.4})`);
     halo.addColorStop(1, 'rgba(120,143,118,0)');
     g.fillStyle = halo;
-    g.beginPath(); g.arc(cx, cy, R * 1.7, 0, Math.PI * 2); g.fill();
-    // anillo (isotipo)
-    g.lineWidth = W * 0.012;
-    g.strokeStyle = `rgba(244,239,229,${live ? 0.9 : 0.55})`;
+    g.beginPath(); g.arc(cx, cy, R * 1.6, 0, Math.PI * 2); g.fill();
+    g.lineWidth = W * 0.02;
+    g.strokeStyle = 'rgba(244,239,229,.9)';
     g.beginPath();
-    const steps = 96;
-    for (let i = 0; i <= steps; i++) {
-      const a = (i / steps) * Math.PI * 2;
-      const wob = reduce ? 0 : Math.sin(a * 5 + t / 380) * out * W * 0.018 + Math.sin(a * 3 - t / 520) * inn * W * 0.012;
-      const x = cx + Math.cos(a) * (R + wob), y = cy * 0.96 + Math.sin(a) * (R + wob);
+    for (let i = 0; i <= 96; i++) {
+      const a = (i / 96) * Math.PI * 2;
+      const wob = reduce ? 0 : Math.sin(a * 5 + t / 380) * out * W * 0.02 + Math.sin(a * 3 - t / 520) * inn * W * 0.014;
+      const x = cx + Math.cos(a) * (R + wob), y = cy + Math.sin(a) * (R + wob);
       i ? g.lineTo(x, y) : g.moveTo(x, y);
     }
     g.stroke();
-    // núcleo sage y punto
     g.fillStyle = '#788F76';
-    g.beginPath(); g.arc(cx, cy * 0.96 + R * 0.48, R * (0.42 + inn * 0.12), 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.arc(cx, cy + R * 0.48, R * (0.42 + inn * 0.12), 0, Math.PI * 2); g.fill();
     g.fillStyle = 'rgba(191,177,156,.95)';
-    g.beginPath(); g.arc(cx, cy * 0.96 - R * 1.0, W * 0.016, 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.arc(cx, cy - R, W * 0.022, 0, Math.PI * 2); g.fill();
     if (!document.hidden) requestAnimationFrame(draw);
   }
   document.addEventListener('visibilitychange', () => { if (!document.hidden) requestAnimationFrame(draw); });
   requestAnimationFrame(draw);
 
-  // Para pruebas automáticas (test/inversores.test.mjs).
+  refreshStart();
   window.__regenVoice = { state };
 })();
 </script>

@@ -129,7 +129,7 @@ test('llamada completa: saludo, subtítulos, herramienta, pregunta escrita y cie
   await fillContact(page);
   await page.check('#consent');
   await page.click('#start');
-  await page.waitForSelector('#end:not(.hidden)');
+  await page.waitForSelector('#end', { state: 'visible' });
 
   // Pidió la sesión con el perfil y la versión del aviso que espera el Worker.
   assert.deepEqual(calls.session[0], { profile: 'especialista', consent: true, consentVersion: 'inv-2026-11-04b', email: 'ana@lab.com.ar', phone: '+54 9 351 555 1234' });
@@ -161,7 +161,7 @@ test('llamada completa: saludo, subtítulos, herramienta, pregunta escrita y cie
   assert.equal(out[0].item.type, 'function_call_output');
   assert.equal(out[0].item.call_id, 'c1');
   assert.equal(out.filter((e) => e.type === 'response.create').length, 1);
-  await page.waitForSelector('text=Contacto guardado para la dirección.');
+  await page.waitForSelector('text=Contacto guardado para la dirección');
 
   // Pregunta escrita.
   await page.fill('#typed-input', '¿Cómo es el harness de evals?');
@@ -173,12 +173,12 @@ test('llamada completa: saludo, subtítulos, herramienta, pregunta escrita y cie
 
   // Cierre: manda la transcripción y muestra lo que quedó guardado.
   await page.click('#end');
-  await page.waitForSelector('#done:not(.hidden)');
+  await page.waitForSelector('#done', { state: 'visible' });
   const end = calls.end[0];
   assert.equal(end.callId, 'call-1');
   assert.equal(end.reason, 'usuario');
   assert.deepEqual(end.transcript.map((t) => t.role), ['assistant', 'user', 'user']);
-  assert.match(await page.textContent('#done'), /recibe un resumen de la conversación/);
+  assert.match(await page.textContent('#done'), /recibe un resumen/);
   await page.screenshot({ path: '/tmp/inversores-fin.png', fullPage: true });
   await ctx.close();
 });
@@ -194,6 +194,47 @@ test('si el Worker rechaza la llamada se muestra su mensaje y se puede reintenta
   assert.equal(await page.isDisabled('#start'), false);
   assert.equal(calls.sdp.length, 0);
   assert.equal(calls.end.length, 0);
+  await ctx.close();
+});
+
+test('el botón para empezar se ve sin scrollear en laptop y celular', async () => {
+  for (const [width, height] of [[1280, 720], [1440, 900], [390, 844], [360, 740]]) {
+    const ctx = await browser.newContext({ viewport: { width, height } });
+    const page = await ctx.newPage();
+    await page.route('**/*', (r) => (r.request().url().startsWith(BASE) ? r.continue() : r.abort()));
+    await page.goto(`${BASE}/inversores/`, { waitUntil: 'load' });
+    const bottom = await page.evaluate(() => document.querySelector('#start').getBoundingClientRect().bottom);
+    assert.ok(bottom <= height, `${width}x${height}: el botón termina en ${Math.round(bottom)}px`);
+    await ctx.close();
+  }
+});
+
+test('durante la llamada la conversación ocupa la pantalla y no se pierde el control', async () => {
+  const { page, ctx } = await open();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.click('[data-profile="inversor"]');
+  await fillContact(page);
+  await page.check('#consent');
+  await page.click('#start');
+  await page.waitForSelector('#end', { state: 'visible' });
+  for (let i = 0; i < 14; i++) {
+    await emit(page, { type: 'response.output_audio_transcript.done', item_id: `a${i}`, transcript: `Respuesta número ${i} de REGEN, con un texto bastante largo para llenar la pantalla del celular.` });
+    await emit(page, { type: 'conversation.item.input_audio_transcription.completed', item_id: `u${i}`, transcript: `Pregunta ${i}` });
+  }
+  const m = await page.evaluate(() => {
+    const t = document.querySelector('#captions');
+    const r = (s) => document.querySelector(s).getBoundingClientRect();
+    return { page: document.documentElement.scrollHeight, vh: innerHeight, atEnd: t.scrollHeight - t.scrollTop - t.clientHeight < 5, end: r('#end').bottom, input: r('#typed-input').bottom };
+  });
+  assert.ok(m.page <= m.vh + 1, 'la página no scrollea: scrollea solo la conversación');
+  assert.ok(m.atEnd, 'sigue el último mensaje');
+  assert.ok(m.end <= m.vh && m.input <= m.vh, 'colgar y escribir siempre visibles');
+  // Si sube a releer, no lo arrastra hacia abajo y aparece "Ir al final".
+  await page.evaluate(() => { const t = document.querySelector('#captions'); t.scrollTop = 0; t.dispatchEvent(new Event('scroll')); });
+  await emit(page, { type: 'response.output_audio_transcript.delta', item_id: 'z', delta: 'Nuevo texto' });
+  assert.equal(await page.evaluate(() => document.querySelector('#captions').scrollTop), 0);
+  assert.ok(await page.isVisible('#jump'));
+  await page.screenshot({ path: '/tmp/prop-llamada-celular.png' });
   await ctx.close();
 });
 
