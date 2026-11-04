@@ -69,6 +69,13 @@
   .profile strong{font-weight:500;font-size:15px}
   .profile small{font-size:13px;color:var(--stone-d)}
 
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+  @media(max-width:520px){.fields{grid-template-columns:1fr}}
+  .field{display:grid;gap:6px;font-size:12px;letter-spacing:.06em;color:var(--stone)}
+  .field input{background:transparent;border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;color:var(--linen);font:inherit;font-size:15px;letter-spacing:0}
+  .field input::placeholder{color:var(--stone-d)}
+  .field input:focus{border-color:var(--sage);outline:none}
+  .field input[aria-invalid="true"]{border-color:var(--danger)}
   .consent{display:flex;gap:12px;align-items:flex-start;font-size:12.5px;color:rgba(244,239,229,.72);padding:14px 16px;border-radius:var(--radius);background:rgba(244,239,229,.04);margin-bottom:20px}
   .consent input{margin-top:3px;width:16px;height:16px;accent-color:var(--sage)}
   .consent a{color:var(--stone)}
@@ -144,16 +151,21 @@
         <button class="profile" role="radio" aria-checked="false" data-profile="socio"><span class="dot"></span><strong>Socio o aliado</strong><small>Laboratorios, empresas, farmacias, gimnasios, marcas.</small></button>
         <button class="profile" role="radio" aria-checked="false" data-profile="especialista"><span class="dot"></span><strong>Especialista en IA o software</strong><small>Arquitectura, seguridad, evals y frentes abiertos.</small></button>
       </div>
-      <div class="step-title"><span class="n">2</span><span class="eyebrow">Antes de empezar</span></div>
+      <div class="step-title"><span class="n">2</span><span class="eyebrow">¿Cómo te contactamos?</span></div>
+      <div class="fields">
+        <label class="field"><span>Email</span><input id="email" type="email" inputmode="email" autocomplete="email" maxlength="200" placeholder="nombre@empresa.com" required></label>
+        <label class="field"><span>Celular</span><input id="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="+54 9 351 555 1234" required></label>
+      </div>
+      <div class="step-title"><span class="n">3</span><span class="eyebrow">Antes de empezar</span></div>
       <label class="consent">
         <input type="checkbox" id="consent">
-        <span>Entiendo que hablo con un asistente de inteligencia artificial que puede equivocarse, y que lo importante lo confirma la dirección de REGEN. Acepto que la conversación se transcriba para darle seguimiento; la transcripción se borra a los 90 días y mis datos de contacto solo se guardan si yo los dejo. Puedo pedir acceso o baja en <a href="mailto:hola@regen.ar">hola@regen.ar</a> (Ley 25.326). No es un canal de salud ni de urgencias: ante una urgencia, 107 o 911.</span>
+        <span>Entiendo que hablo con un asistente de inteligencia artificial que puede equivocarse, y que lo importante lo confirma la dirección de REGEN. Acepto que REGEN guarde mi email y mi celular, que la conversación se transcriba y que la dirección reciba un resumen para contactarme y darle seguimiento. La transcripción y el resumen se borran a los 90 días. Puedo pedir acceso o baja en <a href="mailto:hola@regen.ar">hola@regen.ar</a> (Ley 25.326). No es un canal de salud ni de urgencias: ante una urgencia, 107 o 911.</span>
       </label>
     </div>
 
     <div class="stage">
       <div class="orb-wrap"><canvas id="orb" width="480" height="480" aria-hidden="true"></canvas></div>
-      <p class="status" id="status" role="status" aria-live="polite">Elegí tu perfil y aceptá el aviso para empezar.</p>
+      <p class="status" id="status" role="status" aria-live="polite">Elegí tu perfil para empezar.</p>
       <p class="timer" id="timer" aria-live="off"></p>
       <div class="controls">
         <button class="btn btn-primary" id="start" disabled>Empezar a hablar</button>
@@ -199,7 +211,7 @@
   // En local se puede apuntar a otro Worker (pruebas): ?worker=http://...
   const WORKER = (IS_LOCAL && params.get('worker')) || 'https://regen-agente.sebagaviglio.workers.dev';
   const REALTIME_CALLS = 'https://api.openai.com/v1/realtime/calls';
-  const CONSENT_VERSION = 'inv-2026-11-04'; // = INVESTOR_CONSENT_VERSION del Worker
+  const CONSENT_VERSION = 'inv-2026-11-04b'; // = INVESTOR_CONSENT_VERSION del Worker
   const SUGGESTIONS = {
     inversor: ['¿Qué es REGEN y por qué ahora?', '¿Cuáles son los modelos de negocio?', '¿Qué está construido hoy?', '¿Cuáles son los principales riesgos?'],
     socio: ['Tengo un laboratorio, ¿cómo trabajaríamos?', '¿Qué ofrecen para empresas?', '¿Cómo funciona la licencia del agente?', '¿Qué condiciones no se negocian?'],
@@ -208,7 +220,7 @@
 
   const $ = (id) => document.getElementById(id);
   const ui = {
-    setup: $('setup'), consent: $('consent'), start: $('start'), mute: $('mute'), end: $('end'),
+    setup: $('setup'), consent: $('consent'), email: $('email'), phone: $('phone'), start: $('start'), mute: $('mute'), end: $('end'),
     status: $('status'), timer: $('timer'), live: $('live'), suggest: $('suggest'), typed: $('typed'),
     typedInput: $('typed-input'), captions: $('captions'), done: $('done'), doneText: $('done-text'),
     doneList: $('done-list'), again: $('again'), orb: $('orb'),
@@ -233,10 +245,27 @@
     });
   });
   ui.consent.addEventListener('change', refreshStart);
+  // Mismas reglas que el Worker (normalizeEmail / normalizePhone).
+  const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,190}\.[a-z]{2,24}$/i;
+  const validEmail = (v) => EMAIL_RE.test(v.trim());
+  const validPhone = (v) => /^[+\d\s().-]+$/.test(v.trim()) && (() => { const d = v.replace(/\D/g, ''); return d.length >= 8 && d.length <= 15; })();
+  try {
+    ui.email.value = localStorage.getItem('regen_inv_email') || '';
+    ui.phone.value = localStorage.getItem('regen_inv_phone') || '';
+  } catch { /* sin almacenamiento */ }
+  for (const [el, ok] of [[ui.email, validEmail], [ui.phone, validPhone]]) {
+    el.addEventListener('input', () => { el.removeAttribute('aria-invalid'); refreshStart(); });
+    el.addEventListener('blur', () => { if (el.value.trim() && !ok(el.value)) el.setAttribute('aria-invalid', 'true'); });
+  }
   function refreshStart() {
-    const ready = !!state.profile && ui.consent.checked;
+    const contactOk = validEmail(ui.email.value) && validPhone(ui.phone.value);
+    const ready = !!state.profile && contactOk && ui.consent.checked;
     ui.start.disabled = !ready;
-    if (state.phase === 'idle') setStatus(ready ? 'Cuando quieras. Vas a necesitar el micrófono.' : 'Elegí tu perfil y aceptá el aviso para empezar.');
+    if (state.phase !== 'idle') return;
+    if (ready) setStatus('Cuando quieras. Vas a necesitar el micrófono.');
+    else if (!state.profile) setStatus('Elegí tu perfil para empezar.');
+    else if (!contactOk) setStatus('Dejanos tu email y tu celular.');
+    else setStatus('Aceptá el aviso para empezar.');
   }
   function setStatus(text, err = false) {
     ui.status.textContent = text;
@@ -302,13 +331,17 @@
       const r = await fetch(`${WORKER}/investor/session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile: state.profile, consent: true, consentVersion: CONSENT_VERSION }),
+        body: JSON.stringify({ profile: state.profile, consent: true, consentVersion: CONSENT_VERSION, email: ui.email.value.trim(), phone: ui.phone.value.trim() }),
       });
       session = await r.json().catch(() => ({}));
       if (!r.ok) return fail(session.error || 'No pudimos iniciar la llamada. Probá de nuevo.');
     } catch {
       return fail('No pudimos conectarnos. Revisá tu conexión y probá de nuevo.');
     }
+    try {
+      localStorage.setItem('regen_inv_email', ui.email.value.trim());
+      localStorage.setItem('regen_inv_phone', ui.phone.value.trim());
+    } catch { /* sin almacenamiento */ }
     state.callId = session.callId;
     state.maxSeconds = session.maxSeconds || 900;
 
@@ -511,10 +544,10 @@
       ? 'Llegamos al tiempo máximo de la llamada.'
       : reason === 'error' && hadCall ? 'La llamada se cortó.' : 'La llamada terminó.';
     const items = [];
-    if (state.saved.contact) items.push('Tu contacto quedó guardado: la dirección te escribe.');
+    items.push('La dirección de REGEN recibe un resumen de la conversación y te contacta por email o celular.');
     if (state.saved.meeting) items.push('Pediste una reunión: te escribimos para coordinarla.');
     if (state.saved.questions) items.push(`${state.saved.questions === 1 ? 'Una pregunta quedó anotada' : `${state.saved.questions} preguntas quedaron anotadas`} para que te responda la dirección.`);
-    if (!items.length) items.push('Si querés seguir, escribinos a contacto@regen.ar.');
+    items.push('Si querés sumar algo, escribinos a contacto@regen.ar.');
     ui.doneList.replaceChildren(...items.map((t) => { const li = document.createElement('li'); li.textContent = t; return li; }));
   }
 
@@ -526,7 +559,7 @@
     }
     state.phase = 'idle';
     state.callId = null;
-    ui.start.disabled = !(state.profile && ui.consent.checked);
+    refreshStart();
     setStatus(message, true);
   }
 

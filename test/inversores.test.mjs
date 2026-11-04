@@ -99,12 +99,24 @@ async function open({ sessionStatus = 200, sessionBody } = {}) {
 const sent = (page) => page.evaluate(() => window.__sent);
 const emit = (page, ev) => page.evaluate((e) => window.__emit(e), ev);
 
-test('sin perfil y aviso no se puede empezar', async () => {
+const fillContact = async (page) => {
+  await page.fill('#email', 'ana@lab.com.ar');
+  await page.fill('#phone', '+54 9 351 555 1234');
+};
+
+test('sin perfil, email, celular y aviso no se puede empezar', async () => {
   const { page, ctx } = await open();
   assert.equal(await page.isDisabled('#start'), true);
   await page.click('[data-profile="socio"]');
-  assert.equal(await page.isDisabled('#start'), true);
   await page.check('#consent');
+  assert.equal(await page.isDisabled('#start'), true, 'falta el contacto');
+  await page.fill('#email', 'ana arroba lab');
+  await page.fill('#phone', '+54 9 351 555 1234');
+  assert.equal(await page.isDisabled('#start'), true, 'email inválido');
+  await page.fill('#email', 'ana@lab.com.ar');
+  await page.fill('#phone', '123');
+  assert.equal(await page.isDisabled('#start'), true, 'celular inválido');
+  await page.fill('#phone', '+54 9 351 555 1234');
   assert.equal(await page.isDisabled('#start'), false);
   assert.equal(await page.getAttribute('[data-profile="socio"]', 'aria-checked'), 'true');
   await page.screenshot({ path: '/tmp/inversores-inicio.png', fullPage: true });
@@ -114,12 +126,13 @@ test('sin perfil y aviso no se puede empezar', async () => {
 test('llamada completa: saludo, subtítulos, herramienta, pregunta escrita y cierre', async () => {
   const { page, ctx, calls } = await open();
   await page.click('[data-profile="especialista"]');
+  await fillContact(page);
   await page.check('#consent');
   await page.click('#start');
   await page.waitForSelector('#end:not(.hidden)');
 
   // Pidió la sesión con el perfil y la versión del aviso que espera el Worker.
-  assert.deepEqual(calls.session[0], { profile: 'especialista', consent: true, consentVersion: 'inv-2026-11-04' });
+  assert.deepEqual(calls.session[0], { profile: 'especialista', consent: true, consentVersion: 'inv-2026-11-04b', email: 'ana@lab.com.ar', phone: '+54 9 351 555 1234' });
   // El SDP va a OpenAI con la clave efímera, no con una clave propia.
   assert.equal(calls.sdp[0].auth, 'Bearer ek_test');
   assert.equal(calls.sdp[0].body, 'v=0 oferta-falsa');
@@ -165,7 +178,7 @@ test('llamada completa: saludo, subtítulos, herramienta, pregunta escrita y cie
   assert.equal(end.callId, 'call-1');
   assert.equal(end.reason, 'usuario');
   assert.deepEqual(end.transcript.map((t) => t.role), ['assistant', 'user', 'user']);
-  assert.match(await page.textContent('#done'), /Tu contacto quedó guardado/);
+  assert.match(await page.textContent('#done'), /recibe un resumen de la conversación/);
   await page.screenshot({ path: '/tmp/inversores-fin.png', fullPage: true });
   await ctx.close();
 });
@@ -173,6 +186,7 @@ test('llamada completa: saludo, subtítulos, herramienta, pregunta escrita y cie
 test('si el Worker rechaza la llamada se muestra su mensaje y se puede reintentar', async () => {
   const { page, ctx, calls } = await open({ sessionStatus: 429, sessionBody: { error: 'Hiciste varias llamadas seguidas.', code: 'IP_LIMIT' } });
   await page.click('[data-profile="inversor"]');
+  await fillContact(page);
   await page.check('#consent');
   await page.click('#start');
   await page.waitForSelector('#status.err');
