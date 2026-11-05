@@ -373,7 +373,35 @@
     if (body) { body.textContent = finalText; body.parentElement.classList.remove('speaking'); }
     else if (finalText) addLine(role, finalText);
     state.pending.delete(key);
-    if (finalText) state.transcript.push({ role, text: finalText });
+    if (finalText) { state.transcript.push({ role, text: finalText }); saveProgress(); }
+  }
+
+  // ── Guardado de la conversación mientras sucede ──────────────────────
+  // En el celular, si la persona cambia de app o cierra la pestaña, el aviso de
+  // cierre muchas veces no llega: por eso se guarda después de cada turno y cada
+  // 30 segundos (también le sirve al Worker como señal de que la llamada sigue).
+  let saveTimer = null;
+  function saveProgress() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(postProgress, 800);
+  }
+  async function postProgress() {
+    if (state.phase !== 'live' || !state.callId) return;
+    try {
+      const r = await fetch(`${WORKER}/investor/progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ callId: state.callId, transcript: state.transcript }),
+      });
+      // El Worker la dio por terminada (por ejemplo, estuvo minutos en segundo plano).
+      if (r.status === 409 && state.phase === 'live') end('error');
+    } catch { /* se reintenta en el próximo turno o a los 30 s */ }
+  }
+  // sendBeacon sobrevive al cierre de la pestaña; texto plano para no requerir CORS previo.
+  function beacon(path, payload) {
+    try {
+      return navigator.sendBeacon(`${WORKER}${path}`, new Blob([payload], { type: 'text/plain' }));
+    } catch { return false; }
   }
 
   // ── Llamada ──────────────────────────────────────────────────────────
@@ -484,6 +512,7 @@
     ui.timer.textContent = `${mm}:${ss}`;
     ui.timer.setAttribute('aria-label', `Quedan ${mm} minutos ${ss} segundos`);
     if (left === 60) addLine('note', 'Queda un minuto de llamada.');
+    if (left % 30 === 0) postProgress();
     if (left <= 0) end('tiempo');
   }
 
@@ -571,6 +600,7 @@
     state.stick = true;
     addLine('user', text);
     state.transcript.push({ role: 'user', text });
+    saveProgress();
     send({ type: 'response.cancel' });
     send({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text }] } });
     send({ type: 'response.create' });
@@ -578,6 +608,7 @@
 
   function teardown() {
     clearInterval(state.tick);
+    clearTimeout(saveTimer);
     try { state.dc?.close(); } catch { /* ya cerrado */ }
     try { state.pc?.close(); } catch { /* ya cerrado */ }
     state.mic?.getTracks().forEach((t) => t.stop());
@@ -647,11 +678,19 @@
     refreshStart();
   }
 
+  // Si la pestaña pasa a segundo plano se guarda lo conversado; si se cierra, se avisa el fin.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && state.phase === 'live' && state.callId) {
+      beacon('/investor/progress', JSON.stringify({ callId: state.callId, transcript: state.transcript }));
+    }
+  });
   window.addEventListener('pagehide', () => {
     if (state.phase !== 'live' || !state.callId) return;
-    try {
-      fetch(`${WORKER}/investor/end`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: closingPayload('usuario', 60000) });
-    } catch { /* la tarea programada la cierra */ }
+    if (!beacon('/investor/end', closingPayload('usuario', 60000))) {
+      try {
+        fetch(`${WORKER}/investor/end`, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'text/plain' }, body: closingPayload('usuario', 60000) });
+      } catch { /* la tarea programada la cierra con lo que se guardó */ }
+    }
   });
 
   // ── Esfera (isotipo animado con la voz) ──────────────────────────────
