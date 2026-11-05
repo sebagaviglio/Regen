@@ -67,7 +67,7 @@ const FAKE_RTC = () => {
 async function open({ sessionStatus = 200, sessionBody } = {}) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1 });
   const page = await ctx.newPage();
-  const calls = { session: [], event: [], end: [], sdp: [] };
+  const calls = { session: [], event: [], end: [], sdp: [], progress: [] };
   await page.addInitScript(FAKE_RTC);
   await page.route('**/*', async (route) => {
     const req = route.request();
@@ -81,6 +81,10 @@ async function open({ sessionStatus = 200, sessionBody } = {}) {
     if (url === `${WORKER}/investor/event`) {
       calls.event.push(req.postDataJSON());
       return route.fulfill({ status: 200, headers: cors, body: JSON.stringify({ ok: true, message: 'Contacto guardado.' }) });
+    }
+    if (url === `${WORKER}/investor/progress`) {
+      calls.progress.push(JSON.parse(req.postData()));
+      return route.fulfill({ status: 200, headers: cors, body: '{"ok":true}' });
     }
     if (url === `${WORKER}/investor/end`) {
       calls.end.push(req.postDataJSON());
@@ -148,6 +152,11 @@ test('llamada completa: saludo, subtítulos, herramienta, pregunta escrita y cie
   await emit(page, { type: 'response.done', response: { output: [{ type: 'message' }] } });
   await emit(page, { type: 'conversation.item.input_audio_transcription.completed', item_id: 'u1', transcript: 'Quiero dejar mi contacto.' });
   assert.match(await page.textContent('#captions'), /Hola, soy la voz de REGEN\.[\s\S]*Quiero dejar mi contacto\./);
+  // La conversación se guarda en el Worker sin esperar al cierre.
+  for (let i = 0; i < 40 && !calls.progress.some((p) => p.transcript.length === 2); i++) await page.waitForTimeout(50);
+  const saved = calls.progress.at(-1);
+  assert.equal(saved.callId, 'call-1');
+  assert.deepEqual(saved.transcript.map((t) => t.role), ['assistant', 'user']);
 
   // El modelo llama a save_contact: la página lo persiste en el Worker y pide UNA respuesta.
   const before = (await sent(page)).length;
@@ -252,6 +261,27 @@ test('si falla el audio, el visitante ve un mensaje prolijo y el detalle va al W
   for (let i = 0; i < 20 && !calls.end.length; i++) await page.waitForTimeout(50);
   assert.equal(calls.end[0].reason, 'error');
   assert.match(calls.end[0].error, /OpenAI 429: You have no credits remaining/);
+  await ctx.close();
+});
+
+test('si la pestaña se oculta o se cierra, se avisa con sendBeacon', async () => {
+  const { page, ctx, calls } = await open();
+  await page.click('[data-profile="socio"]');
+  await fillContact(page);
+  await page.check('#consent');
+  await page.click('#start');
+  await page.waitForSelector('#end', { state: 'visible' });
+  await emit(page, { type: 'conversation.item.input_audio_transcription.completed', item_id: 'u1', transcript: 'Hola' });
+  const beacons = await page.evaluate(() => {
+    const sent = [];
+    navigator.sendBeacon = (url, blob) => { sent.push({ url, type: blob.type }); return true; };
+    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    window.dispatchEvent(new Event('pagehide'));
+    return sent;
+  });
+  assert.deepEqual(beacons.map((b) => b.url.split('/investor/')[1]), ['progress', 'end']);
+  assert.ok(beacons.every((b) => b.type === 'text/plain'));
   await ctx.close();
 });
 
