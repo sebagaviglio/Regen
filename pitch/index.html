@@ -269,7 +269,7 @@ tr.us td:first-child{color:var(--sage)}
 
 /* market video */
 .vid{margin:44px 0 0; display:flex; flex-direction:column; gap:10px}
-.vid video{display:block; width:100%; max-width:100%; aspect-ratio:16/9; border-radius:16px; border:1px solid color-mix(in srgb,var(--panelInk) 20%,transparent); background:#141a15; object-fit:cover}
+.mv{position:relative; width:100%; aspect-ratio:16/9; overflow:hidden; border-radius:16px; border:1px solid color-mix(in srgb,var(--panelInk) 20%,transparent); background:#1E2A20}
 .vid figcaption{font-size:13px; color:var(--panelInk2)}
 
 /* auto player */
@@ -373,9 +373,157 @@ footer{background:var(--panel); color:var(--panelInk); padding-block:64px calc(4
     <h2 class="h2 rv">La prevención personalizada es de lo que más crece en bienestar.</h2>
     <p class="lede rv">El mundo ya gasta billones en sentirse mejor. El dinero se mueve de lo puntual a lo medido, de la consulta aislada al seguimiento continuo.</p>
     <figure class="vid rv">
-      <video id="mktVideo" src="media/mercado.mp4" poster="media/poster.jpg" muted playsinline loop preload="metadata" controls aria-label="Video: recortes de prensa, publicaciones y datos del mercado de bienestar"></video>
+      <div class="mv" id="mktVideo" role="img" aria-label="Animación: recortes de prensa, publicaciones y datos del mercado de bienestar"></div>
       <figcaption>Prensa, informes y publicaciones de noviembre de 2026. Fuentes al final del pitch.</figcaption>
     </figure>
+<template id="mvTpl"><style>
+:host{--bg:#1E2A20;--bg2:#243226;--ink:#F4EFE5;--ink2:#C9D1C3;--sage:#93A991;--paper:#F4EFE5;--paperInk:#191917;--paperInk2:#5A564E;--gold:#D3B26E;--stone:#BFB19C}
+*{box-sizing:border-box;margin:0}
+.stage{position:absolute;left:0;top:0;width:1280px;height:720px;overflow:hidden;transform-origin:0 0;background:var(--bg);color:var(--ink);font-family:"DM Sans",sans-serif;font-weight:300;-webkit-font-smoothing:antialiased}
+.serif{font-family:"Bodoni Moda",Georgia,serif;font-weight:400}
+.it{font-family:"Cormorant",Georgia,serif;font-style:italic}
+#bgc{position:absolute;inset:0}
+.scene{position:absolute;inset:0;padding:64px 80px;opacity:0;transition:opacity .7s ease}
+.scene.on{opacity:1}
+.label{font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage)}
+.clip{position:absolute;background:var(--paper);color:var(--paperInk);padding:26px 30px 24px;box-shadow:0 30px 60px -20px rgba(0,0,0,.6),0 4px 10px rgba(0,0,0,.25);transform:translateY(40px) rotate(var(--r,0deg)) scale(.96);opacity:0;transition:transform 1s cubic-bezier(.2,.8,.2,1),opacity .8s}
+.clip::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.018) 0 2px,transparent 2px 4px);pointer-events:none}
+.on .clip{transform:translateY(0) rotate(var(--r,0deg)) scale(1);opacity:1}
+.clip .src{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--paperInk2);display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid #CFC4B1;padding-bottom:10px;margin-bottom:14px}
+.clip h2{font-family:"Bodoni Moda",Georgia,serif;font-weight:400;line-height:1.08;letter-spacing:-.01em}
+.post{position:absolute;width:440px;background:var(--bg2);border:1px solid rgba(244,239,229,.18);border-radius:18px;padding:22px 24px;transform:translateY(40px) rotate(var(--r,0deg));opacity:0;transition:transform 1s .25s cubic-bezier(.2,.8,.2,1),opacity .8s .25s;box-shadow:0 24px 50px -20px rgba(0,0,0,.6)}
+.on .post{transform:translateY(0) rotate(var(--r,0deg));opacity:1}
+.post .h{display:flex;align-items:center;gap:12px;font-size:15px}
+.post .av{width:34px;height:34px;border-radius:50%;border:1px solid var(--sage);display:grid;place-items:center;font-family:"Bodoni Moda",serif;font-size:15px;color:var(--sage)}
+.post .h small{display:block;font-size:12px;color:var(--ink2)}
+.post q{display:block;margin-top:16px;font-family:"Cormorant",Georgia,serif;font-style:italic;font-size:30px;line-height:1.15;quotes:"“" "”"}
+.post .meta{margin-top:14px;font-size:12.5px;color:var(--ink2);letter-spacing:.04em}
+.big{white-space:nowrap;font-family:"Bodoni Moda",Georgia,serif;font-variant-numeric:tabular-nums;line-height:1}
+.cap{font-size:20px;color:var(--ink2);max-width:30ch;margin-top:14px;line-height:1.4}
+.wipe{display:inline-block;overflow:hidden;vertical-align:bottom}
+.wipe > span{display:block;transform:translateY(105%);transition:transform 1s cubic-bezier(.2,.7,.1,1)}
+.on .wipe > span{transform:none}
+.d2 > span{transition-delay:.15s}.d3 > span{transition-delay:.3s}
+.bar{position:absolute;left:0;bottom:0;height:3px;background:var(--sage);width:0}
+.foot{position:absolute;left:80px;right:80px;bottom:34px;display:flex;justify-content:space-between;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2);opacity:.7}
+.arrow{color:var(--sage)}
+.fade-late{opacity:0;transition:opacity .9s 1.1s}.on .fade-late{opacity:1}
+</style><div class="stage"><canvas id="bgc" width="1280" height="720"></canvas>
+
+<!-- S1 -->
+<section class="scene" id="s1">
+  <div style="position:absolute;left:80px;top:220px">
+    <p class="label">REGEN · Análisis de mercado</p>
+    <h1 class="serif" style="font-size:92px;line-height:1;margin-top:22px"><span class="wipe"><span>Lo que dice</span></span><br><span class="wipe d2"><span>el mercado.</span></span></h1>
+    <p class="it fade-late" style="font-size:34px;color:var(--ink2);margin-top:22px">Prensa, informes y conversación · noviembre 2026</p>
+  </div>
+</section>
+
+<!-- S2 GWI -->
+<section class="scene" id="s2">
+  <div class="clip" style="left:80px;top:96px;width:560px;--r:-1.6deg">
+    <div class="src"><span>Global Wellness Institute</span><span>11 · nov · 2026</span></div>
+    <h2 style="font-size:40px">The Global Wellness Economy Hits New Record of $7.5 Trillion</h2>
+    <p style="margin-top:14px;font-size:15px;color:#5A564E">Global Wellness Economy Monitor 2026</p>
+  </div>
+  <div style="position:absolute;right:80px;top:130px;width:480px">
+    <p class="label">Economía global del bienestar</p>
+    <p class="big" style="font-size:104px;margin-top:14px">US$<span data-count="7.5" data-dec="1">0</span> B</p>
+    <p class="cap">en 2025. Llegaría a <b style="color:var(--ink);font-weight:500">US$10,9 billones</b> en 2030, 7,7% por año.</p>
+    <p class="cap fade-late" style="margin-top:22px;border-top:1px solid rgba(244,239,229,.25);padding-top:16px">Medicina personalizada y longevidad: <b style="color:var(--ink);font-weight:500">US$364.000 M</b>, +9,3% anual.</p>
+  </div>
+</section>
+
+<!-- S3 McKinsey -->
+<section class="scene" id="s3">
+  <div class="clip" style="left:80px;top:90px;width:540px;--r:1.4deg">
+    <div class="src"><span>NutraIngredients</span><span>10 · nov · 2026</span></div>
+    <h2 style="font-size:44px">McKinsey: Wellness consumers demand more proof</h2>
+  </div>
+  <div class="post" style="left:150px;top:400px;--r:-1.5deg">
+    <div class="h"><span class="av">M</span><div>@mckinseyco<small>Instagram · 6 nov 2026</small></div></div>
+    <q>Wellness is more than a consumer trend.</q>
+    <p class="meta">Future of Wellness · 10.000+ consumidores encuestados</p>
+  </div>
+  <div style="position:absolute;right:80px;top:150px;width:440px">
+    <p class="big" style="font-size:136px">+<span data-count="11">0</span> pp</p>
+    <p class="cap">más intención de compra cuando los que más gastan ven <b style="color:var(--ink);font-weight:500">evidencia de eficacia</b>.</p>
+  </div>
+</section>
+
+<!-- S4 Gym + medicine -->
+<section class="scene" id="s4">
+  <div class="post" style="left:80px;top:80px;width:520px;--r:-1deg">
+    <div class="h"><span class="av">R</span><div>@realryanhawkes<small>Instagram · 3 nov 2026</small></div></div>
+    <q style="font-size:38px">The future of preventive health care is in the gym.</q>
+  </div>
+  <div class="clip" style="left:640px;top:110px;width:540px;--r:1.8deg">
+    <div class="src"><span>Athletech News</span><span>Longevidad</span></div>
+    <h2 style="font-size:36px">Life Time Opens Second Miora Longevity Clinic</h2>
+  </div>
+  <div class="clip" style="left:600px;top:340px;width:520px;--r:-1.2deg;transition-delay:.35s">
+    <div class="src"><span>Fortune</span><span>Equinox</span></div>
+    <h2 style="font-size:32px">Equinox is offering a $40,000 a year personalized wellness program</h2>
+  </div>
+  <p class="it fade-late" style="position:absolute;left:80px;top:430px;width:460px;font-size:34px;line-height:1.2">El gimnasio y el médico <span style="color:var(--sage)">empiezan a trabajar juntos.</span></p>
+</section>
+
+<!-- S5 Humanolab -->
+<section class="scene" id="s5">
+  <div class="post" style="left:80px;top:110px;width:540px;--r:1.2deg">
+    <div class="h"><span class="av">H</span><div>@humanolab.ai<small>Instagram · 29 oct 2026 · tendencias 2027</small></div></div>
+    <q style="font-size:34px">IA más proactiva: acompañantes que conecten tu información para detectar cambios.</q>
+    <p class="meta">Su app todavía está en lista de espera.</p>
+  </div>
+  <div style="position:absolute;right:80px;top:150px;width:470px">
+    <p class="label">Tendencias 2027</p>
+    <ul style="list-style:none;padding:0;margin-top:18px;font-size:26px;line-height:1.3">
+      <li class="wipe" style="display:block;padding:12px 0;border-bottom:1px solid rgba(244,239,229,.2)"><span>IA que conecta exámenes y hábitos</span></li>
+      <li class="wipe d2" style="display:block;padding:12px 0;border-bottom:1px solid rgba(244,239,229,.2)"><span>Músculo y fuerza para la autonomía</span></li>
+      <li class="wipe d3" style="display:block;padding:12px 0;border-bottom:1px solid rgba(244,239,229,.2)"><span>Salud femenina y salud cerebral</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- S6 Evidence -->
+<section class="scene" id="s6">
+  <div class="post" style="left:80px;top:150px;width:560px;--r:-1.4deg">
+    <div class="h"><span class="av">N</span><div>@neverlaterventures<small>Instagram · 26 oct 2026 · Recovery</small></div></div>
+    <q style="font-size:38px">Scientific credibility will become increasingly important.</q>
+  </div>
+  <div style="position:absolute;right:80px;top:180px;width:460px">
+    <p class="label">La lectura</p>
+    <p class="serif" style="font-size:52px;line-height:1.08;margin-top:16px"><span class="wipe"><span>Gana quien</span></span><br><span class="wipe d2"><span>pueda probar</span></span><br><span class="wipe d3"><span style="color:var(--sage)">lo que promete.</span></span></p>
+  </div>
+</section>
+
+<!-- S7 Burnout -->
+<section class="scene" id="s7">
+  <div style="position:absolute;left:80px;top:120px;width:560px">
+    <p class="label">Costo anual del burnout por empleado</p>
+    <p class="big" style="font-size:140px;margin-top:14px">US$<span data-count="3999" data-thou="1">0</span></p>
+    <p class="cap">operativo · US$10.824 gerente · US$20.683 ejecutivo</p>
+    <p style="margin-top:14px;font-size:13px;color:var(--ink2);letter-spacing:.06em">American Journal of Preventive Medicine, 2025</p>
+  </div>
+  <div class="post" style="right:80px;top:200px;width:460px;--r:1.6deg">
+    <div class="h"><span class="av">W</span><div>@wellnessofficer<small>Instagram · 3 nov 2026</small></div></div>
+    <q style="font-size:38px">The wellness perk era is ending.</q>
+  </div>
+</section>
+
+<!-- S8 Close -->
+<section class="scene" id="s8">
+  <div style="position:absolute;left:80px;right:80px;top:150px;text-align:center">
+    <p class="label">@savia.alquimia · 25 oct 2026</p>
+    <p class="it" style="font-size:52px;line-height:1.15;margin-top:22px">“Porque consumir bienestar no es lo mismo que transformarse.”</p>
+    <p class="serif fade-late" style="font-size:58px;margin-top:70px;letter-spacing:.02em">REGEN <span style="color:var(--sage)">mide</span> la diferencia.</p>
+  </div>
+</section>
+
+<div class="foot"><span>REGEN</span><span id="src">Fuentes en el pitch</span></div>
+<div class="bar" id="bar"></div>
+
+</div></template>
     <div class="big rv">
       <div><strong class="tab">US$7,5 B</strong><span>economía global del bienestar en 2025, récord histórico</span></div>
       <div><strong class="tab">US$364.000 M</strong><span>medicina personalizada, diagnóstico preventivo y longevidad; crece 9,3% por año</span></div>
@@ -688,11 +836,35 @@ footer{background:var(--panel); color:var(--panelInk); padding-block:64px calc(4
     if(n!==null && n!==i){e.preventDefault(); slides[n].scrollIntoView({behavior:reduce?'auto':'smooth'})}
   });
 
-  /* market video: plays muted while in view */
-  var vid=document.getElementById('mktVideo');
-  if('IntersectionObserver' in window && !reduce){
-    new IntersectionObserver(function(es){es.forEach(function(en){ if(en.isIntersecting){var p=vid.play(); if(p&&p.catch)p.catch(function(){})} else vid.pause() })},{threshold:.4}).observe(vid);
-  }
+  /* market animation (shadow DOM, loops while in view) */
+  var vid=(function(){
+    var host=document.getElementById('mktVideo'), root=host.attachShadow({mode:'open'});
+    root.appendChild(document.getElementById('mvTpl').content.cloneNode(true));
+    var stage=root.querySelector('.stage'), sc=[].slice.call(root.querySelectorAll('.scene')), bar=root.getElementById('bar');
+    var cv=root.getElementById('bgc'), c=cv.getContext('2d');
+    var D=[4000,5200,4800,4800,4600,4400,4600,5400], T=D.reduce(function(x,y){return x+y},0);
+    var start=0, run=false, raf=0, cur=-1;
+    function fit(){ stage.style.transform='scale('+(host.clientWidth/1280)+')' }
+    if('ResizeObserver' in window) new ResizeObserver(fit).observe(host); fit(); window.addEventListener('resize',fit);
+    function bg(t){ c.clearRect(0,0,1280,720); c.lineWidth=1; var cx=1040,cy=560;
+      [260,160,100].forEach(function(r,i){c.strokeStyle='rgba(147,169,145,'+(.22-i*.05)+')';c.beginPath();c.arc(cx+Math.cos(t/4000+i)*12,cy+Math.sin(t/5000+i)*12,r,0,7);c.stroke()});
+      [220,136].forEach(function(r){c.strokeStyle='rgba(244,239,229,.08)';c.beginPath();c.arc(cx-90,cy+60,r,0,7);c.stroke()}) }
+    function count(el){ var to=parseFloat(el.dataset.count), dec=+el.dataset.dec||0, th=el.dataset.thou, t0=performance.now();
+      (function f(n){ var p=Math.min(1,(n-t0)/1600), e=1-Math.pow(1-p,3), v=to*e, s=v.toFixed(dec).replace('.',','); if(th) s=Math.round(v).toLocaleString('es-AR'); el.textContent=s; if(p<1) requestAnimationFrame(f) })(t0) }
+    function show(i){ if(i===cur) return; cur=i; sc.forEach(function(x){x.classList.remove('on')}); sc[i].classList.add('on'); sc[i].querySelectorAll('[data-count]').forEach(count) }
+    function loop(n){ if(!run) return; var el=(n-start)%T, acc=0, i=0; for(;i<D.length;i++){acc+=D[i]; if(el<acc) break}
+      if(el<200 && cur===D.length-1) cur=-1; show(Math.min(i,D.length-1)); bg(n); bar.style.width=(el/T*100)+'%'; raf=requestAnimationFrame(loop) }
+    if(reduce){ show(1); bg(0); }
+    return {
+      play:function(){ if(run||reduce) return; run=true; start=performance.now()-(cur>0?0:0); cur=-1; raf=requestAnimationFrame(loop) },
+      pause:function(){ run=false; cancelAnimationFrame(raf) },
+      restart:function(){ this.pause(); cur=-1; this.play() },
+      host:host
+    };
+  })();
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){es.forEach(function(en){ if(en.isIntersecting) vid.play(); else vid.pause() })},{threshold:.35}).observe(vid.host);
+  } else vid.play();
 
   /* ---------- auto play with voice-over ---------- */
   var SCRIPT=[
@@ -733,7 +905,7 @@ footer{background:var(--panel); color:var(--panelInk); padding-block:64px calc(4
     var s=SCRIPT[idx]; slides[idx].scrollIntoView({behavior:reduce?'auto':'smooth', block:'start'});
     sSlide.textContent=(idx+1)+' / '+slides.length; parts=sentences(s.t); dur=s.d; t0=performance.now();
     subs.hidden=!showCC; sText.textContent=parts[0].trim();
-    if(s.v){ try{vid.currentTime=0; var pv=vid.play(); if(pv&&pv.catch)pv.catch(function(){})}catch(e){} }
+    if(s.v){ vid.restart() }
     var a=new Audio('audio/slide-'+(idx+1)+'.mp3'); audio=a; var fellBack=false;
     function fallback(){ if(fellBack||audio!==a) return; fellBack=true; audio=null; sMode.textContent='Subtítulos'; timer=setTimeout(next, dur*1000) }
     a.addEventListener('error', fallback);
