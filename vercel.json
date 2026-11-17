@@ -12,6 +12,10 @@
       { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
       { "key": "Permissions-Policy", "value": "microphone=(self), camera=(), geolocation=()" },
       { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+    ] },
+    { "source": "/pitch(.*)", "headers": [
+      { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
     ] }
   ]
 }
