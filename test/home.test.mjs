@@ -197,3 +197,31 @@ for (const path of ['/', '/invitacion.html']) {
     assert.deepEqual(missing, []);
   });
 }
+
+// ── Formulario de contacto ───────────────────────────────────────────────
+// regen-form exige el consentimiento: sin él, toda consulta falla. El 13/11 una
+// reescritura de la portada lo perdió sin que nada avisara; esta prueba lo cuida.
+test('formulario: aviso de privacidad, línea de urgencias y consentimiento en el envío', async () => {
+  const { ctx, page } = await open({ width: 1280, height: 900 });
+  let sent = null;
+  await page.route(/regen-form\.sebagaviglio\.workers\.dev/, async (r) => {
+    sent = JSON.parse(r.request().postData());
+    await r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '{"ok":true}' });
+  });
+  assert.match(await page.locator('#contactForm').innerText(), /107/);
+  assert.match(await page.locator('#contactForm').innerText(), /Ley 25\.326/);
+  await page.fill('#fname', 'Ana Prueba');
+  await page.fill('#femail', 'ana@example.com');
+  await page.fill('#fmsg', 'Quiero saber más del plan Core.');
+  // Sin tildar el consentimiento no se envía.
+  await page.click('#formSubmit');
+  await page.waitForTimeout(200);
+  assert.equal(sent, null);
+  await page.check('#fconsent');
+  await page.click('#formSubmit');
+  await page.waitForFunction(() => document.getElementById('formOk').classList.contains('is-shown'));
+  await ctx.close();
+  assert.equal(sent.consent, true);
+  assert.equal(sent.privacy_version, 'v1-2026-10-validado', 'manda la versión del aviso');
+  assert.equal(sent.email, 'ana@example.com');
+});

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>REGEN · Bienestar Biológico y Longevidad | Córdoba</title>
-<meta name="description" content="Centro de longevidad basado en evidencia en Córdoba. Medimos tu biología, intervenimos con pilares probados y volvemos a medir para optimizar tus años de vida saludable.">
+<title>REGEN · Plataforma de Salud Biológica y Optimización</title>
+<meta name="description" content="Plataforma de salud biológica basada en evidencia. Medimos tu biología, diseñamos intervenciones precisas y ajustamos tu protocolo con seguimiento continuo y validación médica.">
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -16,36 +16,30 @@
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="REGEN">
-<meta property="og:title" content="REGEN · Bienestar Biológico y Longevidad">
-<meta property="og:description" content="Centro de longevidad basado en evidencia. Medimos tu biología, intervenimos con pilares probados y volvemos a medir para optimizar tus años de vida saludable.">
+<meta property="og:title" content="REGEN · Plataforma de Salud Biológica">
+<meta property="og:description" content="Plataforma de salud biológica basada en evidencia. Medimos tu biología, diseñamos intervenciones precisas y ajustamos tu protocolo con seguimiento continuo y validación médica.">
 <meta property="og:image" content="https://regen.ar/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://regen.ar/">
 <meta property="og:locale" content="es_AR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="REGEN · Bienestar Biológico y Longevidad">
-<meta name="twitter:description" content="Medimos tu biología, intervenimos con pilares probados y volvemos a medir para optimizar tu salud.">
+<meta name="twitter:title" content="REGEN · Plataforma de Salud Biológica">
+<meta name="twitter:description" content="Medimos tu biología, diseñamos intervenciones precisas y ajustamos tu protocolo con seguimiento continuo y validación médica.">
 <meta name="twitter:image" content="https://regen.ar/og-image.png">
 
 <!-- Schema.org -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "MedicalClinic",
+  "@type": "MedicalWebPage",
   "name": "REGEN",
-  "description": "Centro de bienestar biológico y medicina de longevidad basada en evidencia en Córdoba, Argentina.",
+  "description": "Plataforma de salud biológica basada en evidencia. Medición de biomarcadores, intervenciones precisas y seguimiento continuo con validación médica.",
   "url": "https://regen.ar",
-  "medicalSpecialty": "PreventiveMedicine",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Córdoba",
-    "addressRegion": "Córdoba",
-    "addressCountry": "AR"
-  },
-  "areaServed": {
-    "@type": "City",
-    "name": "Córdoba"
+  "specialty": "PreventiveMedicine",
+  "about": {
+    "@type": "MedicalCondition",
+    "name": "Optimización de salud biológica y prevención"
   }
 }
 </script>
@@ -53,7 +47,7 @@
 <!-- Brandbook fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Cormorant:ital,wght@1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400&family=Cormorant:ital,wght@1,300&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 
 <style>
   :root{
@@ -216,15 +210,18 @@
     width:min(640px,115vw);height:min(640px,115vw);
     transform:translate(-50%,-50%);z-index:0;
   }
+  /* Cada anillo es su propia capa (un <svg> con un círculo): el navegador la escala en la
+     placa de video. Animar el <circle> adentro del SVG recalculaba el layout en cada cuadro.
+     Mismo centro, misma escala y mismo trazo que antes. */
   .ring{
     fill:none;stroke:var(--sage);stroke-width:1.2;
-    transform-box:fill-box;transform-origin:center;
+    transform-origin:center;
     opacity:0;animation:ringPulse 6.5s ease-out infinite;
   }
   .ring--stone{stroke:var(--stone);}
-  .ring:nth-of-type(2){animation-delay:1.8s;}
-  .ring:nth-of-type(3){animation-delay:3.6s;}
-  @keyframes ringPulse{0%{transform:scale(.5);opacity:0;}14%{opacity:.4;}100%{transform:scale(1.45);opacity:0;}}
+  .ring--d2{animation-delay:1.8s;}
+  .ring--d3{animation-delay:3.6s;}
+  @keyframes ringPulse{0%{transform:translate(-50%,-50%) scale(.5);opacity:0;}14%{opacity:.4;}100%{transform:translate(-50%,-50%) scale(1.45);opacity:0;}}
   .hero__content{
     position:relative;z-index:2;max-width:760px;
     text-align:center;padding:var(--s6) var(--s3);
@@ -273,7 +270,10 @@
     width:6px;height:6px;border-radius:50%;background:var(--sage);
     animation:cueDrop 2.8s ease-in-out infinite;
   }
-  @keyframes cueDrop{0%{top:0;opacity:0;}20%{opacity:1;}80%{opacity:1;}100%{top:38px;opacity:0;}}
+  /* transform en vez de top: mismo recorrido, sin recalcular el layout en cada cuadro */
+  @keyframes cueDrop{0%{transform:translateY(0);opacity:0;}20%{opacity:1;}80%{opacity:1;}100%{transform:translateY(38px);opacity:0;}}
+  /* Fuera de pantalla las animaciones del hero se pausan (nadie las ve); al volver siguen. */
+  .hero.is-offscreen *,.hero.is-offscreen *::after{animation-play-state:paused;}
   @media(max-width:640px){.hero{min-height:100svh;}.hero__wordmark{font-size:clamp(56px,14vw,80px);}}
 
   .divider{height:2px;background:linear-gradient(90deg,var(--sage),var(--stone));}
@@ -302,6 +302,21 @@
   @media(max-width:860px){
     .intro__grid{grid-template-columns:1fr;}
     .intro__accent{border-top:none;padding-top:0;margin-top:var(--s3);}
+  }
+
+  /* ── Infografía ciclo ── */
+  .infog-wrap{
+    max-width:600px;margin:0 auto var(--s5);
+    position:relative;z-index:1;
+  }
+  .infog-desktop{ display:block; }
+  .infog-mobile{ display:none; }
+  @media(max-width:580px){
+    .infog-badge-group{ display:none; }
+    .infog-wrap{ display:none; }
+  }
+  @media(prefers-reduced-motion:reduce){
+    .infog-wrap *{animation:none!important;}
   }
 
   /* Ciclo medir → intervenir → volver a medir */
@@ -335,20 +350,39 @@
   @media(max-width:760px){.para__grid{grid-template-columns:1fr;}}
 
   /* Diferencial */
-  .dif__grid{
-    display:grid;grid-template-columns:1fr 1fr;
-    gap:var(--s6);align-items:center;position:relative;z-index:1;
-  }
+  .dif__header{max-width:600px;margin-bottom:var(--s6);position:relative;z-index:1;}
   .dif__heading{font-size:clamp(28px,3.6vw,46px);line-height:1.1;margin-top:var(--s2);}
-  .dif__list{margin-top:var(--s4);display:flex;flex-direction:column;gap:var(--s3);}
-  .dif__item{display:flex;gap:var(--s3);align-items:flex-start;}
-  .dif__item-dot{
-    width:8px;height:8px;border-radius:50%;background:var(--sage);
-    flex-shrink:0;margin-top:7px;
+  .dif__intro{margin-top:var(--s3);font-size:17px;font-weight:300;color:#5a5346;max-width:480px;}
+  .dif__cards{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:0;position:relative;z-index:1;
+    border-top:1px solid rgba(120,143,118,.25);
   }
-  .dif__item-text{font-size:16px;font-weight:300;}
-  .dif__spiral{opacity:.85;}
-  @media(max-width:860px){.dif__grid{grid-template-columns:1fr;} .dif__spiral{display:none;}}
+  .dif__card{
+    padding:var(--s5) var(--s4) var(--s5) 0;
+    border-right:1px solid rgba(120,143,118,.15);
+  }
+  .dif__card:last-child{border-right:none;padding-right:0;}
+  .dif__card:first-child{padding-left:0;}
+  .dif__card-visual{
+    height:72px;display:flex;align-items:flex-end;margin-bottom:var(--s4);
+  }
+  .dif__card-title{
+    font-family:'Bodoni Moda',Georgia,serif;font-size:17px;font-weight:400;
+    line-height:1.25;color:var(--charcoal);margin-bottom:var(--s2);
+  }
+  .dif__card-body{font-size:14.5px;font-weight:300;line-height:1.6;color:#5a5346;}
+  .dif__cta{margin-top:var(--s6);position:relative;z-index:1;}
+  @media(max-width:860px){
+    .dif__cards{grid-template-columns:1fr 1fr;}
+    .dif__card{border-right:none;border-bottom:1px solid rgba(120,143,118,.15);padding:var(--s4) 0;}
+    .dif__card:nth-child(odd){padding-right:var(--s3);}
+    .dif__card:last-child{border-bottom:none;}
+  }
+  @media(max-width:480px){
+    .dif__cards{grid-template-columns:1fr;}
+    .dif__card:nth-child(odd){padding-right:0;}
+  }
 
   /* Quote */
   .quote__inner{max-width:720px;margin:0 auto;text-align:center;position:relative;z-index:1;}
@@ -424,39 +458,6 @@
   }
   .plan--elite .plan__price strong{font-size:22px;letter-spacing:0;}
 
-  /* Diagnóstico add-on */
-  .diagnostico{
-    margin-top:1px;background:rgba(191,177,156,.08);
-    border-top:1px solid rgba(191,177,156,.2);
-    position:relative;z-index:1;
-    padding:var(--s4);
-    display:grid;grid-template-columns:1fr auto;
-    gap:var(--s4);align-items:center;
-  }
-  .diagnostico__label{
-    font-family:'DM Sans',sans-serif;font-weight:500;font-size:10px;
-    letter-spacing:.18em;text-transform:uppercase;color:var(--stone);
-    margin-bottom:8px;
-  }
-  .diagnostico__title{
-    font-family:'Bodoni Moda',serif;font-weight:400;font-size:22px;
-    color:var(--linen);
-  }
-  .diagnostico__text{
-    margin-top:8px;font-size:14px;font-weight:300;
-    color:rgba(244,239,229,.65);max-width:520px;line-height:1.55;
-  }
-  .diagnostico__price{
-    text-align:right;white-space:nowrap;
-  }
-  .diagnostico__price strong{
-    display:block;font-size:22px;font-weight:500;
-    color:var(--linen);letter-spacing:-.01em;
-  }
-  .diagnostico__price span{
-    display:block;font-size:12px;font-weight:300;
-    color:rgba(244,239,229,.45);margin-top:2px;
-  }
   .planes__mp{
     margin-top:var(--s3);text-align:center;
     font-size:12px;font-weight:300;color:rgba(244,239,229,.4);
@@ -464,8 +465,6 @@
   }
   @media(max-width:900px){
     .planes__grid{grid-template-columns:1fr;}
-    .diagnostico{grid-template-columns:1fr;}
-    .diagnostico__price{text-align:left;}
   }
 
   /* Novedades / form */
@@ -486,6 +485,11 @@
   }
   .field input:focus,.field textarea:focus{outline:none;border-color:var(--sage);}
   .field textarea{resize:vertical;min-height:86px;}
+  .form__help{margin:6px 0 0;font-size:12.5px;line-height:1.5;color:#6b675e;font-weight:300;}
+  .form__consent{margin:var(--s3) 0;}
+  .form__check{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.45;cursor:pointer;}
+  .form__check input{margin-top:3px;flex:none;width:16px;height:16px;accent-color:var(--sage);}
+  .form__urgent{margin:0 0 var(--s3);font-size:13px;line-height:1.5;color:#4A4740;font-weight:300;}
   .form__ok{margin-top:var(--s3);font-size:14px;color:var(--sage);display:none;font-weight:300;}
   .form__ok.is-shown{display:block;}
   .form__err{color:#8C3A26;}
@@ -509,6 +513,52 @@
     display:flex;justify-content:space-between;flex-wrap:wrap;gap:var(--s2);
     padding:var(--s3) 0 var(--s5);font-size:12px;
     color:rgba(244,239,229,.35);position:relative;
+  }
+
+  /* ── Photo break ── */
+  .photobreak{
+    height:68vh;min-height:340px;max-height:680px;
+    overflow:hidden;position:relative;
+  }
+  .photobreak__inner{
+    position:absolute;
+    inset:-15% 0;          /* extra vertical room for parallax travel */
+    will-change:transform;
+    transform:scale(1.07); /* start slightly zoomed — scales to 1 on entry */
+    transition:transform 1.4s cubic-bezier(.16,1,.3,1);
+  }
+  .photobreak__inner.pb-visible{transform:scale(1);}
+  .photobreak__inner picture{display:contents;} /* la imagen sigue midiendo como antes */
+  .photobreak__img{
+    width:100%;height:100%;
+    object-fit:cover;object-position:center 30%;
+    display:block;pointer-events:none;
+  }
+  /* edge-fade overlay — blends into linen above and below */
+  .photobreak__fade{
+    position:absolute;inset:0;pointer-events:none;
+    background:
+      linear-gradient(to bottom,
+        rgba(244,239,229,.55) 0%,
+        transparent 12%,
+        transparent 88%,
+        rgba(244,239,229,.55) 100%);
+  }
+  /* caption */
+  .photobreak__text{
+    position:absolute;bottom:var(--s6);left:var(--s6);
+    font-family:'Cormorant',Georgia,serif;font-style:italic;
+    font-size:clamp(20px,3vw,34px);font-weight:300;
+    color:rgba(244,239,229,.82);letter-spacing:.01em;
+    opacity:0;transform:translateY(10px);
+    transition:opacity 1s .5s ease,transform 1s .5s ease;
+  }
+  .photobreak__inner.pb-visible ~ .photobreak__text{
+    opacity:1;transform:translateY(0);
+  }
+  @media(max-width:580px){
+    .photobreak{height:52vw;min-height:220px;}
+    .photobreak__text{font-size:18px;left:var(--s4);bottom:var(--s4);}
   }
 </style>
 </head>
@@ -614,23 +664,21 @@
     <div class="hero__glow hero__glow--a"></div>
     <div class="hero__glow hero__glow--b"></div>
     <svg class="hero__spiral" viewBox="0 0 600 600"><use href="#spiralCream"/></svg>
-    <svg class="hero__rings" viewBox="0 0 300 300">
-      <circle class="ring" cx="150" cy="150" r="60"/>
-      <circle class="ring ring--stone" cx="150" cy="150" r="60"/>
-      <circle class="ring" cx="150" cy="150" r="60"/>
-    </svg>
+    <svg class="hero__rings ring" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="60"/></svg>
+    <svg class="hero__rings ring ring--stone ring--d2" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="60"/></svg>
+    <svg class="hero__rings ring ring--d3" viewBox="0 0 300 300" aria-hidden="true"><circle cx="150" cy="150" r="60"/></svg>
 
     <div class="hero__content">
-      <div class="hero__badge"><span class="hero__badge-dot"></span>Biological Wellness Center</div>
+      <div class="hero__badge"><span class="hero__badge-dot"></span>Plataforma de Salud Biológica</div>
 
       <!-- SEO semántico oculto -->
-      <h1 class="sr-only">Centro de bienestar biológico y longevidad en Córdoba</h1>
+      <h1 class="sr-only">REGEN — Plataforma de salud biológica basada en evidencia</h1>
       <h2 class="sr-only">Medimos, intervenimos y volvemos a medir para optimizar tu salud</h2>
 
       <!-- Visual -->
       <p class="hero__wordmark display" aria-hidden="true">REGEN</p>
       <p class="hero__tagline">Recovery is the upgrade.</p>
-      <p class="hero__sub">Longevidad basada en evidencia. Medimos tu biología, intervenimos con pilares probados y volvemos a medir para optimizar tus años de vida saludable.</p>
+      <p class="hero__sub">Salud biológica basada en evidencia. Medimos tus biomarcadores, diseñamos intervenciones precisas y ajustamos tu protocolo a medida que tu biología responde.</p>
       <div class="hero__actions">
         <a class="btn btn--sage" href="#planes">Ver planes</a>
         <a class="btn btn--on-dark" href="#como-funciona">Cómo funciona</a>
@@ -669,6 +717,198 @@
         <p class="label">El método</p>
         <h3 class="display ciclo__heading">Un ciclo continuo, no una consulta aislada.</h3>
       </div>
+      <!-- INFOGRAFÍA ANIMADA -->
+      <!--
+        Geometría (triángulo equilátero perfecto):
+        Hub centroide = (320, 233)
+        Radio hub→nodo = 168
+        Nodo Medimos     = (320, 65)    ← 320, 233-168
+        Nodo Intervenimos= (465, 317)   ← 320+145.5, 233+84
+        Nodo Volvemos    = (175, 317)   ← 320-145.5, 233+84
+        Bordes hub (r=66): top=(320,167), →Interv=(377,266), →Vuelve=(263,266)
+        Bordes nodos (r=40): Medimos=(320,105), Interv=(432,297), Vuelve=(208,297)
+      -->
+      <div class="infog-wrap reveal" aria-hidden="true">
+      <svg class="infog-desktop" viewBox="0 0 640 500" xmlns="http://www.w3.org/2000/svg" style="width:100%;">
+        <defs>
+          <!-- Motion paths (invisible) -->
+          <path id="fp-medir"      d="M320,167 L320,105"/>
+          <path id="fp-intervenir" d="M377,266 L432,297"/>
+          <path id="fp-volver"     d="M263,266 L208,297"/>
+          <!-- Cycle arc clockwise: top→BR→BL→top -->
+          <path id="fp-cycle" d="M340,47 C560,50 560,340 465,315 C438,448 98,448 175,315 C80,340 80,50 300,47"/>
+          <!-- Hub glow -->
+          <radialGradient id="rg-hub" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#788F76" stop-opacity=".35"/>
+            <stop offset="100%" stop-color="#788F76" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Hub ambient glow -->
+        <circle cx="320" cy="233" r="100" fill="url(#rg-hub)">
+          <animate attributeName="opacity" values=".55;1;.55" dur="4s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Spoke lines: hub edges → node edges -->
+        <line x1="320" y1="167" x2="320" y2="105"  stroke="#788F76" stroke-width="1.2" stroke-dasharray="4,7" opacity=".5"/>
+        <line x1="377" y1="266" x2="432" y2="297"  stroke="#788F76" stroke-width="1.2" stroke-dasharray="4,7" opacity=".5"/>
+        <line x1="263" y1="266" x2="208" y2="297"  stroke="#788F76" stroke-width="1.2" stroke-dasharray="4,7" opacity=".5"/>
+
+        <!-- Sage dots: hub → nodes -->
+        <circle r="4" fill="#788F76">
+          <animateMotion dur="2.3s" repeatCount="indefinite" begin="0s"><mpath href="#fp-medir"/></animateMotion>
+        </circle>
+        <circle r="4" fill="#788F76">
+          <animateMotion dur="2.3s" repeatCount="indefinite" begin="0.77s"><mpath href="#fp-intervenir"/></animateMotion>
+        </circle>
+        <circle r="4" fill="#788F76">
+          <animateMotion dur="2.3s" repeatCount="indefinite" begin="1.53s"><mpath href="#fp-volver"/></animateMotion>
+        </circle>
+        <!-- Stone dots: nodes → hub (return) -->
+        <circle r="2.8" fill="#BFB19C" opacity=".8">
+          <animateMotion dur="2.3s" repeatCount="indefinite" begin="1.15s" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+            <mpath href="#fp-medir"/>
+          </animateMotion>
+        </circle>
+        <circle r="2.8" fill="#BFB19C" opacity=".8">
+          <animateMotion dur="2.3s" repeatCount="indefinite" begin="1.92s" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+            <mpath href="#fp-intervenir"/>
+          </animateMotion>
+        </circle>
+        <circle r="2.8" fill="#BFB19C" opacity=".8">
+          <animateMotion dur="2.3s" repeatCount="indefinite" begin="2.68s" keyPoints="1;0" keyTimes="0;1" calcMode="linear">
+            <mpath href="#fp-volver"/>
+          </animateMotion>
+        </circle>
+
+        <!-- Outer cycle arc (marching ants) -->
+        <path d="M340,47 C560,50 560,340 465,315 C438,448 98,448 175,315 C80,340 80,50 300,47"
+              fill="none" stroke="#788F76" stroke-width="1.1" stroke-dasharray="8,12" opacity=".2">
+          <animate attributeName="stroke-dashoffset" values="0;-80" dur="4.5s" repeatCount="indefinite" calcMode="linear"/>
+        </path>
+        <!-- Cycle direction dot -->
+        <circle r="5.5" fill="#788F76" opacity=".6">
+          <animateMotion dur="10s" repeatCount="indefinite"><mpath href="#fp-cycle"/></animateMotion>
+        </circle>
+
+        <!-- ══════════════════════════════════
+             HUB — Asistente REGEN
+             Double-center spiral (brandbook)
+             Primary:  cx=320 cy=228, r=26/17/9
+             Secondary: offset 45° × r/3 → cx=326 cy=222
+        ══════════════════════════════════ -->
+
+        <!-- Hub outer rotating ring -->
+        <circle cx="320" cy="233" r="78" fill="none" stroke="#788F76" stroke-width="1"
+                stroke-dasharray="2,9" opacity=".28">
+          <animateTransform attributeName="transform" type="rotate"
+            from="0 320 233" to="360 320 233" dur="22s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Hub mid ring (static) -->
+        <circle cx="320" cy="233" r="72" fill="none" stroke="#788F76" stroke-width="1" opacity=".12"/>
+
+        <!-- Hub body -->
+        <circle cx="320" cy="233" r="66" fill="#1A1912" stroke="#788F76" stroke-width="1.8"/>
+
+        <!-- SPIRAL ICON — primary set (linen) -->
+        <circle cx="320" cy="228" r="27" fill="none" stroke="rgba(244,239,229,.75)" stroke-width="1.4"/>
+        <circle cx="320" cy="228" r="17" fill="none" stroke="rgba(244,239,229,.55)" stroke-width="1.3"/>
+        <circle cx="320" cy="228" r="9"  fill="none" stroke="rgba(244,239,229,.45)" stroke-width="1.2"/>
+        <!-- SPIRAL ICON — secondary set (sage, offset +6,−6) -->
+        <circle cx="326" cy="222" r="22" fill="none" stroke="#788F76" stroke-width="1.3" opacity=".7"/>
+        <circle cx="326" cy="222" r="13" fill="none" stroke="#788F76" stroke-width="1.2" opacity=".6"/>
+        <!-- Center dot -->
+        <circle cx="320" cy="228" r="2.2" fill="#788F76">
+          <animate attributeName="opacity" values="1;.2;1" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Hub wordmark — below outer ring -->
+        <text x="320" y="324" text-anchor="middle"
+              font-family="'DM Sans',sans-serif" font-size="11" font-weight="500"
+              fill="#191917" letter-spacing="2">ASISTENTE REGEN</text>
+
+        <!-- IA 24/7 pill — below wordmark -->
+        <rect x="291" y="331" width="58" height="18" rx="9"
+              fill="none" stroke="#788F76" stroke-width="1"/>
+        <text x="320" y="344" text-anchor="middle"
+              font-family="'DM Sans',sans-serif" font-size="9" font-weight="500"
+              fill="#788F76" letter-spacing="1.5">IA · 24/7</text>
+
+        <!-- ══════════════════
+             NODOS
+        ══════════════════ -->
+
+        <!-- Nodo 1: Medimos (top, x=320 y=65) -->
+        <circle cx="320" cy="65" r="40" fill="#EDE7D8" stroke="#191917" stroke-width="1.5"/>
+        <circle cx="320" cy="62" r="16" fill="none" stroke="#191917" stroke-width="1.4"/>
+        <circle cx="320" cy="62" r="9"  fill="none" stroke="#191917" stroke-width="1.4"/>
+        <circle cx="320" cy="62" r="3"  fill="#191917"/>
+        <text x="320" y="117" text-anchor="middle"
+              font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#191917">Medimos</text>
+        <text x="320" y="133" text-anchor="middle"
+              font-family="'DM Sans',sans-serif" font-size="10.5" font-weight="300" fill="#8C7F6A">Biomarcadores reales</text>
+
+        <!-- Nodo 2: Intervenimos (bottom-right, x=465 y=317) -->
+        <circle cx="465" cy="317" r="40" fill="#EDE7D8" stroke="#191917" stroke-width="1.5"/>
+        <!-- Arch waves: three nested arches opening upward -->
+        <path d="M450,322 Q465,303 480,322" fill="none" stroke="#191917" stroke-width="1.5"/>
+        <path d="M454,315 Q465,299 476,315" fill="none" stroke="#191917" stroke-width="1.5"/>
+        <path d="M458,308 Q465,304 472,308" fill="none" stroke="#191917" stroke-width="1.5"/>
+        <text x="465" y="368" text-anchor="middle"
+              font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#191917">Intervenimos</text>
+        <text x="465" y="384" text-anchor="middle"
+              font-family="'DM Sans',sans-serif" font-size="10.5" font-weight="300" fill="#8C7F6A">Protocolo personalizado</text>
+
+        <!-- Nodo 3: Volvemos a medir (bottom-left, x=175 y=317) -->
+        <circle cx="175" cy="317" r="40" fill="#EDE7D8" stroke="#191917" stroke-width="1.5"/>
+        <!-- Crosshair -->
+        <circle cx="175" cy="314" r="13" fill="none" stroke="#191917" stroke-width="1.4"/>
+        <line x1="175" y1="296" x2="175" y2="304" stroke="#191917" stroke-width="1.4"/>
+        <line x1="175" y1="324" x2="175" y2="332" stroke="#191917" stroke-width="1.4"/>
+        <line x1="157" y1="314" x2="165" y2="314" stroke="#191917" stroke-width="1.4"/>
+        <line x1="185" y1="314" x2="193" y2="314" stroke="#191917" stroke-width="1.4"/>
+        <text x="175" y="368" text-anchor="middle"
+              font-family="'DM Sans',sans-serif" font-size="13" font-weight="500" fill="#191917">Volvemos a medir</text>
+        <text x="175" y="384" text-anchor="middle"
+              font-family="'DM Sans',sans-serif" font-size="10.5" font-weight="300" fill="#8C7F6A">Ajuste continuo</text>
+
+        <!-- ══════════════════
+             BADGES (dentro del viewBox)
+        ══════════════════ -->
+        <!-- Badge izquierdo: Historia del paciente -->
+        <g class="infog-badge-group">
+          <rect x="8" y="208" width="112" height="50" rx="4" fill="#191917"/>
+          <text x="64" y="226" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9" font-weight="500"
+                fill="rgba(244,239,229,.9)" letter-spacing=".3">Historia del</text>
+          <text x="64" y="238" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9" font-weight="500"
+                fill="rgba(244,239,229,.9)" letter-spacing=".3">paciente</text>
+          <text x="64" y="250" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="8" font-weight="300"
+                fill="rgba(244,239,229,.48)" letter-spacing=".3">siempre activa</text>
+          <line x1="120" y1="233" x2="254" y2="233" stroke="#788F76" stroke-width="1"
+                stroke-dasharray="3,5" opacity=".4"/>
+        </g>
+
+        <!-- Badge derecho: Validación médica permanente -->
+        <g class="infog-badge-group">
+          <rect x="520" y="208" width="112" height="50" rx="4" fill="#191917"/>
+          <circle cx="532" cy="224" r="4.5" fill="#788F76">
+            <animate attributeName="opacity" values="1;.15;1" dur="2.4s" repeatCount="indefinite"/>
+          </circle>
+          <text x="541" y="221" font-family="'DM Sans',sans-serif" font-size="9" font-weight="500"
+                fill="rgba(244,239,229,.9)" letter-spacing=".3">Validación</text>
+          <text x="541" y="233" font-family="'DM Sans',sans-serif" font-size="9" font-weight="500"
+                fill="rgba(244,239,229,.9)" letter-spacing=".3">médica</text>
+          <text x="541" y="245" font-family="'DM Sans',sans-serif" font-size="8" font-weight="300"
+                fill="rgba(244,239,229,.48)" letter-spacing=".3">permanente</text>
+          <line x1="520" y1="233" x2="386" y2="233" stroke="#788F76" stroke-width="1"
+                stroke-dasharray="3,5" opacity=".4"/>
+        </g>
+
+      </svg>
+
+      </div>
+      <!-- END INFOGRAFÍA -->
+
       <div class="ciclo__grid reveal">
         <div class="ciclo__paso">
           <div class="ciclo__num">01</div>
@@ -692,6 +932,18 @@
     </div>
   </section>
 
+  <!-- PHOTO BREAK -->
+  <div class="photobreak" aria-hidden="true">
+    <div class="photobreak__inner" id="pbInner">
+      <picture>
+        <source type="image/webp" srcset="cuerpo-movimiento-1200.webp 1200w, cuerpo-movimiento.webp 1792w" sizes="100vw">
+        <img class="photobreak__img" src="cuerpo-movimiento.jpg" alt="" draggable="false" loading="lazy" decoding="async">
+      </picture>
+    </div>
+    <div class="photobreak__fade"></div>
+    <p class="photobreak__text" id="pbText">La biología no miente.</p>
+  </div>
+
   <!-- PARA QUIÉN -->
   <section class="band" id="para-quien">
     <div class="blob" style="width:36vmax;height:36vmax;background:var(--sage);top:10%;right:5%;opacity:.11;"></div>
@@ -708,7 +960,7 @@
         </div>
         <div class="para__card">
           <svg class="para__icon" viewBox="0 0 48 48"><use href="#iArch"/></svg>
-          <h4 class="para__title">Prevención y longevidad</h4>
+          <h4 class="para__title">Prevención activa</h4>
           <p class="para__text">Quienes priorizan la salud antes de que aparezcan los síntomas y quieren años de vida con calidad, no solo cantidad.</p>
         </div>
         <div class="para__card">
@@ -780,19 +1032,18 @@
             Consultá disponibilidad
           </div>
           <ul class="plan__features">
-            <li class="plan__feat">Médico de longevidad dedicado a tu caso</li>
+            <li class="plan__feat">Médico de cabecera dedicado a tu caso</li>
             <li class="plan__feat">Estudios en cualquier ciudad del país</li>
             <li class="plan__feat">Protocolo anual personalizado</li>
             <li class="plan__feat">Acceso directo al equipo REGEN</li>
           </ul>
           <div class="plan__cta">
-            <a class="btn btn--on-dark" href="mailto:contacto@regen.ar?subject=Quiero%20ser%20Elite" rel="noopener">Consultar Elite</a>
+            <a class="btn btn--on-dark" href="mailto:hola@regen.ar?subject=Quiero%20ser%20Elite" rel="noopener">Consultar Elite</a>
             <p class="plan__note">Te respondemos dentro de las 24 hs hábiles.</p>
           </div>
         </div>
 
       </div>
-
 
       <p class="planes__mp reveal">Pagos procesados por Mercado Pago · Podés cancelar cuando quieras</p>
     </div>
@@ -800,36 +1051,94 @@
 
   <!-- DIFERENCIAL -->
   <section class="band" id="diferencial">
-    <div class="blob" style="width:46vmax;height:46vmax;background:var(--sage);top:-16vmax;left:50%;opacity:.09;"></div>
-    <div class="wrap dif__grid">
-      <div class="reveal">
+    <div class="blob" style="width:46vmax;height:46vmax;background:var(--sage);top:-16vmax;left:50%;opacity:.07;"></div>
+    <div class="wrap">
+
+      <div class="dif__header reveal">
         <p class="label">Por qué REGEN</p>
         <h3 class="display dif__heading">Evidencia primero. Siempre.</h3>
-        <div class="dif__list">
-          <div class="dif__item">
-            <span class="dif__item-dot"></span>
-            <p class="dif__item-text">Base de conocimiento con niveles de evidencia científica y guardrails regulatorios: nada sin respaldo.</p>
-          </div>
-          <div class="dif__item">
-            <span class="dif__item-dot"></span>
-            <p class="dif__item-text">Diagnóstico, indicación e interpretación siempre a cargo de un profesional matriculado. La IA asiste, no reemplaza.</p>
-          </div>
-          <div class="dif__item">
-            <span class="dif__item-dot"></span>
-            <p class="dif__item-text">Protocolos que se ajustan a tu respuesta biológica, no a un plan genérico de 30 días.</p>
-          </div>
-          <div class="dif__item">
-            <span class="dif__item-dot"></span>
-            <p class="dif__item-text">Seguimiento real: el progreso se mide, se muestra y se explica. Sin promesas vagas de resultado.</p>
-          </div>
-        </div>
-        <div style="margin-top:var(--s4);">
-          <a class="btn btn--primary" href="#planes">Ver planes</a>
-        </div>
+        <p class="dif__intro">Una plataforma de salud se diferencia en cómo usa la ciencia, no solo en qué la cita.</p>
       </div>
-      <div class="reveal dif__spiral">
-        <svg viewBox="0 0 600 600" style="width:100%;opacity:.55;"><use href="#spiralMain"/></svg>
+
+      <div class="dif__cards">
+
+        <!-- 1: Evidencia -->
+        <div class="dif__card reveal">
+          <div class="dif__card-visual">
+            <svg viewBox="0 0 72 72" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="36" cy="36" r="5.5" stroke="#788F76" stroke-width="1.4"/>
+              <circle cx="36" cy="14" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <circle cx="57" cy="27" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <circle cx="57" cy="50" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <circle cx="15" cy="27" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <circle cx="15" cy="50" r="3.5" stroke="#788F76" stroke-width="1.2"/>
+              <line x1="36" y1="17.5" x2="36" y2="30.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <line x1="53.7" y1="29.5" x2="41.2" y2="33.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <line x1="53.9" y1="47.6" x2="41.2" y2="38.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <line x1="18.3" y1="29.5" x2="30.8" y2="33.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <line x1="18.1" y1="47.6" x2="30.8" y2="38.5" stroke="#788F76" stroke-width="1" opacity=".5"/>
+              <path d="M33.5,14 L35.5,16 L38.5,12" stroke="#788F76" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h4 class="dif__card-title">Ciencia con criterio</h4>
+          <p class="dif__card-body">Cada protocolo lleva nivel de evidencia asignado. Si no tiene respaldo publicado, no entra al sistema.</p>
+        </div>
+
+        <!-- 2: Médico -->
+        <div class="dif__card reveal">
+          <div class="dif__card-visual">
+            <svg viewBox="0 0 72 72" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="36" cy="19" r="8" stroke="#788F76" stroke-width="1.4"/>
+              <path d="M22,58 C22,44 50,44 50,58" stroke="#788F76" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M14,38 L22,38 L25,31 L28,45 L32,34 L36,38 L40,38 L43,33 L46,43 L49,38 L58,38"
+                    stroke="#788F76" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h4 class="dif__card-title">Criterio médico, siempre</h4>
+          <p class="dif__card-body">La IA amplifica al profesional, no lo reemplaza. Diagnóstico e indicación: siempre bajo firma médica.</p>
+        </div>
+
+        <!-- 3: Personalización -->
+        <div class="dif__card reveal">
+          <div class="dif__card-visual">
+            <svg viewBox="0 0 72 72" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M36,62 C19,62 10,50 10,36 C10,20 20,10 36,10" stroke="#788F76" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M36,55 C23,55 17,46 17,36 C17,25 24,17 36,17" stroke="#788F76" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+              <path d="M36,48 C27,48 24,42 24,36 C24,30 28,24 36,24" stroke="#788F76" stroke-width="1.1" stroke-linecap="round" opacity=".55"/>
+              <path d="M36,41 C31,41 31,38 31,36 C31,33 32,31 36,31" stroke="#788F76" stroke-width="1" stroke-linecap="round" opacity=".4"/>
+              <line x1="36" y1="10" x2="36" y2="62" stroke="#788F76" stroke-width="1" stroke-dasharray="2,4" opacity=".3"/>
+              <circle cx="36" cy="36" r="2.5" fill="#788F76"/>
+            </svg>
+          </div>
+          <h4 class="dif__card-title">Tu biología, tu protocolo</h4>
+          <p class="dif__card-body">El programa se construye desde tus biomarcadores y se ajusta a medida que tu biología responde.</p>
+        </div>
+
+        <!-- 4: Seguimiento -->
+        <div class="dif__card reveal">
+          <div class="dif__card-visual">
+            <svg viewBox="0 0 72 72" width="72" height="72" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="14" y1="58" x2="14" y2="14" stroke="#788F76" stroke-width="1.2" stroke-linecap="round" opacity=".4"/>
+              <line x1="14" y1="58" x2="62" y2="58" stroke="#788F76" stroke-width="1.2" stroke-linecap="round" opacity=".4"/>
+              <path d="M18,52 C24,48 28,45 34,38 C40,31 46,25 58,16"
+                    stroke="#788F76" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="18" cy="52" r="2.8" fill="#788F76"/>
+              <circle cx="34" cy="38" r="2.8" fill="#788F76"/>
+              <circle cx="58" cy="16" r="2.8" fill="#788F76"/>
+              <line x1="34" y1="38" x2="34" y2="58" stroke="#788F76" stroke-width="1" stroke-dasharray="2,3" opacity=".3"/>
+              <line x1="58" y1="16" x2="58" y2="58" stroke="#788F76" stroke-width="1" stroke-dasharray="2,3" opacity=".3"/>
+            </svg>
+          </div>
+          <h4 class="dif__card-title">Progreso en datos reales</h4>
+          <p class="dif__card-body">Medimos antes y después. El avance se muestra en números concretos, no en percepciones.</p>
+        </div>
+
+      </div><!-- /dif__cards -->
+
+      <div class="dif__cta reveal">
+        <a class="btn btn--primary" href="#planes">Ver planes</a>
       </div>
+
     </div>
   </section>
 
@@ -838,7 +1147,7 @@
     <div class="blob" style="width:30vmax;height:30vmax;background:var(--stone);top:5%;right:6%;opacity:.12;"></div>
     <div class="wrap quote__inner reveal">
       <p class="quote__text">"Tu biología, optimizada."</p>
-      <p class="label label--sage" style="margin-top:var(--s4);">— REGEN Biological Wellness Center</p>
+      <p class="label label--sage" style="margin-top:var(--s4);">— REGEN</p>
     </div>
   </section>
 
@@ -859,23 +1168,32 @@
           </div>
           <div class="field">
             <label for="fname">Nombre</label>
-            <input id="fname" name="name" type="text" required autocomplete="name">
+            <input id="fname" name="name" type="text" required maxlength="100" autocomplete="name">
           </div>
           <div class="field">
             <label for="femail">Email</label>
-            <input id="femail" name="email" type="email" required autocomplete="email">
+            <input id="femail" name="email" type="email" required maxlength="254" autocomplete="email">
           </div>
           <div class="field">
             <label for="fphone">Teléfono (opcional)</label>
-            <input id="fphone" name="phone" type="tel" autocomplete="tel">
+            <input id="fphone" name="phone" type="tel" maxlength="30" autocomplete="tel">
           </div>
           <div class="field">
             <label for="fmsg">Tu consulta</label>
-            <textarea id="fmsg" name="message" placeholder="¿Qué plan te interesa? ¿Qué querés mejorar? Cualquier duda que tengas…"></textarea>
+            <textarea id="fmsg" name="message" maxlength="1000" placeholder="¿Qué plan te interesa? ¿Qué querés mejorar? Cualquier duda que tengas…" aria-describedby="fmsgHelp"></textarea>
+            <p class="form__help" id="fmsgHelp">Hasta 1000 caracteres. Por favor, no incluyas información médica ni estudios: eso lo vemos con el equipo en la consulta.</p>
           </div>
+          <div class="form__consent">
+            <label class="form__check" for="fconsent">
+              <input id="fconsent" name="consent" type="checkbox" required>
+              <span>Acepto que REGEN use mis datos para responder esta consulta.</span>
+            </label>
+            <p class="form__help">Usamos tu nombre, email, teléfono y mensaje solo para contestarte. Los procesan los servicios de correo y alojamiento que usa REGEN. Podés pedir acceso, corrección o baja de tus datos escribiendo a hola@regen.ar. Tenés derecho a hacerlo según la Ley 25.326 de Protección de Datos Personales; la autoridad de control es la Agencia de Acceso a la Información Pública.</p>
+          </div>
+          <p class="form__urgent"><strong>Este formulario no es para urgencias.</strong> Si es una urgencia, llamá al 107 o al 911. Si estás atravesando un momento difícil, podés llamar al 0800-999-0091.</p>
           <button type="submit" class="btn btn--primary" id="formSubmit">Enviar consulta</button>
           <p class="form__ok" id="formOk">¡Listo! Te respondemos en breve.</p>
-          <p class="form__ok form__err" id="formErr">No pudimos enviar tu mensaje. Probá de nuevo o escribinos a contacto@regen.ar.</p>
+          <p class="form__ok form__err" id="formErr">No pudimos enviar tu mensaje. Probá de nuevo o escribinos a hola@regen.ar.</p>
         </form>
       </div>
     </div>
@@ -888,7 +1206,7 @@
   <div class="wrap footer__row">
     <div>
       <p class="footer__logo">REGEN</p>
-      <p class="footer__tag">Biological Wellness Center. Longevidad basada en evidencia.</p>
+      <p class="footer__tag">Plataforma de salud biológica basada en evidencia.</p>
     </div>
     <div class="footer__cols">
       <div class="footer__col">
@@ -901,13 +1219,13 @@
       <div class="footer__col">
         <p class="label label--light footer__col-title">Contacto</p>
         <a href="#novedades">Escribinos</a>
-        <a href="mailto:contacto@regen.ar">contacto@regen.ar</a>
+        <a href="mailto:hola@regen.ar">hola@regen.ar</a>
         <a href="https://asistente.regen.ar/planes" target="_blank" rel="noopener">Ver planes →</a>
       </div>
     </div>
   </div>
   <div class="wrap footer__bottom">
-    <span>© <span id="year"></span> REGEN Biological Wellness Center.</span>
+    <span>© <span id="year"></span> REGEN.</span>
     <span>Recovery is the upgrade.</span>
   </div>
 </footer>
@@ -929,6 +1247,8 @@
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(([e]) => nav.classList.toggle('nav--light', !e.isIntersecting),
       { rootMargin:'-80px 0px 0px 0px', threshold:0 }).observe(hero);
+    new IntersectionObserver(([e]) => hero.classList.toggle('is-offscreen', !e.isIntersecting))
+      .observe(hero);
   }
 
   const rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -941,6 +1261,42 @@
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
   }
 
+  // Photo break: scale reveal + parallax
+  const pbInner = document.getElementById('pbInner');
+  const pbText  = document.getElementById('pbText');
+  if (pbInner && !rm) {
+    // Reveal on entry
+    const pbObserver = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        pbInner.classList.add('pb-visible');
+        pbObserver.disconnect();
+      }
+    }, { threshold: .08 });
+    pbObserver.observe(pbInner);
+
+    // Parallax on scroll: one measurement per frame, and only while the photo is on screen
+    const pbSection = pbInner.closest('.photobreak');
+    function pbParallax() {
+      const rect = pbSection.getBoundingClientRect();
+      const vh   = window.innerHeight;
+      if (rect.bottom < 0 || rect.top > vh) return;
+      const progress = (vh - rect.top) / (vh + rect.height); // 0→1 as section traverses
+      const offset   = (progress - 0.5) * 90;               // ±45px travel
+      pbInner.style.transform = `translateY(${offset}px) scale(${pbInner.classList.contains('pb-visible') ? 1 : 1.07})`;
+    }
+    let pbFrame = 0;
+    const onPbScroll = () => {
+      if (!pbFrame) pbFrame = requestAnimationFrame(() => { pbFrame = 0; pbParallax(); });
+    };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { window.addEventListener('scroll', onPbScroll, { passive: true }); pbParallax(); }
+      else window.removeEventListener('scroll', onPbScroll);
+    }).observe(pbSection);
+    pbParallax();
+  } else if (pbInner) {
+    pbInner.classList.add('pb-visible');
+  }
+
   // Formulario → Cloudflare Worker → Resend
   const ENDPOINT = 'https://regen-form.sebagaviglio.workers.dev';
   const form = document.getElementById('contactForm');
@@ -948,15 +1304,37 @@
   const errEl = document.getElementById('formErr');
   const btn   = document.getElementById('formSubmit');
 
+  // Avisos de validación en español (el navegador los muestra en su propio idioma si no se definen)
+  const MSG = {
+    fname:    { valueMissing: 'Escribí tu nombre.' },
+    femail:   { valueMissing: 'Escribí tu email.', typeMismatch: 'Revisá el email: tiene que ser como nombre@dominio.com.' },
+    fconsent: { valueMissing: 'Para enviar la consulta tenés que aceptar el aviso de privacidad.' },
+  };
+  Object.keys(MSG).forEach((id) => {
+    const el = document.getElementById(id);
+    const apply = () => {
+      el.setCustomValidity('');
+      if (el.validity.valid) return;
+      const k = Object.keys(MSG[id]).find((key) => el.validity[key]);
+      el.setCustomValidity(k ? MSG[id][k] : 'Revisá este campo.');
+    };
+    el.addEventListener('invalid', apply);
+    el.addEventListener('input', () => el.setCustomValidity(''));
+    el.addEventListener('change', () => el.setCustomValidity(''));
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!form.consent.checked) { errEl.classList.add('is-shown'); return; }
     okEl.classList.remove('is-shown');
     errEl.classList.remove('is-shown');
     const payload = {
       name: form.name.value.trim(),
       email: form.email.value.trim(),
       phone: form.phone.value.trim(),
-      message: form.message.value.trim(),
+      message: form.message.value.trim().slice(0, 1000),
+      consent: form.consent.checked,
+      privacy_version: 'v1-2026-10-validado',
       website: form.website.value.trim(),
     };
     btn.disabled = true;
