@@ -1,0 +1,44 @@
+{
+  "_nota": "Páginas para verify.py. La red externa (Google Fonts, Workers) está cortada; los Workers responden con fixtures. Las presentaciones con audio/video pesado (demo, mismosanos, presentacionelite) quedan afuera: sumalas si las tocás.",
+  "workerHost": "regen-agente.sebagaviglio.workers.dev",
+  "storageKey": "-",
+  "viewports": [
+    [
+      390,
+      844
+    ],
+    [
+      1440,
+      900
+    ]
+  ],
+  "screens": [
+    {
+      "name": "portada",
+      "path": "/",
+      "ready": "#contactForm"
+    },
+    {
+      "name": "invitacion",
+      "path": "/invitacion.html?t=prueba",
+      "ready": "body"
+    },
+    {
+      "name": "pitch",
+      "path": "/pitch/",
+      "ready": "body"
+    },
+    {
+      "name": "inversores",
+      "path": "/inversores/",
+      "ready": "body"
+    },
+    {
+      "name": "benchmark",
+      "path": "/benchmark/",
+      "ready": "body"
+    }
+  ],
+  "fixtures": {},
+  "pauseClock": true
+}
