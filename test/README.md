@@ -1,7 +1,7 @@
 # Pruebas de la web
 
-Prueban la portada (`index.html`) y la invitación en un navegador real. No son parte del
-sitio: `.vercelignore` las deja afuera del deploy.
+Prueban la portada (`index.html`) y la voz para inversores en un navegador real. No son parte del
+sitio: `.vercelignore` las deja afuera del deploy. GitHub las corre en cada PR.
 
 ```
 cd test
